@@ -38,47 +38,67 @@ function main(){
 
 	result.__tariff = prefs.login;
 	
-	if(AnyBalance.isAvailable('enp', 'enpconfirmed', 'daysleft', 'appears')){
-		html = AnyBalance.requestGet(baseurl + '/lkfl/api/v1/taxes/taxInfo', addHeaders({
-			'Authorization': 'Bearer ' + accessToken,
-			'Referer': baseurl + '/lkfl/'
-		}));
-        
-		json = getJson(html);
-		AnyBalance.trace('Задолженность: ' + JSON.stringify(json));
-		getParam(json.enpSum, result, 'enp', null, null, parseBalance);
-		getParam(json.confirmedPaymentsSum, result, 'enpconfirmed', null, null, parseBalance);
-		getParam(json.daysLeft, result, 'daysleft', null, null, parseBalance);
-		getParam(json.sumToPay, result, 'arrears', null, null, parseBalance);
+	html = AnyBalance.requestGet(baseurl + '/api/lkfl/api/v1/ens/general', addHeaders({
+		'Authorization': 'Bearer ' + accessToken,
+		'Referer': baseurl + '/lkfl/'
+	}));
+    
+	var mainInfo = getJson(html);
+	AnyBalance.trace('Сводка: ' + JSON.stringify(mainInfo));
+	getParam(mainInfo.ens.balanceAmount, result, 'balance', null, null, parseBalance);
+	getParam(mainInfo.ens.arrearAmount, result, 'arrears', null, null, parseBalance);
+	getParam(mainInfo.ens.recommendedPaymentAmount, result, 'accruals', null, null, parseBalance);
+	
+	if(mainInfo.ens.accrual && mainInfo.ens.accrual.accrualNearest){
+		getParam(mainInfo.ens.accrual.accrualNearest.amount, result, 'accrualnearest', null, null, parseBalance);
+		getParam(mainInfo.ens.accrual.accrualNearest.date, result, 'accrualnearestdate', null, null, parseDateISO);
 	}
 	
-	if(AnyBalance.isAvailable(['appears', 'accruals', 'transport', 'property', 'land', 'daysleft'])){
-	    html = AnyBalance.requestGet(baseurl + '/lkfl/api/v1/taxes/cards', addHeaders({
+	getParam((mainInfo.ens.balanceAmount && mainInfo.ens.balanceAmount > 0) ? mainInfo.ens.balanceAmount : 0, result, 'overpay', null, null, parseBalance);
+	
+	if(AnyBalance.isAvailable('enp', 'enpconfirmed')){
+		html = AnyBalance.requestGet(baseurl + '/api/lkfl/api/v1/taxes/taxInfo', addHeaders({
 			'Authorization': 'Bearer ' + accessToken,
 			'Referer': baseurl + '/lkfl/'
 		}));
         
+		var taxInfo = getJson(html);
+		AnyBalance.trace('taxInfo: ' + JSON.stringify(taxInfo));
+		getParam(taxInfo.enpSum, result, 'enp', null, null, parseBalance);
+		getParam(taxInfo.confirmedPaymentsSum, result, 'enpconfirmed', null, null, parseBalance);
+	}
+	
+	if(AnyBalance.isAvailable(['accruals', 'arrears', 'transport', 'property', 'land', 'daysleft'])){
+        html = AnyBalance.requestGet(baseurl + '/api/lkfl/api/v1/ens/liabilitiesMeta', addHeaders({
+			'Authorization': 'Bearer ' + accessToken,
+			'Referer': baseurl + '/lkfl/individual/taxes'
+		}));
+        
 		json = getJson(html);
-		AnyBalance.trace('Категории налогов: ' + JSON.stringify(json));
+		AnyBalance.trace('Все начисления: ' + JSON.stringify(json));
 		
-		getParam(json.totalSumToPay, result, 'arrears', null, null, parseBalance);
+		var accInfo = json.accruals;
+		var arrInfo = json.arrears;
 		
-		if(json.taxesGroup && json.taxesGroup.length>0){
-	        for(var i=0; i<json.taxesGroup.length; ++i){
-	        	var tax = json.taxesGroup[i];
-	        	AnyBalance.trace('Найден налог: ' + tax.taxType);
-	        	if(tax.taxType == 'TRANSPORT'){
-	        		getParam(tax.totalSum, result, 'transport', null, null, parseBalance);
-	        	}else if(tax.taxType == 'PROPERTY'){
-	        		getParam(tax.totalSum, result, 'property', null, null, parseBalance);
-	        	}else if(tax.taxType == 'LAND'){
-	        		getParam(tax.totalSum, result, 'land', null, null, parseBalance);
-	        	}else{
-	        		AnyBalance.trace('Неизвестный тип налога: ' + tax.taxType);
-	        	}
-	        }
-	    }else{
-	    	AnyBalance.trace('Не удалось получить информацию о задолженности по налогам. Проверяем предстоящие платежи...');
+		if(accInfo && accInfo.length>0){
+	        for(var i=0; i<accInfo.length; ++i){
+	        	var accrual = accInfo[i];
+				sumParam(accrual.amount, result, 'accruals', null, null, parseBalance, aggregate_sum);
+			}
+		}else{
+	    	AnyBalance.trace('Предстоящие платежи не найдены');
+	    }
+		
+		if(arrInfo && arrInfo.length>0){
+	        for(var i=0; i<arrInfo.length; ++i){
+	        	var arrear = arrInfo[i];
+				sumParam(arrear.amount, result, 'arrears', null, null, parseBalance, aggregate_sum);
+			}
+		}else{
+	    	AnyBalance.trace('Задолженности не найдены');
+	    }
+		
+		if(result.accruals && result.accruals > 0){ // Обрабатываем предстоящие платежи
 			html = AnyBalance.requestPost(baseurl + '/api/lkfl/api/v1/ens/accrualsLiabilitySvnz', JSON.stringify({
                 "filter": {
                     "liabilityType": "FL",
@@ -96,10 +116,10 @@ function main(){
 			    'Origin': baseurl,
 			    'Referer': baseurl + '/lkfl/individual/taxes'
 		    }));
-        
+            
 		    json = getJson(html);
 		    AnyBalance.trace('Предстоящие платежи: ' + JSON.stringify(json));
-		
+		    
 		    if(json.content && json.content.length>0){
 				var dates = [];
 				
@@ -136,30 +156,98 @@ function main(){
 	        }else{
 	    	    AnyBalance.trace('Не удалось получить информацию о предстоящих платежах');
 	        }
-	    }
+		}
 		
-		if(AnyBalance.isAvailable('accruals')){
-			html = AnyBalance.requestGet(baseurl + '/api/lkfl/api/v1/ens/liabilitiesMeta', addHeaders({
+		if(result.arrears && result.arrears > 0){ // Обрабатываем задолженности
+			html = AnyBalance.requestPost(baseurl + '/api/lkfl/api/v1/ens/arrearsLiabilitySvnz', JSON.stringify({
+            "filter": {
+                "liabilityType": "FL",
+                "sourceDocCodes": [],
+                "svnzCodes": []
+            },
+            "pagination": {
+                "page": 0,
+                "size": 10
+            }
+        }), addHeaders({
+			    'Accept': 'application/json, text/plain, */*',
 			    'Authorization': 'Bearer ' + accessToken,
+			    'Content-Type': 'application/json',
+			    'Origin': baseurl,
 			    'Referer': baseurl + '/lkfl/individual/taxes'
 		    }));
-        
+            
 		    json = getJson(html);
-		    AnyBalance.trace('Все начисления: ' + JSON.stringify(json));
-			
-			if(json.accruals && json.accruals.length>0){
-	            for(var i=0; i<json.accruals.length; ++i){
-	        	    var accrual = json.accruals[i];
-					sumParam(accrual.amount, result, 'accruals', null, null, parseBalance, aggregate_sum);
-				}
-			}else{
-	    	    AnyBalance.trace('Не удалось получить информацию о начислениях');
+		    AnyBalance.trace('Задолженности: ' + JSON.stringify(json));
+		    
+		    if(json.content && json.content.length>0){
+				var dates = [];
+				
+	            for(var i=0; i<json.content.length; ++i){
+	        	    var tax = json.content[i];
+	        	    AnyBalance.trace('Найден налог: ' + tax.svnzInfo.title);
+	        	    if(tax.svnzInfo.code == 20){ // Транспортный налог
+	        		    getParam(tax.amount, result, 'transport', null, null, parseBalance);
+						dates.push(getParam(tax.periodYear + '-12-01', null, null, null, null, parseDateISO));
+	        	    }else if(tax.svnzInfo.code == 25){ // Налог на имущество
+	        		    getParam(tax.amount, result, 'property', null, null, parseBalance);
+						dates.push(getParam(tax.periodYear + '-12-01', null, null, null, null, parseDateISO));
+	        	    }else if(tax.svnzInfo.code == 24){ // Земельный налог
+	        		    getParam(tax.amount, result, 'land', null, null, parseBalance);
+						dates.push(getParam(tax.periodYear + '-12-01', null, null, null, null, parseDateISO));
+	        	    }else{
+	        		    AnyBalance.trace('Неизвестный тип налога: ' + tax.svnzInfo.title);
+	        	    }
+	            }
+				
+				var date = findEarliestDate(dates);
+				
+		        if(date){
+	        		var days = Math.ceil((date - (new Date().getTime())) / 86400 / 1000);
+	        		result.daysleft = days;
+	        	}else{
+ 	        		AnyBalance.trace('Не удалось получить дату уплаты налогов');
+ 	        	}
+	        }else{
+	    	    AnyBalance.trace('Не удалось получить информацию о задолженностях');
 	        }
 		}
 	}
 	
+	if(AnyBalance.isAvailable('lastoperdate', 'lastopersum', 'lastopertype', 'lastoperdesc')){
+		html = AnyBalance.requestPost(baseurl + '/api/lkfl/api/v1/ens/historyOperations', JSON.stringify({
+            "filter": {
+                "actionTypeName": "",
+                "sourceDocCodes": []
+            },
+            "pagination": {
+                "page": 0,
+                "size": 10
+            }
+        }), addHeaders({
+			'Accept': 'application/json, text/plain, */*',
+			'Authorization': 'Bearer ' + accessToken,
+			'Content-Type': 'application/json',
+			'Origin': baseurl,
+			'Referer': baseurl + '/lkfl/individual/taxes'
+		}));
+	
+	    json = getJson(html);
+		AnyBalance.trace('Операции: ' + JSON.stringify(json));
+		
+        if(json.content && json.content.length>0){
+        	var o = json.content[0];
+        	getParam(o.date, result, 'lastoperdate', null, null, parseDateISO);
+        	getParam(o.amount, result, 'lastopersum', null, null, parseBalance);
+        	getParam(o.svnzInfo.title, result, 'lastopertype', null, replaceTagsAndSpaces);
+			getParam(o.operationDescription||o.actionTypeInfo.name, result, 'lastoperdesc', null, replaceTagsAndSpaces);
+        }else{
+			AnyBalance.trace('Последняя операция не найдена');
+		}
+	}
+	
 	if(AnyBalance.isAvailable(['inn', 'notifications', 'email', 'fio'])){
-		html = AnyBalance.requestGet(baseurl + '/lkfl/api/v1/taxpayer/info/v2', addHeaders({
+		html = AnyBalance.requestGet(baseurl + '/api/lkfl/api/v1/taxpayer/info/v2', addHeaders({
 			'Authorization': 'Bearer ' + accessToken,
 			'Referer': baseurl + '/lkfl/'
 		}));
@@ -171,48 +259,15 @@ function main(){
 		getParam(json.email, result, 'email');
 		getParam(json.name, result, 'fio', null, null, capitalFirstLetters);
 	}
-	
-	if(AnyBalance.isAvailable('lastoperdate', 'lastopersum', 'lastopertype', 'lastoperdesc')){
-		html = AnyBalance.requestPost(baseurl + '/lkfl/api/v1/taxes/historyOperations', JSON.stringify({
-            "pagination": {
-                "page": 0,
-                "size": 10
-            },
-            "filter": {
-                "showCorrections": false,
-                "operationType": "ALL",
-                "taxCode": "ALL",
-                "taxType": "ALL"
-            }
-		}), addHeaders({
-			'Accept': 'application/json, text/plain, */*',
-			'Authorization': 'Bearer ' + accessToken,
-			'Content-Type': 'application/json',
-			'Origin': baseurl,
-			'Referer': baseurl + '/lkfl/myTaxes/operationsHistory'
-		}));
-	
-	    json = getJson(html);
-		AnyBalance.trace('Операции: ' + JSON.stringify(json));
-		
-        if(json.content && json.content.length>0){
-        	var o = json.content[0];
-        	getParam(o.operationDate, result, 'lastoperdate', null, null, parseDateISO);
-        	getParam(o.sum, result, 'lastopersum', null, null, parseBalance);
-        	getParam(g_type[o.taxType]||o.taxType, result, 'lastopertype');
-			getParam(o.operationDescription, result, 'lastoperdesc');
-        }else{
-			AnyBalance.trace('Последняя операция не найдена');
-		}
-	}
 
 /*	if(AnyBalance.isAvailable('overpay')){
-		html = AnyBalance.requestGet(baseurl + '/lkfl/api/v1/taxpayer/overpayments', addHeaders({
+		html = AnyBalance.requestGet(baseurl + '/api/lkfl/api/v1/taxpayer/overpayments', addHeaders({
 			'Authorization': 'Bearer ' + accessToken,
 			'Referer': baseurl + '/lkfl/'
 		}));
         
 		json = getJson(html);
+		AnyBalance.trace('Переплата: ' + JSON.stringify(json));
 
 		var over = (json || []).reduce(function(acc, cur){ acc += cur.classifiedOverpaymentTotal; return acc }, 0);
 		getParam(over, result, 'overpay');
@@ -232,9 +287,7 @@ function saveTokens(json){
 function loginPure(){
 	var prefs = AnyBalance.getPreferences();
 	
-	clearAllCookies();
-	
-	var html = requestPostMultipart(baseurl + '/auth/oauth/token', {
+	var html = requestPostMultipart(baseurl + '/api/auth/oauth/token', {
 		'username': prefs.login,
 		'password': prefs.password,
 		'grant_type': 'password',
@@ -247,10 +300,11 @@ function loginPure(){
 	}));
 
 	var json = getJson(html);
+	AnyBalance.trace(JSON.stringify(json));
 
     if(json.message && (/CAPTCHA/i.test(json.message))){
 		AnyBalance.trace('Сайт ФНС затребовал капчу');
-		var img = AnyBalance.requestGet(baseurl + '/auth/captcha?username=' + prefs.login, addHeaders({
+		var img = AnyBalance.requestGet(baseurl + '/api/auth/captcha?username=' + prefs.login, addHeaders({
 			'Authorization': 'Basic dGF4cGF5ZXItYnJvd3Nlcjo3VklQS25aQXR3UUw3Zm10dnUycm5BSFQ2YzM0RGtrRw==',
 			'Referer': baseurl + '/lkfl/login'
 		}));
@@ -260,9 +314,9 @@ function loginPure(){
 	        throw new AnyBalance.Error('Не удалось найти капчу. Сайт изменен?');
 	    }
 		
-		var captcha = AnyBalance.retrieveCode('Пожалуйста, введите цифры с картинки', img, {inputType: 'number', time: 300000});
+		var captcha = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', img, {inputType: 'number', time: 300000});
 		
-		html = requestPostMultipart(baseurl + '/auth/oauth/token', {
+		html = requestPostMultipart(baseurl + '/api/auth/oauth/token', {
 		    'username': prefs.login,
 		    'password': prefs.password,
 			'captcha': captcha,
@@ -281,7 +335,11 @@ function loginPure(){
 		if(json.status){
 	    	var error = json.message;
 	    	if(error) {
-	    		throw new AnyBalance.Error(error, null, /Incorrect CAPTCHA/i.test(error));
+				if(/Incorrect CAPTCHA/i.test(error)){
+				    throw new AnyBalance.Error('Неверный код с картинки!', null, true);
+			    }else{
+			        throw new AnyBalance.Error(error, null, true);
+			    }
 	    	}
 
 	    	AnyBalance.trace(html);
@@ -293,11 +351,15 @@ function loginPure(){
 	if(!json.access_token){
 		var error = json.error_description;
 		if(error) {
-			throw new AnyBalance.Error(error, null, /bad credentials/i.test(error));
+			if(/bad credentials/i.test(error)){
+				throw new AnyBalance.Error('Неверный логин или пароль!', null, true);
+			}else{
+			    throw new AnyBalance.Error(error, null, true);
+			}
 		}
 
 		AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проверьте правильность ввода логина и пароля. Также, возможно, сайт изменен');
+        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
     }
 	
 	saveTokens(json);
@@ -311,12 +373,12 @@ function loginAccessToken(){
 	AnyBalance.restoreCookies();
 	try{
 	    AnyBalance.trace('Токен сохранен. Пробуем войти...');
-		html = AnyBalance.requestGet(baseurl + '/lkfl/api/v1/taxes/taxInfo', addHeaders({
+		var html = AnyBalance.requestGet(baseurl + '/api/lkfl/api/v1/taxes/taxInfo', addHeaders({
 			'Authorization': 'Bearer ' + accessToken,
 			'Referer': baseurl + '/lkfl/'
 		}));
 	    var json = getJson(html);
-		if (!json.sumToPay){
+		if(!json.sumToPay){
 		    return false;
 		}else{
 		    AnyBalance.trace('Успешно вошли по accessToken');
@@ -334,7 +396,7 @@ function loginRefreshToken(){
 	AnyBalance.restoreCookies();
 	try{
 		AnyBalance.trace('Токен устарел. Пробуем обновить...');
-		var html = requestPostMultipart(baseurl + '/auth/oauth/token', {
+		var html = requestPostMultipart(baseurl + '/api/auth/oauth/token', {
 	    	'grant_type': 'refresh_token',
 	    	'client_id': 'taxpayer-browser',
 	    	'client_secret': '7VIPKnZAtwQL7fmtvu2rnAHT6c34DkkG',
@@ -348,7 +410,7 @@ function loginRefreshToken(){
 	    var json = getJson(html);
 		AnyBalance.trace(JSON.stringify(json));
 		
-		if (!json.access_token){
+		if(!json.access_token){
 			AnyBalance.trace('Токен refreshToken не принят. Будем логиниться заново');
 		    saveTokens({});
 		    clearAllCookies();
@@ -362,7 +424,7 @@ function loginRefreshToken(){
 		    return true;
 		}
 	}catch(e){
-		AnyBalance.trace('Не удалось войти по refreshToken: ' + e.error_description);
+		AnyBalance.trace('Не удалось войти по refreshToken: ' + e.error_description + '. Будем логиниться заново');
 		saveTokens({});
 		clearAllCookies();
 		AnyBalance.saveData();

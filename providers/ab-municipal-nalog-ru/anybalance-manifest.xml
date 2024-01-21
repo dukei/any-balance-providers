@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="14">ab-municipal-nalog-ru</id>
+	<id version="16">ab-municipal-nalog-ru</id>
 	<name>Федеральная Налоговая Служба (ФНС)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о задолженности по налогам с сайта Федеральной Налоговой Службы (ФНС) https://nalog.ru/.</p>
-	<p>Информация берется из личного кабинета налогоплательщика на сайте https://lkfl2.nalog.ru/lk/.</p>
+	<p>Предоставляет информацию о балансе, задолженности и другие данные по налогам с сайта Федеральной Налоговой Службы (ФНС) https://nalog.ru/.</p>
+	<p>Информация берется из личного кабинета налогоплательщика на сайте https://lkfl2.nalog.ru/lkfl/.</p>
 	<p>ВНИМАНИЕ! Для получения регистрационной карты и доступа к сервису «Личный кабинет налогоплательщика для физических лиц» вы должны лично обратиться в любую инспекцию ФНС России, независимо от места постановки на учет.</p>
 	<p>При обращении в инспекцию ФНС России по месту жительства при себе необходимо иметь документ, удостоверяющий личность.</p>
 	<p>При обращении в иные инспекции ФНС России при себе необходимо иметь документ, удостоверяющий личность, и оригинал или копию свидетельства о постановке на учет физического лица (свидетельство о присвоении ИНН)/уведомления о постановке на учет.</p>
@@ -24,6 +24,7 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
+	    <counter id="balance" name="Баланс" units=" ₽"/>
 		<counter id="arrears" name="Задолженность" units=" ₽"/>
 		<counter id="accruals" name="Сумма к уплате" units=" ₽"/>
 		<counter id="overpay" name="Переплата" units=" ₽"/>
@@ -32,6 +33,8 @@
 		<counter id="transport" name="Транспортный налог" units=" ₽"/>
 		<counter id="property" name="Налог на имущество" units=" ₽"/>
 		<counter id="land" name="Земельный налог" units=" ₽"/>
+		<counter id="accrualnearest" name="Сумма ближайшего платежа" units=" ₽"/>
+		<counter id="accrualnearestdate" name="Дата ближайшего платежа" type="time" format="dd.MM.yyyy"/>
 		<counter id="daysleft" name="Дней до срока уплаты" units=" дн"/>
 		<counter id="inn" name="ИНН" type="text"/>
 		<counter id="notifications" name="Сообщения" units=" шт"/>

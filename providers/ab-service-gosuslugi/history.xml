@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1.2" version="862" date="2024-01-15">
+	- Обработка требования о подтверждении входа
+	</change>
+    <change major_version="1.2" version="861" date="2023-09-11">
+	- Добавлен вывод номеров документов и списка транспорта
+	</change>
     <change major_version="1.2" version="860" date="2023-09-07">
 	- Поддержка авторизации через Яндекс Ключ
 	</change>

@@ -3,13 +3,12 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
 	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
     'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
-//	'Upgrade-Insecure-Requests': '1',
-	'X-Requested-With': 'XMLHttpRequest',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36'
+	'Upgrade-Insecure-Requests': '1',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36'
 };
 
 var g_baseurl = 'https://www.gosuslugi.ru/';
@@ -29,6 +28,12 @@ function main() {
     AnyBalance.trace ('Пробуем войти в личный кабинет...');
 
 	var html = AnyBalance.requestGet(g_baseurl, g_headers);
+	
+	if (!html || AnyBalance.getLastStatusCode() >= 500 || /shadow-block|dot-flashing/i.test(html)){
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
+    }
+	
 	var data = getJsonObject(html, /data:\s/);
 	
 	if (data && data.user && data.user.person) {
@@ -82,6 +87,11 @@ function main() {
 		
 		var json = getJson(html);
 	    AnyBalance.trace(JSON.stringify(json));
+		
+		if (json.action && json.action == 'SET_MFA_REQUIRED') {
+			AnyBalance.trace('Госуслуги затребовали подключить вход с подтверждением');
+			throw new AnyBalance.Error('Подтверждение входа стало обязательным! Пожалуйста, перейдите на страницу https://esia.gosuslugi.ru/login/ через браузер, авторизуйтесь и выберите способ подтверждения', null, true);
+        }
 		
 		if (json.action && json.action == 'FILL_MFA') {
 			AnyBalance.trace('Госуслуги предложили подключить вход с подтверждением. Отказываемся...');
@@ -331,40 +341,87 @@ function main() {
 		AL10:'Упрощённый'
 		}
 	getParam(level[json.assuranceLevel]||json.assuranceLevel, result, 'account_status');
+	
+	if(AnyBalance.isAvailable('passport_rf', 'driving_license_rf', 'military_id', 'old_birf_cert', 'passport_frgn', 'policy_mdcl')){
+	    if(json.person.docs && json.person.docs.length > 0){
+			for(var i=0; i<json.person.docs.length; ++i){
+                var doc = json.person.docs[i];
+				var doc_res = doc.series !== null ? doc.series + ' ' + doc.number : doc.number;
+				if(doc.type == 'RF_PASSPORT' || /RF_PASSPORT/i.test(doc.type)){ // Паспорт РФ
+        		    getParam(doc_res, result, 'passport_rf');
+				}else if(doc.type == 'RF_DRIVING_LICENSE' || /RF_DRIVING_LICENSE/i.test(doc.type)){ // Вод. удостоверение РФ
+        		    getParam(doc_res, result, 'driving_license_rf');
+				}else if(doc.type == 'MLTR_ID' || /MLTR_ID/i.test(doc.type)){ // Военный билет
+        		    getParam(doc_res, result, 'military_id');
+				}else if(doc.type == 'OLD_BRTH_CERT' || /OLD_BRTH_CERT/i.test(doc.type)){ // Св-во о рождении
+        		    getParam(doc_res, result, 'old_birf_cert');
+        	    }else if(doc.type == 'FRGN_PASS' || /FRGN_PASS/i.test(doc.type)){ // Загранпаспорт
+        		    getParam(doc_res, result, 'passport_frgn');
+        	    }else if(doc.type == 'MDCL_PLCY' || /MDCL_PLCY/i.test(doc.type)){ // Мед. полис
+        		    getParam(doc_res, result, 'policy_mdcl');
+        	    }else{
+        		    AnyBalance.trace('Неизвестный тип документа: ' + JSON.stringify(doc));
+			    }
+			}
+		}else{
+			AnyBalance.trace('Не удалось получить информацию по документам');
+		}
+	}
+	
+	if(AnyBalance.isAvailable('vehicles')){
+		result.vehicles='';
+	    if (json.person.vehicles){
+       	    json.person.vehicles.forEach(function(g) {
+			    result.vehicles+='<b>'+g.name+'</b>';
+				result.vehicles+='<br> Гос. номер: '+g.numberPlate;
+       			result.vehicles+=',<br> СТС: '+g.regCertificate.series + ' ' + g.regCertificate.number;
+				if(json.person.vehicles[json.person.vehicles.length - 1] !== g)
+					result.vehicles+='.<br><br> ';
+       	    })
+	    }else{
+			AnyBalance.trace('Не удалось получить информацию по транспорту');
+			result.vehicles='Нет данных';
+		}
+	}
+	
 	var json=callAPI('pay/v1/informer/fetch');
 	getParam(json.result.amount, result, 'balance', null, null, parseBalance);
 	getParam(json.result.total, result, 'total', null, null, parseBalance);
 	getParam(json.result.totalDocs, result, 'total_docs', null, null, parseBalance);
     result.info='';
 	if (json.result.amount==0)
-    	result.info='Нет начислений'	
+    	result.info='Нет начислений';
 
 	if (json.fns){
        	json.fns.groups.forEach(function(g) {
-			result.info+=g.name
+			result.info+='<b>'+g.name+'</b>';
        		g.bills.forEach(function(n) {
-				result.info+='<br>'+n.billDate.replace(/(\d{4})-(\d{2})-(\d{2})T(\d{2}:\d{2}:\d{2})([\s\S]*)/,'$3.$2.$1 $4');
-       			result.info+='<br>'+n.amount+' ₽<br>'+(n.billName||n.fnsName);
+				result.info+='<br> '+n.billDate.replace(/(\d{4})-(\d{2})-(\d{2})T(\d{2}:\d{2}:\d{2})([\s\S]*)/,'$3.$2.$1 $4');
+       			result.info+=',<br> '+n.amount+' ₽<br>'+(n.billName||n.fnsName);
        		})
+			if(json.fns.groups[json.fns.groups.length - 1] !== g)
+				result.info+='.<br><br> ';
        	})    	
 	}
 	
     if (json.fine){
     	json.fine.groups.forEach(function(g) {
-    		result.info+=g.name
+    		result.info+='<b>'+g.name+'</b>';
     		g.bills.forEach(function(n) {
     			n.discountDate=n.discountDate.replace(/(\d*)-(\d*)-(\d*)/,'$3.$2.$1');
     			if (parseDate(n.discountDate)>new Date()) {
-    				result.info+='<br>'+n.amount+' ₽<br>(до '+n.discountDate+')';
+    				result.info+='<br> '+n.amount+' ₽<br>(до '+n.discountDate+')';
 			    }else{
-    				result.info+='<br>'+n.originalAmount+' ₽';
-                    result.info+='<br>'+n.billName+' ('+n.articleCode+')<br>'+n.offenseDate.replace(/(\d{4})-(\d{2})-(\d{2})([\s\S]*)/,'$3.$2.$1 в $4');
+    				result.info+='<br> '+n.originalAmount+' ₽';
+                    result.info+=',<br> '+n.billName+' ('+n.articleCode+')<br> '+n.offenseDate.replace(/(\d{4})-(\d{2})-(\d{2})([\s\S]*)/,'$3.$2.$1 в $4');
                     if (n.hasPhoto) {
-						result.info+='<br>Есть фото нарушения'
-                        result.info+='<br>'+n.supplierFullName;
+						result.info+='.<br> Есть фото нарушения'
+                        result.info+='<br> '+n.supplierFullName;
 					}
 			    }
         	})
+			if(json.fine.groups[json.fine.groups.length - 1] !== g)
+				result.info+='.<br><br> ';
         })
 	}
 	

@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id version="1">ab-cell-phoenix-dnr</id>
+	<name>Феникс (ДНР)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и тарифном плане для пользователей оператора сотовой связи Феникс (http://phoenix-dnr.ru/).</p>
+	<p>Информация берется из личного кабинета Феникс на сайте https://my.phoenix-dnr.ru/.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Феникс.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="framework/browser"/>
+	</depends>
+  	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="min_left" name="Остаток минут" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_used" name="Использовано минут" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="sms_left" name="Остаток SMS" units=" sms"/>
+		<counter id="sms_used" name="Использовано SMS" units=" sms"/>
+		<counter id="traffic_left" name="Остаток трафика" units=" Мб"/>
+		<counter id="traffic_used" name="Использовано трафика" units=" Мб"/>
+		<counter id="traffic_left_roaming" name="Остаток трафика в роуминге" units=" Мб"/>
+		<counter id="traffic_used_roaming" name="Использовано трафика в роуминге" units=" Мб"/>
+		<counter id="free_sms" name="Бесплатные SMS" units=" sms"/>
+		<counter id="status" name="Статус" type="text"/>
+		<counter id="services_count" name="Подключенные услуги" units=" шт"/>
+		<counter id="abon" name="Абонентская плата" units=" ₽/мес"/>
+		<counter id="tariff_desc" name="Описание тарифа" type="text"/>
+		<counter id="total_spent" name="Расходы за этот месяц" units=" ₽"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>сотовая связь, мобильный, phoenix, феникс, ДНР</keywords>
+	<type>cell</type>
+	<country>ru</country>
+</provider>

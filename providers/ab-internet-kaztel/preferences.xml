@@ -1,40 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-	<ListPreference
-		key="authtype"
-		title="Вход по"
-		summary="||{@s}"
-		entries="Логину|Телефону (10 цифр)"
-		entryValues="1|2"
-		defaultValue="1">
-	</ListPreference>
 	<EditTextPreference
-		obligatory="true"
 		title="Логин"
-		positiveButtonText="ОК"
-		summary="||{@s}"
+		key="login"
+		summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n"
+		obligatory="true"
 		dialogTitle="Логин"
+		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите логин или номер телефона (10 цифр) для входа в личный кабинет."
-		key="login">
+		dialogMessage="Введите логин, используемый для входа в личный кабинет">
 	</EditTextPreference>
 	<EditTextPreference
-		obligatory="true"
-		positiveButtonText="ОК"
-		key="password"
-		dialogTitle="Пароль"
-		negativeButtonText="Отмена"
 		title="Пароль"
-		summary="||***********"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		key="password"
+		summary="Пароль для входа в личный кабинет|Введите пароль\n|**********\n"
+		obligatory="true"
+		dialogTitle="Пароль"
+		positiveButtonText="ОК"
+		negativeButtonText="Отмена"
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет"
 		inputType="textPassword">
 	</EditTextPreference>
-	<ListPreference
-		key="sitetype"
-		title="Логин с сайта"
-		summary="||{@s}"
-		entries="ID Port|Megaline|telecom.kz"
-		entryValues="1|2|3"
-		defaultValue="1">
-	</ListPreference>
 </PreferenceScreen>

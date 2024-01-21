@@ -1,38 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-internet-kaztel</id>
+	<id version="7">ab-internet-kaztel</id>
 	<api flags="no_browser"/>
 	<name>Казахтелеком (Единый кабинет)</name>
 	<description html="true"><![CDATA[
-	<p>Получает сумму к оплате в АО Казахтелеком (http://www.telecom.kz)</p>
-	<p>Информация берется из единого личного кабинета (ЕЛК): http://cabinet.idport.kz</p>
+	<p>Предоставляет информацию о балансе и тарифном плане для пользователей интернет-провайдера <a href="https://telecom.kz/">Казахтелеком</a>.</p>
+	<p>Информация берется из личного кабинета Казахтелеком на сайте https://telecom.kz/ru/account/main.
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Вопрос: Как мне зарегистрироваться в ЕЛК?</p>
-	<p>Ответ:</p>
-	<p>Примечание: Если у Вас есть логин и пароль для доступа в любой из кабинетов сайтов – www.telecom.kz, www.megaline.kz, инфокиоски проходить процедуру регистрации не нужно. Используя имеющийся логин и пароль от любого из перечисленных кабинетов вы можете войти в ЕЛК.</p>
-	<p>Шаг 1: Подойти в ближайший пункт сети сервиса АО "Казахтелеком, получить регистрационные коды. (Регистрационные коды выдаются только абонентам АО «Казактелеком» при предъявлении удостоверения личности).</p>
-	<p>Шаг 2: На главной странице www.iDPort.kz нажмите на кнопку «Регистрация» и используя регистрационные коды, пройдите процедуру регистрации.</p>
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Казахтелеком.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
-		<icon>icon.png</icon>
+	    <icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" 〒"/>
-		<counter id="overpayment" name="Переплата" units=" 〒"/>
-		<counter id="accrued" name="Начислено" units=" 〒"/>
-		<counter id="paid" name="Оплачено" units=" 〒"/>
+		<counter id="balance" name="Баланс" units=" ₸"/>
+		<counter id="topay" name="Сумма к оплате" units=" ₸"/>
+		<counter id="overpayment" name="Переплата" units=" ₸"/>
+		<counter id="accrued" name="Начислено" units=" ₸"/>
+		<counter id="paid" name="Оплачено" units=" ₸"/>
 		<counter id="bill" name="Номер счета" type="text"/>
-		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="payment_period" name="Расчетный период" type="text"/>
+		<counter id="traffic_input" name="Входящий трафик" units=" Мб"/>
+		<counter id="traffic_output" name="Исходящий трафик" units=" Мб"/>
 		<counter id="licschet" name="Лицевой счет" type="text"/>
-		<counter id="login" name="Логин" type="text"/>
+		<counter id="login" name="Номер устройства" type="text"/>
+		<counter id="last_oper_date" name="Дата последней операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_oper_sum" name="Сумма последней операции" units=" ₸"/>
+		<counter id="last_oper_type" name="Тип последней операции" type="text"/>
+		<counter id="address" name="Адрес подключения" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords>казахстан</keywords>
+	<keywords>казахстан, интернет, телеком</keywords>
 	<type>internet</type>
 	<country>kz</country>
 </provider>

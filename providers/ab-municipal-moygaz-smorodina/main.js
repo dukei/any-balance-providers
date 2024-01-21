@@ -9,11 +9,10 @@ var g_headers = {
     'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
 	'Upgrade-Insecure-Requests': '1',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36'
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
 };
 
 var baseurl = 'https://xn--80afnfom.xn--80ahmohdapg.xn--80asehdb';
-var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d)(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+$1 $2 $3-$4-$5'];
 
 function getInfo(){
 	var prefs = AnyBalance.getPreferences();
@@ -37,7 +36,7 @@ function getInfo(){
 	var json = getJson(html);
 	AnyBalance.trace(JSON.stringify(json));
 	
-	if (json.data && json.data.clientV2 && json.data.clientV2.ok && json.data.clientV2.ok != true) {
+	if (json.data.clientV2.ok !== true) {
 		var error = json.data.clientV2.error;
     	if (error)
     		throw new AnyBalance.Error(error);
@@ -84,16 +83,16 @@ function main() {
 	
 	var json = getInfo();
 
-	getParam(json.clientV2.client.email, result, 'email');
-	getParam(json.clientV2.client.phone, result, 'phone', null, replaceNumber);
-	getParam(json.clientV2.client.name, result, 'fio');
+	getParam(json.clientV2.client.email ? json.clientV2.client.email : 'Не указано', result, 'email');
+	getParam(json.clientV2.client.phone ? json.clientV2.client.phone.replace(/\(|\)/g, '') : 'Не указано', result, 'phone');
+	getParam(json.clientV2.client.name ? json.clientV2.client.name : 'Не указано', result, 'fio');
 	
 	AnyBalance.trace ('Пробуем получить информацию по лицевому счету...');
 	
 	var params = {
         "operationName": "accountsN",
         "variables": {},
-        "query": "query accountsN {\n  accountsN {\n    ok\n    error\n    accounts {\n      elsGroup {\n        els {\n          id\n          jntAccountNum\n          isFull\n          alias\n          address\n          epd {\n            id\n            name\n            typePaymentCode\n            ENABLE_PAPER_RECEIPT_EPD\n            UNITED_PAY_INDICATION_EPD\n            __typename\n          }\n          paperReceiptSetting {\n            value\n            dateTime\n            __typename\n          }\n          __typename\n        }\n        lspu {\n          id\n          account\n          isFull\n          alias\n          address\n          hasAutopay\n          elsAvailable\n          provider {\n            id\n            name\n            exchangeType {\n              code\n              __typename\n            }\n            setup {\n              ...ProviderSetupParts\n              __typename\n            }\n            __typename\n          }\n          paperReceiptSetting {\n            value\n            dateTime\n            __typename\n          }\n          __typename\n        }\n        lspuDublicate {\n          lspu\n          lspuId\n          providerId\n          providerName\n          __typename\n        }\n        __typename\n      }\n      lspu {\n        id\n        account\n        isFull\n        alias\n        address\n        hasAutopay\n        elsAvailable\n        provider {\n          id\n          name\n          exchangeType {\n            code\n            __typename\n          }\n          setup {\n            ...ProviderSetupParts\n            __typename\n          }\n          __typename\n        }\n        paperReceiptSetting {\n          value\n          dateTime\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment ProviderSetupParts on ProviderSetup {\n  ACCOUNT_ATTACH_HINT\n  ALLOW_ACCESS_TYPE_CHARGE\n  ALLOW_ACCESS_TYPE_COUNTER\n  ALLOW_ACCESS_TYPE_PIN\n  ALLOW_AUTOPAY\n  ALLOW_INDICATION_CHECK_EXPIRED\n  ALLOW_INDICATION_OVERLAP\n  ALLOW_INDICATION_SEND\n  ALLOW_INDICATION_SEND_LITE\n  ALLOW_INDICATION_ZERO\n  ALLOW_PAY\n  ALLOW_PAY_APPLE\n  ALLOW_PAY_GOOGLE\n  ALLOW_PAY_SBP\n  CHARGES_INTERVAL_MONTHS_NUMBER\n  COUNTER_CHECK_DATE\n  DAYS_BEFORE_CONTRACT_END\n  DAYS_BEFORE_EQUIPMENT_CHECK\n  DUBLICATE_PAPER_RECEIPT\n  ENABLE_AGREEMENT_SECTION\n  ENABLE_APPLICATIONS_SECTION\n  ENABLE_CALCULATION_SECTION\n  ENABLE_COUNTER_RATE\n  ENABLE_INDICATION_SOURCE\n  ENABLE_NOTIFICATION_DOCUMENT\n  ENABLE_NOTIFICATION_EQUIPMENT\n  ENABLE_NOTIFICATION_INDICATION\n  ENABLE_PAPER_RECEIPT\n  ENABLE_PAYMENTS_SECTION\n  ENABLE_PAYMENT_DETAILS_FULL\n  ENABLE_PAYMENT_DETAILS_LITE\n  ENABLE_PAYMENT_EXCHANGE\n  ENABLE_PAYMENT_MESSAGE\n  ENABLE_PRINT_INVOICE\n  ENABLE_PRIVILEGES_SECTION\n  FULL_REQUEST_EMAIL\n  IS_DEFAULT_FULL\n  KKT_PAYMENT_METHOD_TYPE\n  KKT_PAYMENT_SUBJECT_TYPE\n  MAX_CONSUMPTION\n  MESSAGE_AFTER_CONTRACT_END\n  MESSAGE_AFTER_EQUIPMENT_CHECK\n  MESSAGE_BEFORE_CONTRACT_END\n  MESSAGE_BEFORE_EQUIPMENT_CHECK\n  MESSAGE_INDICATION_SECTION\n  PAYMENT_MESSAGE\n  PROVIDER_ALLOW_OFFER_ELS\n  SERVICE_UNAVAILABLE\n  SHOW_NORMS_AND_RATES\n  SHOW_PAPER_RECEIPT_OFFER\n  SUPPORT_EMAIL\n  __typename\n}"
+        "query": "query accountsN {\n  accountsN {\n    ok\n    error\n    accounts {\n      elsGroup {\n        els {\n          id\n          jntAccountNum\n          isFull\n          alias\n          address\n          epd {\n            id\n            name\n            typePaymentCode\n            ENABLE_PAPER_RECEIPT_EPD\n            UNITED_PAY_INDICATION_EPD\n            __typename\n          }\n          paperReceiptSetting {\n            value\n            dateTime\n            __typename\n          }\n          __typename\n        }\n        lspu {\n          id\n          account\n          isFull\n          alias\n          address\n          hasAutopay\n          elsAvailable\n          provider {\n            id\n            name\n            exchangeType {\n              code\n              __typename\n            }\n            setup {\n              ...ProviderSetupParts\n              __typename\n            }\n            __typename\n          }\n          paperReceiptSetting {\n            value\n            dateTime\n            __typename\n          }\n          __typename\n        }\n        lspuDublicate {\n          lspu\n          lspuId\n          providerId\n          providerName\n          __typename\n        }\n        __typename\n      }\n      lspu {\n        id\n        account\n        isFull\n        alias\n        address\n        hasAutopay\n        elsAvailable\n        provider {\n          id\n          name\n          exchangeType {\n            code\n            __typename\n          }\n          setup {\n            ...ProviderSetupParts\n            __typename\n          }\n          __typename\n        }\n        paperReceiptSetting {\n          value\n          dateTime\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment ProviderSetupParts on ProviderSetup {\n  ACCOUNT_ATTACH_HINT\n  ALLOW_ACCESS_TYPE_CHARGE\n  ALLOW_ACCESS_TYPE_COUNTER\n  ALLOW_ACCESS_TYPE_PIN\n  ALLOW_AUTOPAY\n  ALLOW_INDICATION_CHECK_EXPIRED\n  ALLOW_INDICATION_OVERLAP\n  ALLOW_INDICATION_SEND\n  ALLOW_INDICATION_SEND_LITE\n  ALLOW_INDICATION_ZERO\n  ALLOW_PAY\n  ALLOW_PAY_APPLE\n  ALLOW_PAY_GOOGLE\n  ALLOW_PAY_SBP\n  CHARGES_INTERVAL_MONTHS_NUMBER\n  COUNTER_CHECK_DATE\n  DAYS_BEFORE_CONTRACT_END\n  DAYS_BEFORE_EQUIPMENT_CHECK\n  DUBLICATE_PAPER_RECEIPT\n  ENABLE_AGREEMENT_SECTION\n  ENABLE_APPLICATIONS_SECTION\n  ENABLE_CALCULATION_SECTION\n  ENABLE_COUNTER_RATE\n  ENABLE_INDICATION_SOURCE\n  ENABLE_NOTIFICATION_DOCUMENT\n  ENABLE_NOTIFICATION_EQUIPMENT\n  ENABLE_NOTIFICATION_INDICATION\n  ENABLE_PAPER_RECEIPT\n  ENABLE_PAYMENTS_SECTION\n  ENABLE_PAYMENT_DETAILS_FULL\n  ENABLE_PAYMENT_DETAILS_LITE\n  ENABLE_PAYMENT_EXCHANGE\n  ENABLE_PAYMENT_MESSAGE\n  ENABLE_PRINT_INVOICE\n  ENABLE_PRIVILEGES_SECTION\n  FULL_REQUEST_EMAIL\n  IS_DEFAULT_FULL\n  KKT_PAYMENT_METHOD_TYPE\n  KKT_PAYMENT_SUBJECT_TYPE\n  MAX_CONSUMPTION\n  MESSAGE_AFTER_CONTRACT_END\n  MESSAGE_AFTER_EQUIPMENT_CHECK\n  MESSAGE_BEFORE_CONTRACT_END\n  MESSAGE_BEFORE_EQUIPMENT_CHECK\n  MESSAGE_INDICATION_SECTION\n  PAYMENT_MESSAGE\n  PROVIDER_ALLOW_OFFER_ELS\n  SERVICE_UNAVAILABLE\n  SHOW_NORMS_AND_RATES\n  SHOW_PAPER_RECEIPT_OFFER\n  SUPPORT_EMAIL\n  TICKET_SRC_PROVIDER_OPD\n  __typename\n}"
     };
 
     html = AnyBalance.requestPost(baseurl + '/abr-lka-backend', JSON.stringify(params), addHeaders({
@@ -107,7 +106,7 @@ function main() {
 	var json = getJson(html);
 	AnyBalance.trace(JSON.stringify(json));
 	
-	if (json.data && json.data.accountsN && json.data.accountsN.ok && json.data.accountsN.ok != true) {
+	if (json.data.accountsN.ok !== true) {
 		var error = json.data.accountsN.error;
     	if (error)
     		throw new AnyBalance.Error(error);	
@@ -116,20 +115,40 @@ function main() {
     	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменён?');
     }
 	
-	AnyBalance.trace('Найдено лицевых счетов: ' + json.data.accountsN.accounts.lspu.length);
-
-	if(json.data.accountsN.accounts.lspu.length < 1)
-		throw new AnyBalance.Error('У вас нет ни одного лицевого счета');
-
 	var curAcc;
-	for(var i=0; i<json.data.accountsN.accounts.lspu.length; ++i){
-		var acc = json.data.accountsN.accounts.lspu[i];
-		AnyBalance.trace('Найден лицевой счет ' + acc.account);
-		if(!curAcc && (!prefs.num || endsWith(acc.account, prefs.num))){
-			AnyBalance.trace('Выбран лицевой счет ' + acc.account);
-			curAcc = acc;
-		}
+	
+	if(json.data.accountsN.accounts.lspu && json.data.accountsN.accounts.lspu.length > 0){
+	    AnyBalance.trace('Найдено лицевых счетов: ' + json.data.accountsN.accounts.lspu.length);
+            
+	    for(var i=0; i<json.data.accountsN.accounts.lspu.length; ++i){
+		    var acc = json.data.accountsN.accounts.lspu[i];
+		    AnyBalance.trace('Найден лицевой счет ' + acc.account);
+		    if(!curAcc && (!prefs.num || endsWith(acc.account, prefs.num))){
+			    AnyBalance.trace('Выбран лицевой счет ' + acc.account);
+			    curAcc = acc;
+		    }
+	    }
 	}
+	
+	if(!curAcc && json.data.accountsN.accounts.elsGroup && json.data.accountsN.accounts.elsGroup.length > 0){ // Проверяем на наличие группировки по ЕПД
+		AnyBalance.trace('Найдено групп лицевых счетов: ' + json.data.accountsN.accounts.elsGroup.length);
+		
+		for(var i=0; i<json.data.accountsN.accounts.elsGroup.length; ++i){
+		    var elsGgroup = json.data.accountsN.accounts.elsGroup[i];
+		    AnyBalance.trace('Разбираем группу ' + (i + 1) + '...');
+		    for(var j=0; j<elsGgroup.lspu.length; ++j){
+		        var acc = elsGgroup.lspu[j];
+		        AnyBalance.trace('Найден лицевой счет ' + acc.account);
+		        if(!curAcc && (!prefs.num || endsWith(acc.account, prefs.num))){
+			        AnyBalance.trace('Выбран лицевой счет ' + acc.account);
+			        curAcc = acc;
+		        }
+	        }
+	    }
+	}
+	
+	if(json.data.accountsN.accounts.lspu.length < 1 && (json.data.accountsN.accounts.elsGroup && json.data.accountsN.accounts.elsGroup.length < 1))
+		    throw new AnyBalance.Error('У вас нет ни одного лицевого счета');
 
 	if(!curAcc)
 		throw new AnyBalance.Error('Не удалось найти лицевой счет с последними цифрами ' + prefs.num);
@@ -160,7 +179,7 @@ function main() {
 	var json = getJson(html);
 	AnyBalance.trace(JSON.stringify(json));
 	
-	if (json.data && json.data.lspuInfo && json.data.lspuInfo.ok && json.data.lspuInfo.ok != true) {
+	if (json.data.lspuInfo.ok !== true) {
 		var error = json.data.lspuInfo.error;
     	if (error)
     		throw new AnyBalance.Error(error);
@@ -194,8 +213,11 @@ function main() {
 		}
 	}
 	
-	for(var i=json.data.lspuInfo.info.balances.length-1; i>=0; i--){
+	for(var i=0; json.data.lspuInfo.info.balances.length; ++i){
 		var data = json.data.lspuInfo.info.balances[i];
+		
+		if(/Пени/i.test(data.name))
+			continue;
 
 		if(data){
 			var endSum = data.balanceEndSum;
@@ -215,7 +237,7 @@ function main() {
 		break;
 	}
 	
-	for(var i=0; json.data.lspuInfo.info.payments; ++i){
+	for(var i=0; json.data.lspuInfo.info.payments.length; ++i){
 		var data = json.data.lspuInfo.info.payments[i];
 
 		if(data){
@@ -251,8 +273,8 @@ function loginSite(prefs){
         "variables": {
             "deviceInfo": {
                 "appName": "desktop",
-                "appVersion": "7.5.9",
-                "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
+                "appVersion": "7.5.15",
+                "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
                 "device": "undefined",
                 "system": "Windows 10",
                 "screenResolution": "1600x900"
@@ -277,7 +299,7 @@ function loginSite(prefs){
 	var json = getJson(html);
 	AnyBalance.trace(JSON.stringify(json));
 	
-	if (json.data && json.data.signInN3 && json.data.signInN3.hasAgreement != true) {
+	if (json.data.signInN3.hasAgreement !== true) {
 		AnyBalance.trace('Требуется принять соглашение. Принимаем...');
 		
 		params.variables.input.agreement = true;
@@ -287,14 +309,14 @@ function loginSite(prefs){
 		    'Content-Type': 'application/json',
 			'Token': '',
 	        'Origin': baseurl,
-            'Referer': baseurl + '/',
+            'Referer': baseurl + '/auth/sign-in',
 	    }));
 		
 		var json = getJson(html);
 	    AnyBalance.trace(JSON.stringify(json));
     }
 	
-	if (json.data && json.data.signInN3 && json.data.signInN3.ok && json.data.signInN3.ok != true) {
+	if (json.data.signInN3.ok !== true) {
 		var error = json.data.signInN3.error;
         if (error) {
             throw new AnyBalance.Error(error, null, true);	

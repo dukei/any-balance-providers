@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-internet-lovit</id>
+	<id version="3">ab-internet-lovit</id>
 	<api flags="no_browser"/>
-	<name>Lovit)) интернет провайдер</name>
+	<name>Lovit (Москва и Санкт-Петербург)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера Lovit)) https://lovit.ru/.</p>
+	<p>Предоставляет информацию о текущем балансе и другие данные для пользователей интернет-провайдера Lovit (https://lovit.ru/).</p>
 	<p>Информация берется из мобильного приложения Lovit.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Для получения данных необходимо ввести в настройки провайдера номер договора или телефон, привязанный к личному кабинету, и пароль.</p>
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Lovit.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>

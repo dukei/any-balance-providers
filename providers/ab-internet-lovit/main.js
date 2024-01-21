@@ -179,11 +179,24 @@ function main() {
 	getParam(json.data.address, result, 'address');
 	getParam(json.data.contact_phone.replace(/(.*)(\d{3})(\d{3})(\d\d)(\d\d)$/, '+7 $2 $3-$4-$5'), result, 'phone');
 	getParam(json.data.fio, result, 'fio');
+	if(json.data.blocked)
+		result.status = 'Заблокирован';
 	
 	var date = getParam(json.data.datePayment, null, null, null, null, parseDate);
+	
 	if (date) {
-		result.date_to_off = date;
 		var dt = new Date(date).getTime();
+		var hours = new Date().getHours();
+		
+		if(hours >= 0 && hours < 6){
+			date = AnyBalance.getData('dateToOff') ? AnyBalance.getData('dateToOff') : date;
+			dt = new Date(date).getTime();
+		}else{
+			AnyBalance.setData('dateToOff', date);
+			AnyBalance.saveData();
+		}
+		
+		result.date_to_off = date;
 		var days = Math.ceil((dt - (new Date().getTime())) / 86400 / 1000);
 		if (days >= 0) {
 			result.days_to_off = days;
@@ -201,12 +214,16 @@ function main() {
 		for(var i = 0; i<services.length; i++){
 			var sname = (i >= 1 ? 'servicename' + (i + 1) : 'servicename');
 	    	var sdesc = (i >= 1 ? 'servicedesc' + (i + 1) : 'servicedesc');
-		   	getParam(services[i].title, result, sname);
-			getParam(services[i].desc, result, sdesc);
+		   	getParam(services[i].title, result, sname, null, null, capitalizeFirstLetter);
+			getParam(services[i].desc, result, sdesc, null, null, capitalizeFirstLetter);
 		}
 	}else{
  		AnyBalance.trace('Не удалось получить данные по услугам');
  	}
 
     AnyBalance.setResult(result);
+}
+
+function capitalizeFirstLetter(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
 }

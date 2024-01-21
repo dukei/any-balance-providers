@@ -3,20 +3,23 @@
 */
 
 var g_headers = {
-	Connection: "keep-alive",
-	"sec-ch-ua": '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
-	"sec-ch-ua-mobile": '?0',
-	"sec-ch-ua-platform": '"Windows"',
-	"Upgrade-Insecure-Requests": '1',
-	"User-Agent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-	"Accept": 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-	"Sec-Fetch-Site": 'none',
-	"Sec-Fetch-Mode": 'navigate',
-	"Sec-Fetch-User": '?1',
-	"Sec-Fetch-Dest": 'document',
-	"Accept-Language": 'ru',
-}
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+	'Cache-Control': 'max-age=0',
+	'Connection': 'keep-alive',
+	'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+	'sec-ch-ua-mobile': '?0',
+	'sec-ch-ua-platform': '"Windows"',
+	'Sec-Fetch-Site': 'none',
+	'Sec-Fetch-Mode': 'navigate',
+	'Sec-Fetch-User': '?1',
+	'Sec-Fetch-Dest': 'document',
+	'Upgrade-Insecure-Requests': '1',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+};
 
+var baseurl = 'https://www.sportmaster.ru';
+var g_savedData;
 var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4'];
 
 function generateUUID() {
@@ -26,173 +29,223 @@ function generateUUID() {
   	return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
 }
 
-function saveTokens(json){
-	AnyBalance.setData('accessToken', json.token.accessToken);
-	AnyBalance.setData('refreshToken', json.token.refreshToken);
-    AnyBalance.setData('expiresIn', json.token.expiresIn);
-	AnyBalance.saveData();
-}
-
 function callApi(action, params, method){
 	var prefs = AnyBalance.getPreferences();
 	
-	var deviceId = AnyBalance.getData('deviceId');
-	var userId = AnyBalance.getData('userId');
-	var sityId = AnyBalance.getData('sityId');
-	var accessToken = AnyBalance.getData('accessToken');
+	var headers = g_headers;
 	
-	var headers = {
-        'user-agent': 'android-4.6.0(29432)',
-        'locale': 'ru',
-        'country': 'RU',
-        'device-id': deviceId,
-        'installation-id': 'E08E77B2-1AFC-412B-858A-8AE991A9FD3D',
-        'x-request-id': generateUUID(),
-    	'sity-id': sityId,
-    	'x-user-id': userId,
-        'accept-encoding': 'gzip'
-    };
+	headers['Accept'] = 'application/json, text/plain, */*';
+	headers['Referer'] = baseurl + '/profile/personal/';
+	headers['X-Sm-Accept-Language'] = 'ru-RU';
 
-    if(accessToken){
-    	headers['authorization'] = accessToken;
-    }
-
-	if(params){
-		headers['Content-Type'] = 'application/json; charset=UTF-8';
-	}else{
+	if(params)
 		headers['Content-Type'] = 'application/json';
-	}
 	
-	AnyBalance.trace ('Запрос: ' + action);
-	var html = AnyBalance.requestPost('https://mp4x-api.sportmaster.ru/api/v1/' + action, params ? JSON.stringify(params) : null, headers, {HTTP_METHOD: method || 'GET'});
+	AnyBalance.trace('Запрос: ' + action);
+	var html = AnyBalance.requestPost(baseurl + '/web-api/v1/' + action, params ? JSON.stringify(params) : null, headers, {HTTP_METHOD: method || 'GET'});
 	var json = getJson(html);
-	AnyBalance.trace ('Ответ: ' + JSON.stringify(json));
-	if(json.error){
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error(json.error.message, null, /телефон|код/i.test(json.error.message));
-	}
-		
-	return json.data;
-}
-
-function loginPure(action, params, method){
-	var prefs = AnyBalance.getPreferences(), json;
+	AnyBalance.trace('Ответ: ' + JSON.stringify(json));
 	
-	var deviceId = AnyBalance.getData('deviceId');
-	if(!deviceId){
-		deviceId = generateUUID();
-		AnyBalance.setData('deviceId', deviceId);
-		AnyBalance.saveData();
-	}
-	
-	var userId = AnyBalance.getData('userId');
-	var sityId = AnyBalance.getData('sityId');
-	if(!userId){
-		var prefs = AnyBalance.getPreferences();
-		userId = generateUUID();
-		AnyBalance.setData('userId', userId);
-		AnyBalance.saveData();
-	}
+	if(json.reason || json.errorCode || json.error){
+		var error = json.reason || json.errorCode || json.message;
+      	if(error){
+			if(/PHONE|NUMBER/i.test(error)){
+       	        throw new AnyBalance.Error('Неверный номер телефона!', null, true);
+			}else if(/CODE/i.test(error)){
+       	        throw new AnyBalance.Error('Неверный код подтверждения!', null, true);
+			}else if(/101/i.test(error)){
+       	        throw new AnyBalance.Error('Ошибка запроса. Попробуйте еще раз позже');
+			}else if(/FLOW/i.test(error)){
+       	        throw new AnyBalance.Error('Ошибка запроса. Сайт изменен?');
+			}
+			
+			AnyBalance.trace(html);
+       		throw new AnyBalance.Error(error, null, /телефон|код|incorrect/i.test(error));	
+      	}
 
-	var accessToken = AnyBalance.getData('accessToken');
-    var json = callApi('auth/anonym', {device: {id: deviceId, os :'android'}}, 'POST');
-	AnyBalance.setData('userId', json.profile.id);
-	AnyBalance.setData('sityId', json.profile.city.id);
-	AnyBalance.setData('loginType', json.profile.type);
-	AnyBalance.saveData();
-	saveTokens(json);
-
-    if(!json || !json.token.accessToken){
-    	AnyBalance.trace(JSON.stringify(json));
-    	throw new AnyBalance.Error('Не удалось получить токен авторизации. Сайт изменен?');
-    }
-	
-    var json = callApi('verify/sendSms', {phone: {countryCode: '7', nationalNumber: prefs.login, isoCode: 'RU'}, operation: 'search_account', communicationChannel: 'SMS'}, 'POST');
-
-    var requestId = json.requestId;
-	var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, высланный на номер +7' + prefs.login, null, {inputType: 'number', time: 180000});
-
-    var json = callApi('verify/check', {requestId: requestId, code: code}, 'POST');
-	var authToken = json.token;
-
-    var json = callApi('auth/isPhoneExists', {token: authToken}, 'POST');
-	if(json.isPhoneExists !== true){
-    	throw new AnyBalance.Error('Профиль с указанным номером телефона не существует!');
+       	AnyBalance.trace(html);
+       	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
     }
 		
-	var json = callApi('auth/signInBySms', {token: authToken}, 'POST');
-	AnyBalance.setData('login', prefs.login);
-	AnyBalance.setData('userId', json.profile.id);
-	AnyBalance.setData('loginType', json.profile.type);
-	AnyBalance.saveData();
-	saveTokens(json);
+	return json;
 }
 
-function loginAccessToken(){
-	var accessToken = AnyBalance.getData('accessToken');
-	try{
-	    AnyBalance.trace('Токен сохранен. Пробуем войти...');
-		var json = callApi('profile');
-		AnyBalance.trace('Успешно вошли по accessToken');
-		return true;
-	}catch(e){
-		AnyBalance.trace('Не удалось войти по accessToken: ' + e.message);
-		return false;
-	}
-}
-
-function loginRefreshToken(){
-	var refreshToken = AnyBalance.getData('refreshToken');
-	var deviceId = AnyBalance.getData('deviceId');
-	try{
-		AnyBalance.trace('Токен устарел. Пробуем обновить...');
-		AnyBalance.setData('accessToken', undefined);
-		AnyBalance.saveData();
-		var json = callApi('auth/refresh', {refreshToken: refreshToken, deviceId: deviceId}, 'POST');
-		AnyBalance.trace('Успешно вошли по refreshToken');
-		saveTokens(json);
-		return true;
-	}catch(e){
-		AnyBalance.trace('Не удалось войти по refreshToken: ' + e.message);
-		saveTokens({});
-		return false;
-	}
-}
-
-function loginToken(){
+function main() {
 	var prefs = AnyBalance.getPreferences();
 	
-	if(!AnyBalance.getData('accessToken')){
-		AnyBalance.trace('Токен не сохранен. Будем логиниться');
-		return false;
+	AnyBalance.setDefaultCharset('utf-8');
+	
+	checkEmpty(prefs.login, 'Введите логин!');
+    if (/^\d+$/.test(prefs.login)){
+	    checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите номер телефона - 10 цифр без пробелов и разделителей!');
 	}
 	
-	if(AnyBalance.getData('accessToken') && (AnyBalance.getData('login') !== prefs.login)){
-		AnyBalance.trace('Токен соответствует другому логину');
-		return false;
-	}
-	
-	if(AnyBalance.getData('accessToken') && (AnyBalance.getData('loginType') !== 'registered')){
-		AnyBalance.trace('Токен соответствует начальной авторизации');
-		return false;
-	}
+	if(!g_savedData)
+		g_savedData = new SavedData('sportmaster', prefs.login);
 
-	if(loginAccessToken())
-		return true;
+	g_savedData.restoreCookies();
 	
-	return loginRefreshToken();
+	AnyBalance.trace('Пробуем войти в личный кабинет...');
+	
+	loadProtectedPage("https://www.sportmaster.ru/oferta/", g_headers);
+	
+	var html = AnyBalance.requestGet(baseurl + '/profile/personal/', g_headers);
+	
+	if(!html || AnyBalance.getLastStatusCode() > 403){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
+	}
+	
+	if(!/profile__logout/i.test(html) || AnyBalance.getLastStatusCode() == 401){
+	    AnyBalance.trace('Сессия новая. Будем логиниться заново...');
+		clearAllCookiesExceptProtection();
+    	html = login();
+	}else{
+		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
+	}
+	
+	var result = {success: true};
+	
+	if(AnyBalance.isAvailable('balance', 'cashback', 'promo', 'currlevel', 'cashlevel', '__tariff', 'cardnum', 'buysum', 'nexlevel', 'nextlevel', 'cashbacktillsum', 'cashbacktilldate', 'promotillsum', 'promotilldate')){
+		var json = callApi('profiles/current/bonuses/');
+		
+		var g_status = {STANDARD: 'Стандартный', SILVER: 'Серебряный', GOLD: 'Золотой', undefined: ''};
+
+		getParam(json.details.total, result, 'balance', null, null, parseBalance);
+        getParam(json.details.cashback.amount, result, 'cashback', null, null, parseBalance);
+		getParam(json.details.promo.amount, result, 'promo', null, null, parseBalance);
+		var curLevel = getParam(g_status[json.currentLevel]||json.currentLevel, result, 'currlevel');
+		var cashLevel = getParam(json.cashbackLevel, result, 'cashlevel');
+		result.__tariff = curLevel + ' | ' + cashLevel + '%';
+	    getParam(json.cardNumber, result, 'cardnum');
+		
+		getParam(json.buySum, result, 'buysum', null, null, parseBalance);
+		
+		if(json.nextLevel){
+		    getParam(g_status[json.nextLevel]||json.nextLevel, result, 'nexlevel');
+		}else{
+			result.nexlevel = 'Достигнут';
+		}
+		if(json.toNextLevelSum){
+		    getParam(json.toNextLevelSum, result, 'nextlevel', null, null, parseBalance);
+		}
+		
+		if (json.details.cashback.dateEnd){
+		    getParam(json.details.cashback.amountToBeExpired, result, 'cashbacktillsum', null, null, parseBalance);
+		    getParam(json.details.cashback.dateEnd.replace(/(\d{4})-(\d\d)-(\d\d)/,'$3.$2.$1'), result, 'cashbacktilldate', null, null, parseDate);
+		}
+		
+		if (json.details.promo.dateEnd){
+		    getParam(json.details.promo.amountToBeExpired, result, 'promotillsum', null, null, parseBalance);
+		    getParam(json.details.promo.dateEnd.replace(/(\d{4})-(\d\d)-(\d\d)/,'$3.$2.$1'), result, 'promotilldate', null, null, parseDate);
+		}
+	}
+    
+    if(AnyBalance.isAvailable('fio', 'email', 'phone')){
+		var json = callApi('profiles/current/');
+		
+        var fio = json.firstName;
+	    if(json.lastName)
+	    	fio += ' ' + json.lastName;
+	    getParam(fio, result, 'fio');
+		getParam(json.email, result, 'email');
+	    getParam(json.phone, result, 'phone', null, replaceNumber);
+	}
+	
+	if(AnyBalance.isAvailable('favorite')){
+		var json = callApi('wishlist/products/');
+		
+		getParam(json.items && json.items.length, result, 'favorite', null, null, parseBalance);
+	}
+/*	
+	if(AnyBalance.isAvailable('last_oper_date', 'last_oper_sum', 'last_oper_desc')){
+	    var dt = new Date();
+		dtBegin = dt.getFullYear() - 1 + '-' + ('0' + (dt.getMonth() + 1)).slice(-2) + '-' + ('0' + (dt.getDate())).slice(-2);
+		dtEnd = dt.getFullYear() + '-' + ('0' + (dt.getMonth() + 1)).slice(-2) + '-' + ('0' + (dt.getDate())).slice(-2);
+		
+		var json = callApi('api/v1/bonus/history?dateBegin=' + dtBegin + '&dateEnd=' + dtEnd);
+		json = json.list;
+		
+        if(json.length){
+        	var t = json[0];
+        	getParam(t.date.replace(/(\d{4})-(\d\d)-(\d\d)/,'$3.$2.$1'), result, 'last_oper_date', null, null, parseDate);
+        	getParam(t.summa, result, 'last_oper_sum', null, null, parseBalance);
+        	getParam(t.transDesc, result, 'last_oper_desc');
+        }else{
+			AnyBalance.trace('Последняя операция не найдена');
+		}
+	}
+*/	
+    if(AnyBalance.isAvailable('last_order_date', 'last_order_number', 'last_order_status', 'last_order_sum')){
+        var json = callApi('orders/?page=1');
+		
+        if(json.orders && json.orders.length > 0){
+        	var o = json.orders[0];
+        	getParam(o.date.replace(/(\d{4})-(\d\d)-(\d\d)/,'$3.$2.$1'), result, 'last_order_date', null, null, parseDate);
+        	getParam(o.number, result, 'last_order_number');
+        	getParam(o.totalCost, result, 'last_order_sum', null, null, parseBalance);
+        	getParam(o.status.sm.text, result, 'last_order_status');
+        }else{
+			AnyBalance.trace('Последний заказ не найден');
+		}
+    }
+	
+	if(AnyBalance.isAvailable('last_retail_date', 'last_retail_number', 'last_retail_status', 'last_retail_sum')){
+        var json = callApi('orders/retails?page=1&pageSize=5');
+		
+        if(json.retails && json.retails.length > 0){
+        	var r = json.retails[0];
+        	getParam(r.date.replace(/(\d{4})-(\d\d)-(\d\d)/,'$3.$2.$1'), result, 'last_retail_date', null, null, parseDate);
+        	getParam(r.number, result, 'last_retail_number');
+        	getParam(r.totalCost, result, 'last_retail_sum', null, null, parseBalance);
+        	getParam(r.status.sm.text, result, 'last_retail_status');
+        }else{
+			AnyBalance.trace('Последняя покупка не найдена');
+		}
+    }
+
+	AnyBalance.setResult(result);
 }
-
+	
 function login(){
-	if(!loginToken()){
-		loginPure();
-	}
+    var prefs = AnyBalance.getPreferences();
+	
+	AnyBalance.setDefaultCharset('utf-8');
+	
+	var formattedLogin = prefs.login.replace(/.*(\d{3})(\d{3})(\d{2})(\d{2})$/i, '7$1$2$3$4');
+	var formattedLoginHint = prefs.login.replace(/.*(\d{3})(\d{3})(\d{2})(\d{2})$/i, '+7 $1 $2-$3-$4');
+	
+	var html = AnyBalance.requestGet(baseurl + '/login/', g_headers);
+	
+	var json = callApi('auth/phone/codes/', {'typeChannel': 'SMS', 'phone': formattedLogin}, 'POST');
+	
+	if(!json.codeLength)
+       	throw new AnyBalance.Error('Не удалось отправить SMS на указанный номер. Сайт изменен?');
+	
+	var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, высланный на номер ' + formattedLoginHint, null, {inputType: 'number', time: 180000});
+	
+	var json = callApi('auth/phone/codes/_verify/', {'code': code, 'phone': formattedLogin}, 'POST');
+	
+	if(!json.step || (json.step && json.step !== 'AUTHORIZATION'))
+       	throw new AnyBalance.Error('Не удалось проверить код подтверждения. Сайт изменен?');
+	
+	var json = callApi('auth/phone/_login/', {'login': formattedLogin}, 'POST');
+	
+	if(!json.ga || (json.ga && !json.ga.userId))
+       	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
+	
+	html = AnyBalance.requestGet(baseurl + '/profile/personal/', g_headers);
+	
+	g_savedData.setCookies();
+	g_savedData.save();
+	
+	return html;
 }
 
 function loadProtectedPage(url, headers){
 	var prefs = AnyBalance.getPreferences();
 
-	if(!headers)
+    if(!headers)
 		headers = g_headers;
 
     var html = AnyBalance.requestGet(url, headers);
@@ -203,7 +256,7 @@ function loadProtectedPage(url, headers){
         const bro = new BrowserAPI({
             provider: 'sportmaster',
             userAgent: headers["user-agent"] || headers["User-Agent"],
-	    headful: true,
+	        headful: true,
             rules: [{
                 url: /^data:/.toString(),
                 action: 'abort',
@@ -258,97 +311,6 @@ function loadProtectedPage(url, headers){
     return html;
 }
 
-function main(){
-    var prefs = AnyBalance.getPreferences();
-    AnyBalance.setDefaultCharset('utf-8');
-
-    AB.checkEmpty(prefs.login, 'Введите номер телефона!');
-    AB.checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите номер телефона - 10 цифр без пробелов и разделителей!');
-
-    
-    loadProtectedPage("https://www.sportmaster.ru/oferta/", g_headers);
-
-var json;
-	
-	login();
-
-    var result = {success: true};
-	
-	if(AnyBalance.isAvailable('balance', 'cashback', 'promo', 'currlevel', 'cashlevel', '__tariff', 'cardnum', 'sumtill', 'till')){
-		var json = callApi('bonus/shortInfo');
-		json = json.info;
-
-		AB.getParam(json.totalAmount, result, 'balance', null, null, parseBalance);
-        AB.getParam(json.cashAmount, result, 'cashback', null, null, parseBalance);
-		AB.getParam(json.promoAmount, result, 'promo', null, null, parseBalance);
-		var curLevel = AB.getParam(json.bonusLevel.name, result, 'currlevel');
-		var cashLevel = AB.getParam(json.cashLevel, result, 'cashlevel');
-		result.__tariff = curLevel + ' | ' + cashLevel + '%';
-	    AB.getParam(json.clubCard.barcode, result, 'cardnum');
-		if (json.details.length){
-		    AB.getParam(json.details[0].amount, result, 'sumtill', null, null, parseBalance);
-		    AB.getParam(json.details[0].dateEnd.replace(/(\d{4})-(\d\d)-(\d\d)/,'$3.$2.$1'), result, 'till', null, null, parseDate);
-		}
-	}
-
-    if(AnyBalance.isAvailable('buysum', 'nexlevel', 'nextlevel')){
-    	var json = callApi('bonus/progress');
-        json = json.progress;
-
-        AB.getParam((json.buySumma.value)/100, result, 'buysum', null, null, parseBalance);
-	    if (json.nextLevel && json.nextLevel.name){
-		    AB.getParam(json.nextLevel.name, result, 'nexlevel');
-		}else{
-			result.nexlevel = 'Достигнут';
-		}
-		if (json.toNextLevelSumma && json.toNextLevelSumma.value){
-		    AB.getParam((json.toNextLevelSumma.value)/100, result, 'nextlevel', null, null, parseBalance);
-		}
-    }
-
-    if(AnyBalance.isAvailable('fio', 'phone')){
-		var json = callApi('profile');
-		json = json.profile;
-		
-        var fio = json.anketa.firstName;
-	    if (json.anketa.lastName)
-	    	fio+=' '+json.anketa.lastName;
-	    AB.getParam(fio, result, 'fio');
-	    AB.getParam(json.phone.nationalNumber, result, 'phone', null, replaceNumber);
-	}
-	
-	if(AnyBalance.isAvailable('last_oper_date', 'last_oper_sum', 'last_oper_desc')){
-	    var dt = new Date();
-		dtBegin = dt.getFullYear() - 1 + '-' + ('0' + (dt.getMonth() + 1)).slice(-2) + '-' + ('0' + (dt.getDate())).slice(-2);
-		dtEnd = dt.getFullYear() + '-' + ('0' + (dt.getMonth() + 1)).slice(-2) + '-' + ('0' + (dt.getDate())).slice(-2);
-		
-		var json = callApi('bonus/history?dateBegin=' + dtBegin + '&dateEnd=' + dtEnd);
-		json = json.list;
-		
-        if(json.length){
-        	var t = json[0];
-        	AB.getParam(t.date.replace(/(\d{4})-(\d\d)-(\d\d)/,'$3.$2.$1'), result, 'last_oper_date', null, null, parseDate);
-        	AB.getParam(t.summa, result, 'last_oper_sum', null, null, parseBalance);
-        	AB.getParam(t.transDesc, result, 'last_oper_desc');
-        }else{
-			AnyBalance.trace('Последняя операция не найдена');
-		}
-	}
-	
-    if(AnyBalance.isAvailable('last_order_date', 'last_order_number', 'last_order_status', 'last_order_sum')){
-        var json = callApi('orderHistory');
-		json = json.orders;
-		
-        if(json.length){
-        	var o = json[0];
-        	AB.getParam(o.date.replace(/(\d{4})-(\d\d)-(\d\d)/,'$3.$2.$1'), result, 'last_order_date', null, null, parseDate);
-        	AB.getParam(o.number, result, 'last_order_number');
-        	AB.getParam((o.totalSum.value)/100, result, 'last_order_sum', null, null, parseBalance);
-        	AB.getParam(o.status.statusText, result, 'last_order_status');
-        }else{
-			AnyBalance.trace('Последний заказ не найден');
-		}
-    }
-
-    AnyBalance.setResult(result);
+function clearAllCookiesExceptProtection(){
+	clearAllCookies(function(c){return!/qrator|UDID|SMAID/i.test(c.name)})
 }

@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="35">ab-bonus-sportmaster</id>
+	<id version="38">ab-bonus-sportmaster</id>
 	<name>Спортмастер</name>
 	<description html="true"><![CDATA[
     <p>Предоставляет информацию по бонусной карте для участников клубной программы сети магазинов Спортмастер (https://www.sportmaster.ru/).</p> 
-    <p>Информация берется из мобильного приложения Спортмастер.</p>
+    <p>Информация берется из личного кабинета Спортмастер на сайте https://www.sportmaster.ru/profile/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Для получения данных необходимо ввести в настройки провайдера свой номер телефона, на который зарегистрирована клубная программа Спортмастер, и однократно ввести код, пришедший по SMS.</p>
+	<p>Если у вас нет доступа в личный кабинет, получите его на странице https://www.sportmaster.ru/login/.</p>
+	<p>Для работы провайдера требуется ввести номер телефона, привязанного к личному кабинету Спортмастер, и код подтверждения из SMS, высланного на этот номер.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
     <depends>
    		<module id="library"/>
-   		<module id="framework/browser"/>
+		<module id="misc/saved-data"/>
+		<module id="framework/browser"/>
    	</depends>
 	<files>
 		<icon>icon.png</icon>
@@ -23,23 +25,31 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" ₽"/>
-		<counter id="cashback" name="Кешбэк бонусы" units=" ₽"/>
-		<counter id="promo" name="Промо бонусы" units=" ₽"/>
-		<counter id="sumtill" name="Ближайшая сумма сгорания" units=" ₽"/>
-		<counter id="till" name="Ближайшая дата сгорания" type="time" format="dd.MM.yyyy"/>
+		<counter id="cashback" name="Кешбэк бонусы" units=" Б"/>
+		<counter id="promo" name="Промо бонусы" units=" Б"/>
+    	<counter id="cashbacktillsum" name="Сгораемые кешбэк бонусы" units=" Б"/>
+    	<counter id="cashbacktilldate" name="Дата сгорания кешбэка" type="time" format="dd.MM.yyyy"/>
+		<counter id="promotillsum" name="Сгораемые промо бонусы" units=" Б"/>
+    	<counter id="promotilldate" name="Дата сгорания промо" type="time" format="dd.MM.yyyy"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
 		<counter id="currlevel" name="Текущий уровень" type="text"/>
 		<counter id="cashlevel" name="Уровень кешбэка" units="%"/>
 		<counter id="buysum" name="Накопленная сумма покупок" units=" ₽"/>
 		<counter id="nexlevel" name="Следующий уровень" type="text"/>
 		<counter id="nextlevel" name="Покупок до след. уровня" units=" ₽"/>
-		<counter id="last_oper_date" name="Дата последней операции" type="time" format="dd.MM.yyyy"/>
+<!--	<counter id="last_oper_date" name="Дата последней операции" type="time" format="dd.MM.yyyy"/>
 		<counter id="last_oper_sum" name="Сумма последней операции" units=" ₽"/>
-		<counter id="last_oper_desc" name="Описание последней операции" type="text"/>
+		<counter id="last_oper_desc" name="Описание последней операции" type="text"/> -->
 		<counter id="last_order_date" name="Дата последнего заказа" type="time" format="dd.MM.yyyy"/>
 		<counter id="last_order_number" name="Номер последнего заказа" type="text"/>
 		<counter id="last_order_sum" name="Сумма последнего заказа" units=" ₽"/>
 		<counter id="last_order_status" name="Статус последнего заказа" type="text"/>
+		<counter id="last_retail_date" name="Дата последней покупки" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_retail_number" name="Номер последней покупки" type="text"/>
+		<counter id="last_retail_sum" name="Сумма последней покупки" units=" ₽"/>
+		<counter id="last_retail_status" name="Статус последней покупки" type="text"/>
+		<counter id="favorite" name="Избранное" units=" шт"/>
+		<counter id="email" name="E-mail" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>

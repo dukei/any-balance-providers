@@ -1,29 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-tracking-boxberry</id>
+	<id version="3">ab-tracking-boxberry</id>
 	<api flags="no_browser"/>
 	<name>BoxBerry</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию по трек-номеру в BoxBerry http://boxberry.ru</p>
+	<p>Предоставляет информацию о состоянии, дате и времени изменения, местонахождении и другую информацию для пользователей услуг доставки BoxBerry (https://boxberry.ru/).</p>
+	<p>Информация берется со страницы отслеживания посылок на сайте https://boxberry.ru/.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести трек-номер отправления.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+        <module id="library"/>
+    </depends>
 	<files>
 		<icon>icon.png</icon>
-		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
+		<preferences>preferences.xml</preferences>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="orderNum" name="№ заказа интернет-магазина" type="text"/>
-		<counter id="storeName" name="Название интернет-магазина" type="text"/>
+		<counter id="orderNum" name="Номер заказа магазина" type="text"/>
+		<counter id="storeName" name="Название магазина" type="text"/>
+		<counter id="orderNumBox" name="Номер заказа BoxBerry" type="text"/>
 		<counter id="dest" name="Город назначения" type="text"/>
-		<counter id="weight" name="Вес товара, кг" type="text"/>
+		<counter id="weight" name="Вес" units=" кг"/>
+		<counter id="toPay" name="К оплате" units=" ₽"/>
 		<counter id="point" name="Пункт выдачи" type="text"/>
-		<counter id="orderNumBox" name="Номер заказа Boxberry" type="text"/>
+		<counter id="status" name="Состояние" type="text"/>
+		<counter id="date" name="Время изменения" type="time" format="dd.MM.yyyy HH:mm"/>
 		<counter id="all" name="Сводка" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>Почтовое отправление, боксберри, доставка</keywords>
 	<type>tracking</type>
 	<country>ru</country>
 </provider>

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-	<EditTextPreference
-		title="Трек-номер"
-		key="login"
-		summary="||{@s}"
+	<EditTextPreference 
+        title="Номер отправления"
+        positiveButtonText="ОК"
+        summary="Трек-номер отправления|Введите номер\n|{@s}\n"
+        dialogTitle="Номер отправления"
 		obligatory="true"
-		dialogTitle="Трек-номер"
-		positiveButtonText="ОК"
-		negativeButtonText="Отмена"
-		dialogMessage="Введите трек-номер.">
-	</EditTextPreference>
+        negativeButtonText="Отмена"
+        dialogMessage="Введите трек-номер отправления. Трек-номер находится в чеке, выдаваемом при приеме почтового отправления. Вид номера: 115127(80)15138 4. Следует вводить: 11512780151384 (весь номер, цифры и латинские буквы без скобок и пробелов). Вид международного идентификатора: CJ247232575US"
+        key="login">
+    </EditTextPreference>
 </PreferenceScreen>

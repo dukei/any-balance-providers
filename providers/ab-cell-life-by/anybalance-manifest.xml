@@ -40,7 +40,7 @@
 		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords>мобильный оператор лайф белоруссия проверка баланса</keywords>
+	<keywords>мобильный оператор лайф беларусь проверка баланса</keywords>
 	<type>cell</type>
 	<country>by</country>
 </provider>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id version="1">ab-internet-infolan-by</id>
-  <name>Домашняя сеть (Белоруссия)</name>
+  <name>Домашняя сеть (Беларусь)</name>
   <description>
     Получает баланс и другую информацию для интернет-провайдера Домашняя сеть (http://infolan.by).
 

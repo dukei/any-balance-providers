@@ -74,10 +74,12 @@ var g_countersTable = {
 		"rate": "accounts.pct",
 		"cardNumber": "accounts.num",
 		"__tariff": "accounts.num",
+		"pct": "accounts.pct",
 		"till": "accounts.till",
 		"status": "accounts.status",
 		"userName": "accounts.userName",
 		"cardName": "accounts.cardName",
+		"balance_min": "accounts.balance_min",
 		
 		"lastPurchSum": "accounts.transactions10.sum",
 		"lastPurchPlace": "accounts.transactions10.descr",

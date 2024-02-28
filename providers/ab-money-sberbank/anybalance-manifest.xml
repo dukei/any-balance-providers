@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="102">ab-money-sberbank</id>
+	<id version="104">ab-money-sberbank</id>
 	<api flags="no_browser"/>
 	<name>СберБанк Онлайн</name>
 	<description html="true"><![CDATA[
@@ -57,7 +57,7 @@
 	<counters>
 		<counter id="balance" name="Остаток" units=" {@currency}"/>
 		<counter id="weight" name="Вес" units=" {@weight_units}"/>
-		<counter id="spasibo" name="Спасибо"/>
+		<counter id="spasibo" name="Спасибо" units=" С"/>
 		<counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>
 		<counter id="minpaydate" name="Дата минимального платежа" type="time" format="dd.MM.yyyy"/>
 		<counter id="electrocash" name="Для покупок" units=" {@currency}"/>
@@ -73,13 +73,15 @@
 		<counter id="loan_ammount" name="Сумма кредита" units=" {@currency}"/>
 		<counter id="cardName" name="Имя карты/счета" type="text"/>
 		<counter id="status" name="Статус карты/счета" type="text"/>
+		<counter id="pct" name="Процентная ставка" units="%"/>
+		<counter id="balance_min" name="Неснижаемый остаток" units=" {@currency}"/>
 		<counter id="lastPurchSum" name="Сумма последней операции" units=" {@currency}"/>
 		<counter id="lastPurchPlace" name="Описание последней операции" type="text"/>
 		<counter id="lastPurchDate" name="Дата последней операции" type="time" format="dd.MM.yyyy"/>
-		<counter id="usdPurch" name="USD покупка"/>
-		<counter id="usdSell" name="USD продажа"/>
-		<counter id="eurPurch" name="EUR покупка"/>
-		<counter id="eurSell" name="EUR продажа"/>
+		<counter id="usdPurch" name="USD покупка" prefix="$↓ " units=" {@currency}"/>
+		<counter id="usdSell" name="USD продажа" prefix="$↑ " units=" {@currency}"/>
+		<counter id="eurPurch" name="EUR покупка" prefix="€↓ " units=" {@currency}"/>
+		<counter id="eurSell" name="EUR продажа" prefix="€↑ " units=" {@currency}"/>
 		<counter id="userName" name="ФИО владельца" type="text"/>
 		<counter id="currency" name="Валюта счета" type="text"/>
 	</counters>

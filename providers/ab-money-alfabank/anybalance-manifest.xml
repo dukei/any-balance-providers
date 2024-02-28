@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="70">ab-money-alfabank</id>
+	<id version="83">ab-money-alfabank</id>
 	<api flags="no_browser"/>
 	<name>Альфа-Банк</name>
 	<description html="true"><![CDATA[
@@ -8,8 +8,7 @@
 	<p>Информация берется из личного кабинета Альфа-Онлайн на сайте https://web.alfabank.ru/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Для работы провайдера требуется ввести номер телефона, привязанного к личному кабинету Альфа-Онлайн, и номер карты или счета для входа в личный кабинет.</p>
-	<p>Кроме того, для авторизации в личном кабинете потребуется ввести одноразовый пароль для входа из SMS, высланного на номер телефона, привязанного к личному кабинету Альфа-Онлайн.</p>
+	<p>Для работы провайдера требуется ввести логин, пароль и код подтверждения из SMS, высланного на номер телефона, привязанного к личному кабинету Альфа-Онлайн.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -18,7 +17,6 @@
 	</depends>
 	<files>
 		<icon>icon.png</icon>
-		<js target="preferences">preferences.js</js>
 		<preferences>preferences.xml</preferences>
 		<js>login.js</js>
 		<js>main.js</js>
@@ -37,8 +35,14 @@
 		<counter id="available" name="Доступно для трат" units=" {@currency}"/>
 		<counter id="gracetill" name="Конец льготного периода" type="time" format="dd.MM.yyyy"/>
 		<counter id="settlementdate" name="Дата следующего отчета" type="time" format="dd.MM.yyyy"/>
+		<counter id="paymentperiod" name="Расчетный период" type="text"/>
 		<counter id="penalty" name="Штрафы" units=" {@currency}"/>
 		<counter id="cashback" name="Кэшбэк" units=" {@currency}"/>
+		<counter id="cashbackpending" name="Ожидаемый кэшбэк" units=" {@currency}"/>
+		<counter id="cashbackpendingdate" name="Дата зачисления кэшбэка" type="time" format="dd.MM.yyyy"/>
+		<counter id="miles" name="Мили Alfa Travel" units=" миль"/>
+		<counter id="milespending" name="Ожидаемые мили" units=" миль"/>
+		<counter id="milespendingdate" name="Дата зачисления миль" type="time" format="dd.MM.yyyy"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
 		<counter id="cardopen" name="Дата выпуска карты" type="time" format="dd.MM.yyyy"/>
 		<counter id="till" name="Срок действия карты" type="time" format="MM/yyyy"/>
@@ -63,6 +67,8 @@
 		<counter id="cardname" name="Название карты" type="text"/>
 		<counter id="cardkind" name="Вид карты" type="text"/>
 		<counter id="status" name="Статус" type="text"/>
+		<counter id="increasedcashback" name="Повышенный кэшбэк" type="html"/>
+		<counter id="supercashback" name="Суперкэшбэк" type="html"/>
 		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="currencyfull" name="Валюта" type="text"/>

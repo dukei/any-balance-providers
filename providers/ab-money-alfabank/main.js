@@ -2,13 +2,12 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
-var g_webHeaders = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+var g_headers = {
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
     'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
 	'Connection': 'keep-alive',
     'Upgrade-Insecure-Requests': '1',
-    'User-Agent': 'Mozilla/5.0 (Linux; Android 8.0.0; AUM-L29 Build/HONORAUM-L29; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/103.0.5060.129 Mobile Safari/537.36',
-    'X-Requested-With': 'ru.alfabank.mobile.android'
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
 };
 
 var g_currency = {
@@ -52,7 +51,6 @@ var g_accstechover = {
 };
 
 var g_mainHtml;
-var g_baseurlApi = 'https://alfa-mobile.alfabank.ru/ALFAJMB';
 var g_baseurl = 'https://web.alfabank.ru';
 var g_savedData;
 
@@ -66,7 +64,7 @@ function main(){
 
 	g_savedData.restoreCookies();
 	
-	var html = AnyBalance.requestGet(g_baseurl + '/dashboard', g_webHeaders);
+	var html = AnyBalance.requestGet(g_baseurl + '/dashboard', addHeaders({'Referer': g_baseurl_auth + '/'}));
 	
 	if(AnyBalance.getLastStatusCode() >= 400){
         AnyBalance.trace(html);
@@ -85,7 +83,7 @@ function main(){
     var result = {success: true};
 	
 	// Получаем объект data с массивом всех продуктов главной страницы
-	var mainData = getParam(g_mainHtml, null, null, /window.__main\(([^\)]*)/i, replaceTagsAndSpaces);
+	var mainData = getParam(g_mainHtml, null, null, /window\.initialState\s*?=\s*?(\{[\s\S]*?)\s*?</i, replaceTagsAndSpaces);
 	
 	if(!mainData){
         AnyBalance.trace(html);
@@ -94,9 +92,14 @@ function main(){
 	
 	var data = getJson(mainData);
 	
+	if(!data.layoutData || data.layoutData == null){
+        AnyBalance.trace(html);
+        throw new AnyBalance.Error('Не удалось получить объект layoutData. Сайт изменен?');
+    }
+	
 	if (AnyBalance.isAvailable('balancetotal')){
-	    var overallTotals = data.state.layoutData.balance.overallTotals;
-	    if (overallTotals.amounts && overallTotals.amounts.length){
+	    var overallTotals = data.layoutData && data.layoutData.balance && data.layoutData.balance.overallTotals;
+	    if (overallTotals && overallTotals.amounts && overallTotals.amounts.length && overallTotals.amounts.length > 0){
 	    	var amount = overallTotals.amounts[0]; // Рублевый остаток по всем счетам
 	        getParam((amount.value)/amount.minorUnits, result, ['balancetotal', 'currency'], null, null, parseBalance);
 	        getParam(g_currency[amount.currency]||amount.currency, result, ['currency', 'balance']);
@@ -129,7 +132,7 @@ function main(){
 }
 
 function getProfileInfo(result){
-    var html = AnyBalance.requestGet(g_baseurl + '/newclick-dashboard-ui/proxy/customer-info-api/information', g_webHeaders);
+	var html = AnyBalance.requestGet(g_baseurl + '/api/v1/customer-info/information', g_headers);
 	
 	var json = getJson(html);
 	AnyBalance.trace('Профиль: ' + JSON.stringify(json));
@@ -144,9 +147,128 @@ function getProfileInfo(result){
 	    getParam(json.phone.replace(/.*(\d{3})(\d{3})(\d{2})(\d{2})$/i, '+7 $1 $2-$3-$4'), result, 'phone');
 }
 
+function getCashbackInfo(result){
+	var html = AnyBalance.requestGet(g_baseurl + '/api/loyalty-api/accounts', addHeaders({
+		'Accept': 'application/json, text/plain, */*',
+		'Referer': g_baseurl + '/dashboard/'
+	}));
+	    
+	var json = getJson(html);
+	
+	var cashbackAccId, milesAccId;
+	
+	if(json.accounts && json.accounts.length > 0){
+		AnyBalance.trace('Данные по кэшбэку: ' + JSON.stringify(json));
+	    for(var i=0; json.accounts && i<json.accounts.length; ++i){
+	    	var acc = json.accounts[i];
+			if(acc.account.type == 'Реверсивный Cashback'){
+			    getParam(0||(acc.balance.amount.value)/acc.balance.amount.minorUnits, result, 'cashback', null, null, parseBalance);
+				cashbackAccId = acc.account.id;
+			}else if(acc.account.type == 'AlfaTravel'){
+			    getParam(0||(acc.balance.amount.value)/acc.balance.amount.minorUnits, result, 'miles', null, null, parseBalance);
+				milesAccId = acc.account.id;
+			}else{
+				AnyBalance.trace('Неизвестный тип кэшбэка: ' + acc.account.type);
+			}
+	    }
+    }else{
+		AnyBalance.trace('Не удалось получить данные по кэшбэку');
+	}
+	
+	if (AnyBalance.isAvailable('cashbackpending', 'cashbackpendingdate') && cashbackAccId){
+	    var html = AnyBalance.requestGet(g_baseurl + '/api/loyalty-api/accounts/' + cashbackAccId, addHeaders({
+		    'Accept': 'application/json, text/plain, */*',
+		    'Referer': g_baseurl + '/dashboard/'
+	    }));
+	    
+	    var json = getJson(html);
+	    AnyBalance.trace('Данные по реверсивному кэшбэку: ' + JSON.stringify(json));
+	    
+	    var cashCurrAmount = json.account && json.account.amount;
+	    var cashPend = json.forecast && (json.forecast.totalIntermediatePeriodAmount || json.forecast.totalActivePeriodAmount);
+	    var cashPendAmount = cashPend && cashPend.amount;
+	    getParam(0||(cashCurrAmount.value)/cashCurrAmount.minorUnits, result, 'cashback', null, null, parseBalance);
+	    getParam(0||(cashPendAmount.value)/cashPendAmount.minorUnits, result, 'cashbackpending', null, null, parseBalance);
+	    getParam(cashPend.description.replace(/(.*[з|н]ачисл(?:им|ен|ено|ены))\s*/i, ''), result, 'cashbackpendingdate', null, null, parseSmallDateSilent);
+	}
+	
+	if (AnyBalance.isAvailable('milespending', 'milespendingdate') && milesAccId){
+		var html = AnyBalance.requestGet(g_baseurl + '/api/loyalty-api/accounts/' + milesAccId, addHeaders({
+		    'Accept': 'application/json, text/plain, */*',
+		    'Referer': g_baseurl + '/dashboard/'
+	    }));
+	    
+	    var json = getJson(html);
+	    AnyBalance.trace('Данные по милям: ' + JSON.stringify(json));
+	
+	    var milesCurrAmount = json.account && json.account.amount;
+	    var milesPend = json.forecast && (json.forecast.totalIntermediatePeriodAmount || json.forecast.totalActivePeriodAmount);
+	    var milesPendAmount = milesPend && milesPend.amount;
+	    getParam(0||(milesCurrAmount.value)/milesCurrAmount.minorUnits, result, 'miles', null, null, parseBalance);
+	    getParam(0||(milesPendAmount.value)/milesPendAmount.minorUnits, result, 'milespending', null, null, parseBalance);
+	    getParam(milesPend.description.replace(/(.*[з|н]ачисл(?:им|ен|ено|ены))\s*/i, ''), result, 'milespendingdate', null, null, parseSmallDateSilent);
+	}
+	
+	var dt = new Date();
+	var dts = new Date(dt.getFullYear(), dt.getMonth()+1, 0);
+	var offerDate = dts.getFullYear() + '-' + n2(dts.getMonth()+1) + '-' + '01';
+	
+	if (AnyBalance.isAvailable('increasedcashback')){
+	    var html = AnyBalance.requestGet(g_baseurl + '/api/loyalty-promoted-cashback-api/summary/categorical-cashback?offerDate=' + offerDate, addHeaders({
+		    'Accept': 'application/json, text/plain, */*',
+		    'Referer': g_baseurl + '/dashboard/'
+	    }));
+	    
+	    var json = getJson(html);
+	    AnyBalance.trace('Данные по категориям месяца: ' + JSON.stringify(json));
+	    
+	    if(json.categoriesSection && json.categoriesSection.categories && json.categoriesSection.categories.length > 0){
+		    AnyBalance.trace('Найдено категорий: ' + json.categoriesSection.categories.length);
+		    for(var i=0; i<json.categoriesSection.categories.length; ++i){
+	            var category = json.categoriesSection.categories[i];
+			    
+			    sumParam(capitalizeFirstLetter(category.title.replace(/\d+%\s*/i, '').replace(/\s$/g, '')) 
+			    + ': ' + category.cashbackPercentRate + '%', result, 'increasedcashback', null, null, null, create_aggregate_join(',<br> '));
+		    }
+	    }else{
+		    AnyBalance.trace('Не удалось найти информацию по категориям месяца');
+		    result.increasedcashback = 'Нет данных';
+	    }
+	}
+	
+	if (AnyBalance.isAvailable('supercashback')){
+	    var html = AnyBalance.requestGet(g_baseurl + '/api/loyalty-promoted-cashback-api/wheel-of-fortune/winner?offerDate=' + offerDate, addHeaders({
+		    'Accept': 'application/json, text/plain, */*',
+		    'Referer': g_baseurl + '/dashboard/'
+	    }));
+	    
+	    var json = getJson(html);
+	    AnyBalance.trace('Данные по суперкэшбэку месяца: ' + JSON.stringify(json));
+	    
+	    if(json.winnerOffer){
+		    AnyBalance.trace('Найдена категория суперкэшбэка ' + json.winnerOffer.partner);
+	        var category = json.winnerOffer;
+			
+		    getParam(capitalizeFirstLetter(category.partner.replace(/\d+%\s*/i, '').replace(/\s$/g, '')) + ': ' + category.discount, result, 'supercashback');
+	    }else{
+		    AnyBalance.trace('Не удалось найти информацию по суперкэшбэку месяца');
+		    result.supercashback = 'Нет данных';
+	    }
+	}
+}
+
+function getPaymentPeriod(result){
+	if(!AnyBalance.isAvailable('paymentperiod'))
+		return;
+	
+	var dt = new Date();
+	var monthes = {0: 'Январь', 1: 'Февраль', 2: 'Март', 3: 'Апрель', 4: 'Май', 5: 'Июнь', 6: 'Июль', 7: 'Август', 8: 'Сентябрь', 9: 'Октябрь', 10: 'Ноябрь', 11: 'Декабрь'};
+	getParam(monthes[dt.getMonth()] + ' ' + dt.getFullYear(), result, 'paymentperiod');
+}
+
 function fetchCard(data, prefs, result){
 	// Получаем счета с картами из data
-	var cardsAcc = data.state.layoutData.accountsWithCards; // Счета с картами
+	var cardsAcc = data.layoutData.accountsWithCards; // Счета с картами
 	AnyBalance.trace('Найдено счетов с картами: ' + cardsAcc.length);
 	if(cardsAcc.length < 1)
 		throw new AnyBalance.Error('У вас нет ни одного счета с картами');
@@ -195,9 +317,10 @@ function fetchCard(data, prefs, result){
 	getParam(currCard.issueDate.replace(/(\d{4})-(\d{2})-(\d{2})/,'$3.$2.$1'), result, 'cardopen', null, null, parseDate);
 	
 	if (cardId) { // Если Id карты определился, получаем данные из кабинета
-		html = AnyBalance.requestGet(g_baseurl + '/newclick-card-ui/api/getAssetsAndConfig', g_webHeaders);
+		html = AnyBalance.requestGet(g_baseurl + '/newclick-card-ui/api/getAssetsAndConfig', g_headers);
 	
 	    var csrf = AnyBalance.getCookie('newclick-card-ui-csrf-token'); // csrf_token для каждого вида отдельно получать через куку getAssetsAndConfig
+		var xsrf = AnyBalance.getCookie('XSRF-TOKEN');
 	
 	    html = AnyBalance.requestPost(g_baseurl + '/newclick-card-ui/bff/card', JSON.stringify({
             'cardId': cardId
@@ -205,8 +328,9 @@ function fetchCard(data, prefs, result){
 	    	'Accept': 'application/json, text/plain, */*',
             'Content-Type': 'application/json',
 	    	'Referer': g_baseurl + '/cards/' + cardId,
-	    	'x-csrf-token': csrf
-	    }), g_webHeaders);
+	    	'x-csrf-token': csrf,
+			'X-XSRF-TOKEN': xsrf
+	    }));
 	    
 		var json = getJson(html);
 	    AnyBalance.trace('Данные по карте: ' + JSON.stringify(json));
@@ -223,31 +347,6 @@ function fetchCard(data, prefs, result){
 		getParam(json.customerTitle, result, 'cardname');
 		getParam(json.title, result, 'cardtype');
 	    getParam(g_cardsstatus[json.blockOperationType.type]||json.blockOperationType.type, result, 'status');
-		
-		var cType = json.type; // Требуется для кэшбэка
-		
-		if (AnyBalance.isAvailable('cashback')){
-	        html = AnyBalance.requestGet(g_baseurl + '/newclick-card-ui/proxy/loyalty-api/cards/bonus?' + cardId + '=' + cType, addHeaders({
-	        	'Accept': 'application/json, text/plain, */*',
-	        	'Referer': g_baseurl + '/cards/' + cardId,
-	        	'x-csrf-token': csrf
-	        }), g_webHeaders);
-	    
-		    var json = getJson(html);
-			
-			if(json && json.length){
-				AnyBalance.trace('Данные по кэшбэку: ' + JSON.stringify(json));
-		        for(var i=0; json && i<json.length; ++i){
-		        	var cashCardId = json[i].cardId;
-				
-		    		if(json[i].cardId === cardId && /Кэшбэк/i.test(json[i].title)){
-						sumParam(0||(json[i].amount.value)/json[i].amount.minorUnits, result, 'cashback', null, null, parseBalance, aggregate_sum);
-		    		}
-		        }
-            }else{
-		    	AnyBalance.trace('Не удалось получить данные по кэшбэку');
-		    }
-	    }
 	}
 	
 	if (currCard.contract) { // Кредитная карта
@@ -271,11 +370,12 @@ function fetchCard(data, prefs, result){
 		    if (currCard.contract.payment.insufficientFunds)
 			    getParam((currCard.contract.payment.insufficientFunds.value)/minorUnits, result, 'overdraft', null, null, parseBalance);
 		}else{
-			html = AnyBalance.requestGet(g_baseurl + '/newclick-card-ui/proxy/credit-api/account/' + accountNumber, addHeaders({
+			html = AnyBalance.requestGet(g_baseurl + '/api/credit-api/account/' + accountNumber, addHeaders({
 	        	'Accept': 'application/json, text/plain, */*',
 	        	'Referer': g_baseurl + '/cards/' + cardId,
-	        	'x-csrf-token': csrf
-	        }), g_webHeaders);
+	        	'x-csrf-token': csrf,
+			    'X-XSRF-TOKEN': xsrf
+	        }));
 	    
 		    var json = getJson(html);
 	        AnyBalance.trace('Данные по задолженности: ' + JSON.stringify(json));
@@ -302,6 +402,12 @@ function fetchCard(data, prefs, result){
 		}
 	}
 	
+	getPaymentPeriod(result);
+	
+	if (AnyBalance.isAvailable('cashback', 'miles', 'cashbackpending', 'cashbackpendingdate', 'milespending', 'increasedcashback', 'supercashback')){
+		getCashbackInfo(result);
+	}
+	
 	if (AnyBalance.isAvailable('fio', 'phone')){
 	    getProfileInfo(result);
 	}
@@ -309,8 +415,8 @@ function fetchCard(data, prefs, result){
 
 function fetchAccount(data, prefs, result){
 	// Получаем все счета из data
-	var accountsWithCards = data.state.layoutData.accountsWithCards; // Счета с картами
-	var accountsCapital = data.state.layoutData.capital; // Счета и вклады
+	var accountsWithCards = data.layoutData.accountsWithCards; // Счета с картами
+	var capitalAccounts = data.layoutData.capitalAccounts; // Счета и вклады
 
 	var allAccounts = [];
 	for(var i=0; i<accountsWithCards.length; ++i){
@@ -320,13 +426,14 @@ function fetchAccount(data, prefs, result){
 	    }else{
 		    allAccounts.push(account);
 		}
-		for(var j=0; j<accountsCapital.length; ++j){
-		    var account = accountsCapital[j];
-		    if(account.productType === 'deposit'){ // Исключаем депозиты из списка счетов и вкладов
-			    continue;
-	        }else{
-		        allAccounts.push(account);
-		    }
+	}
+	
+	for(var j=0; j<capitalAccounts.length; ++j){
+	    var account = capitalAccounts[j];
+	    if(account.productType === 'deposit'){ // Исключаем депозиты из списка счетов и вкладов
+		    continue;
+	    }else{
+	        allAccounts.push(account);
 	    }
 	}
 	
@@ -370,16 +477,18 @@ function fetchAccount(data, prefs, result){
 	}
 	
 	if(accountNumber){ // Если номер счета определился, получаем данные из кабинета
-		html = AnyBalance.requestGet(g_baseurl + '/newclick-account-ui/api/getAssetsAndConfig', g_webHeaders);
+		html = AnyBalance.requestGet(g_baseurl + '/newclick-account-ui/api/getAssetsAndConfig', g_headers);
 	
 	    var csrf = AnyBalance.getCookie('newclick-account-ui-csrf-token'); // csrf_token для каждого вида отдельно получать через куку getAssetsAndConfig
+		var xsrf = AnyBalance.getCookie('XSRF-TOKEN');
 	
 	    // Подробности нужного счета приходится получать из списка счетов, поэтому такая конструкция
-		html = AnyBalance.requestGet(g_baseurl + '/newclick-account-ui/proxy/account-api/?accountNumber=' + accountNumber, addHeaders({
+		html = AnyBalance.requestGet(g_baseurl + '/api/account-api/?accountNumber=' + accountNumber, addHeaders({
 	    	'Accept': 'application/json, text/plain, */*',
 	    	'Referer': g_baseurl + '/accounts/' + accountNumber,
-	    	'x-csrf-token': csrf
-	    }), g_webHeaders);
+//	    	'x-csrf-token': csrf,
+			'X-Xsrf-Token': xsrf
+	    }));
 	    
 		var json = getJson(html);
 		
@@ -415,8 +524,9 @@ function fetchAccount(data, prefs, result){
 	        	'Accept': 'application/json, text/plain, */*',
                 'Content-Type': 'application/json',
 	        	'Referer': g_baseurl + '/accounts/' + accountNumber,
-	        	'x-csrf-token': csrf
-	        }), g_webHeaders);
+	        	'x-csrf-token': csrf, // ???
+			    'X-Xsrf-Token': xsrf
+	        }));
 	    
 		    var json = getJson(html);
 	        
@@ -424,6 +534,37 @@ function fetchAccount(data, prefs, result){
 			    getParam(0||json.cards.length, result, 'acclinkedcards', null, null, parseBalance);
 			}
 	    }
+		// Получаем информацию по ставке
+		html = AnyBalance.requestGet(g_baseurl + '/api/savings-account-api/' + accountNumber, addHeaders({
+	    	'Accept': 'application/json, text/plain, */*',
+	    	'Referer': g_baseurl + '/accounts/' + accountNumber,
+//	    	'x-csrf-token': csrf,
+			'X-Xsrf-Token': xsrf
+	    }));
+	    
+		var json = getJson(html);
+		
+		if(json && json.actualRateInfo){
+			AnyBalance.trace('Данные по ставке: ' + JSON.stringify(json));
+            if(json.actualRateInfo && json.actualRateInfo.length){
+                // Дату начисления и неснижаемый баланс выводим только по основной ставке, она первая в списке
+		        getParam(json.actualRateInfo[0].incomeDate.replace(/(\d{4})-(\d{2})-(\d{2})/,'$3.$2.$1'), result, 'deponextaccrdate', null, null, parseDate);
+				getParam((json.actualRateInfo[0].minBalanceAmount.value)/json.actualRateInfo[i].minBalanceAmount.minorUnits, result, 'depominbalance', null, null, parseBalance);
+				for(var i=0; json.actualRateInfo && i<json.actualRateInfo.length; ++i){
+		        	var rateInfo = json.actualRateInfo[i];
+					sumParam(0||rateInfo.rate, result, 'depocaprate', null, null, parseBalance, aggregate_sum);
+					sumParam(0||(rateInfo.rateAmount.value)/rateInfo.rateAmount.minorUnits, result, 'deponextaccrsum', null, null, parseBalance, aggregate_sum);
+			    }
+			}
+		}else{
+			AnyBalance.trace('Не удалось получить данные по ставке');
+		}
+	}
+	
+	getPaymentPeriod(result);
+	
+	if (AnyBalance.isAvailable('cashback', 'miles', 'cashbackpending', 'cashbackpendingdate', 'milespending', 'increasedcashback', 'supercashback')){
+		getCashbackInfo(result);
 	}
 	
 	if (AnyBalance.isAvailable('fio', 'phone')){
@@ -433,11 +574,11 @@ function fetchAccount(data, prefs, result){
 
 function fetchDeposit(data, prefs, result){
 	// Получаем депозиты из data
-	var accountsCapital = data.state.layoutData.capital; // Счета и вклады
+	var capitalAccounts = data.layoutData.capitalAccounts; // Счета и вклады
 
 	var allDeposits = [];
-	for(var i=0; i<accountsCapital.length; ++i){
-		var account = accountsCapital[i];
+	for(var i=0; i<capitalAccounts.length; ++i){
+		var account = capitalAccounts[i];
 		if(account.productType !== 'deposit'){ // Исключаем счета из списка счетов и вкладов
 			continue;
 	    }else{
@@ -487,15 +628,17 @@ function fetchDeposit(data, prefs, result){
 	}
 	
 	if(depositNumber){ // Если номер депозита определился, получаем данные из кабинета
-		html = AnyBalance.requestGet(g_baseurl + '/newclick-deposit-ui/api/getAssetsAndConfig', g_webHeaders);
+		html = AnyBalance.requestGet(g_baseurl + '/newclick-deposit-ui/api/getAssetsAndConfig', g_headers);
 	
 	    var csrf = AnyBalance.getCookie('newclick-deposit-ui-csrf-token'); // csrf_token для каждого вида отдельно получать через куку getAssetsAndConfig
+		var xsrf = AnyBalance.getCookie('XSRF-TOKEN');
 	
 	    html = AnyBalance.requestGet(g_baseurl + '/newclick-deposit-ui/proxy/deposit-api/view/' + depositNumber, addHeaders({
 	    	'Accept': 'application/json, text/plain, */*',
 	    	'Referer': g_baseurl + '/deposits/' + depositNumber,
-	    	'x-csrf-token': csrf
-	    }), g_webHeaders);
+	    	'x-csrf-token': csrf,
+			'X-XSRF-TOKEN': xsrf
+	    }));
 	    
 		var json = getJson(html);
 		
@@ -543,6 +686,12 @@ function fetchDeposit(data, prefs, result){
 		}
 	}
 	
+	getPaymentPeriod(result);
+	
+	if (AnyBalance.isAvailable('cashback', 'miles', 'cashbackpending', 'cashbackpendingdate', 'milespending', 'increasedcashback', 'supercashback')){
+		getCashbackInfo(result);
+	}
+	
 	if (AnyBalance.isAvailable('fio', 'phone')){
 	    getProfileInfo(result);
 	}
@@ -550,14 +699,14 @@ function fetchDeposit(data, prefs, result){
 
 function fetchCredit(data, prefs, result){
 	// Получаем кредиты из data
-	var credits = data.state.layoutData.credits; // Кредиты
-	AnyBalance.trace('Найдено кредитов: ' + credits.length);
-	if(credits.length < 1)
+	var creditAccounts = data.layoutData.creditAccounts; // Кредиты
+	AnyBalance.trace('Найдено кредитов: ' + creditAccounts.length);
+	if(creditAccounts.length < 1)
 		throw new AnyBalance.Error('У вас нет ни одного кредита');
     
 	var currCrd;
-	for(var i=0; i<credits.length; ++i){
-		var credit = credits[i];
+	for(var i=0; i<creditAccounts.length; ++i){
+		var credit = creditAccounts[i];
 	   	AnyBalance.trace('Найден кредит ' + credit.number);
 	   	if(!currCrd && (!prefs.num || endsWith(credit.number, prefs.num))){
 	   		AnyBalance.trace('Выбран кредит ' + credit.number);
@@ -590,15 +739,17 @@ function fetchCredit(data, prefs, result){
 	}
 	
 	if(creditNumber){ // Если номер кредита определился, получаем данные из кабинета
-		html = AnyBalance.requestGet(g_baseurl + '/newclick-credit-ui/api/getAssetsAndConfig', g_webHeaders);
+		html = AnyBalance.requestGet(g_baseurl + '/newclick-credit-ui/api/getAssetsAndConfig', g_headers);
 	
 	    var csrf = AnyBalance.getCookie('newclick-credit-ui-csrf-token'); // csrf_token для каждого вида отдельно получать через куку getAssetsAndConfig
+		var xsrf = AnyBalance.getCookie('XSRF-TOKEN');
 	
 	    html = AnyBalance.requestGet(g_baseurl + '/newclick-credit-ui/proxy/credit-api/account/' + creditNumber, addHeaders({
 	    	'Accept': 'application/json, text/plain, */*',
 	    	'Referer': g_baseurl + '/credits/' + creditNumber,
-	    	'x-csrf-token': csrf
-	    }), g_webHeaders);
+	    	'x-csrf-token': csrf,
+			'X-XSRF-TOKEN': xsrf
+	    }));
 	    
 		var json = getJson(html);
 		AnyBalance.trace('Данные по задолженности: ' + JSON.stringify(json));
@@ -624,7 +775,45 @@ function fetchCredit(data, prefs, result){
 		    getParam((json.credit.insufficientFunds.value)/json.credit.insufficientFunds.minorUnits, result, 'overdraft', null, null, parseBalance); // Не проверено
 	}
 	
+	getPaymentPeriod(result);
+	
+	if (AnyBalance.isAvailable('cashback', 'miles', 'cashbackpending', 'cashbackpendingdate', 'milespending', 'increasedcashback', 'supercashback')){
+		getCashbackInfo(result);
+	}
+	
 	if (AnyBalance.isAvailable('fio', 'phone')){
 	    getProfileInfo(result);
 	}
+}
+
+function parseSmallDateSilent(str) {
+    return parseSmallDate(str, true);
+}
+
+function parseSmallDate(str, silent) {
+    var dt = parseSmallDateInternal(str);
+    if(!silent)
+    	AnyBalance.trace('Parsed small date ' + new Date(dt) + ' from ' + str);
+    return dt;
+}
+
+function parseSmallDateInternal(str) {
+	var now = new Date();
+	if (/сегодня/i.test(str)) {
+		var date = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+		return date.getTime();
+	} else if (/вчера/i.test(str)) {
+		var date = new Date(now.getFullYear(), now.getMonth(), now.getDate()-1);
+		return date.getTime();
+	} else {
+		if (!/\d{4}/i.test(str)) { //Если год в строке не указан, значит это текущий год
+			str = str + ' '  + now.getFullYear();
+		}
+        var date = getParam(str, null, null, null, null, parseDateWordSilent);
+		return date;
+	}
+}
+
+function capitalizeFirstLetter(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
 }

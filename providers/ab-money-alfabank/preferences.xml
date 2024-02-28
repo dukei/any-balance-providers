@@ -1,43 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
     <EditTextPreference 
-        title="Номер телефона" 
+        title="Логин" 
         positiveButtonText="ОК" 
-        summary="Номер телефона для входа в Альфа-Онлайн|Введите номер телефона\n|{@s}\n" 
-        dialogTitle="Номер телефона" 
+        summary="Логин для входа в Альфа-Онлайн|Введите логин\n|{@s}\n" 
+        dialogTitle="Логин" 
         negativeButtonText="Отмена" 
         obligatory="true"
-        dialogMessage="Введите номер телефона для входа в Альфа-Онлайн в формате 10 цифр, например: 9091234567"
+        dialogMessage="Введите логин, используемый для входа в систему Альфа-Онлайн"
         key="login">
     </EditTextPreference>
-	<ListPreference
-		key="method"
-		title="Способ входа"
-		summary="Способ входа в Альфа-Онлайн|Выберите способ входа\n|{@s}\n"
-		dialogTitle="Способ входа" 
-		entries="По номеру карты|По номеру счета"
-		entryValues="card|account"
-		defaultValue="card">
-	</ListPreference>	
 	<EditTextPreference 
-        title="Номер карты" 
-        positiveButtonText="ОК" 
-        summary="Номер карты для входа в Альфа-Онлайн|Введите номер карты\n|{@s}\n" 
-        dialogTitle="Номер карты" 
-        negativeButtonText="Отмена" 
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
         obligatory="true"
-        dialogMessage="Введите номер карты для входа в Альфа-Онлайн в формате 16 цифр, например: 4321000012345678"
-        key="cardnum">
-    </EditTextPreference>
-	<EditTextPreference 
-        title="Номер счета" 
-        positiveButtonText="ОК" 
-        summary="Номер счета для входа в Альфа-Онлайн|Введите номер счета\n|{@s}\n" 
-        dialogTitle="Номер счета" 
-        negativeButtonText="Отмена" 
-        obligatory="true"
-        dialogMessage="Введите номер счета для входа в Альфа-Онлайн в формате 20 цифр, например: 43210000123400005678"
-        key="accountnum">
+        summary="Пароль для входа в Альфа-Онлайн|Введите пароль\n|**********\n"
+        dialogMessage="Введите пароль, используемый для входа в систему Альфа-Онлайн"
+        inputType="textPassword">
     </EditTextPreference>
 	<ListPreference
 		key="source"

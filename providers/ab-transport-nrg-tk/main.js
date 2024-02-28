@@ -3,12 +3,11 @@
 */
 
 var g_headers = {
-	'Accept': 'application/json, text/javascript, */*; q=0.01',
-	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.7,en;q=0.4',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
 	'Connection': 'keep-alive',
-	'Origin': 'https://nrg-tk.ru',
-    'Referer': 'https://nrg-tk.ru/',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36',
+	'Upgrade-Insecure-Requests': '1',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
 };
 
 function main() {
@@ -20,8 +19,11 @@ function main() {
     var baseurl = 'https://nrg-tk.ru/client/tracking/';
 
     var html = AnyBalance.requestGet(baseurl, g_headers);
-
-    html = AnyBalance.requestGet('https://api2.nrg-tk.ru/v2/sending/state/?docNum=' + prefs.number, g_headers);
+    
+    html = AnyBalance.requestGet('https://nrg-tk.ru/rest/tracking/?docNum=' + prefs.number, addHeaders({
+		'Content-Type': 'application/json;charset=utf-8',
+		'Referer': baseurl
+	}));
 
     var json = getJson(html);
 	AnyBalance.trace('Info: ' + JSON.stringify(json));

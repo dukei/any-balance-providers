@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="37" date="2024-02-25">
+	- Получение баланса из сервиса платежей ПлатиУслуги.ру
+	</change>
     <change version="36" date="2023-12-12">
 	- Получение баланса из платежной системы QIWI
 	</change>

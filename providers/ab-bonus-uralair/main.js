@@ -25,7 +25,7 @@ function main(){
 
 	g_savedData.restoreCookies();
 
-    AnyBalance.trace ('Пробуем войти в личный кабинет...');
+    AnyBalance.trace('Пробуем войти в личный кабинет...');
 	
 	var html = AnyBalance.requestGet(baseurl + '/', g_headers);
 	
@@ -57,22 +57,68 @@ function main(){
     getParam(json.info.card, result, 'cardnum');
 	getParam(json.info.program + ' | ' + json.info.level, result, '__tariff');
 	getParam(json.info.level, result, 'curr_level');
-	getParam(json.info.progress.level_points, result, 'on_level', null, null, parseBalance);
 	getParam(json.info.next_level, result, 'next_level');
-	getParam((json.info.progress.flight_level_up - json.info.progress.level_points), result, 'to_next_level', null, null, parseBalance);
 	getParam(json.info.firstname + ' ' + json.info.lastname, result, 'fio');
 	
-	var dt = new Date();
-	var html = AnyBalance.requestGet(baseurl + '/cabinet/profile/?ajax=profile&action=default&_=' + dt.getTime(), addHeaders({
-		'Accept': 'application/json, text/plain, */*',
-		'Referer': baseurl + '/cabinet/profile/'
-	}));
-    
-	var json = getJson(html);
-	AnyBalance.trace('Профиль: ' + JSON.stringify(json));
+	if(json.info.balance_){
+	    getParam(json.info.balance_.LevelEndDate, result, 'level_exp_date', null, null, parseDate);
+		getParam(json.info.balance_.QualifiedPoints, result, 'q_points', null, null, parseBalance);
+		getParam(json.info.balance_.QualifiedFlights, result, 'q_fligts', null, null, parseBalance);
+	}
 	
-	getParam(json.info.address.City, result, 'city');
-	getParam(json.info.phone, result, 'phone', null, replaceNumber);
+	if(json.info.progress){
+		getParam(json.info.progress.levelFlights, result, 'on_level', null, null, parseBalance);
+	    getParam((json.info.progress.flightLevelUp - json.info.progress.levelFlights), result, 'to_next_level', null, null, parseBalance);
+		getParam(json.info.progress.levelCoins, result, 'coins_on_level', null, null, parseBalance);
+	    getParam((json.info.progress.coinsLevelUp - json.info.progress.levelCoins), result, 'coins_to_next_level', null, null, parseBalance);
+	}
+	
+	if(AnyBalance.isAvailable(['last_oper_sum', 'last_oper_date', 'last_oper_type', 'last_oper_desc', 'bonuses_burn', 'bonuses_till'])){
+		var dt = new Date();
+	    var html = AnyBalance.requestGet(baseurl + '/cabinet/bonus/?ajax=transactions&action=default&_=' + dt.getTime(), addHeaders({
+		    'Accept': 'application/json, text/plain, */*',
+		    'Referer': baseurl + '/cabinet/bonus/'
+	    }));
+        
+	    var json = getJson(html);
+	    AnyBalance.trace('Операции: ' + JSON.stringify(json));
+	    
+	    if(json.elements && json.elements.length > 0){
+	    	AnyBalance.trace('Найдено операций: ' + json.elements.length);
+			for(var i=0; i<json.elements.length; ++i){
+	            var operation = json.elements[i];
+		
+	    	    getParam(operation.bonuses, result, 'last_oper_sum', null, null, parseBalance);
+	    	    getParam(operation.date_prepared, result, 'last_oper_date', null, null, parseDate);
+	    	    getParam(operation.type, result, 'last_oper_type');
+				getParam(operation.title, result, 'last_oper_desc');
+				
+				if(operation.expired && operation.expired.length > 0){
+					getParam(operation.expired[0].bonus, result, 'bonuses_burn', null, null, parseBalance);
+					getParam(operation.expired[0].date, result, 'bonuses_till', null, null, parseDate);
+				}
+			    
+			    break;
+			}
+	    }else{
+ 	    	AnyBalance.trace('Не удалось получить данные по последней операции');
+ 	    }
+	}
+	
+	if(AnyBalance.isAvailable(['city', 'email', 'phone'])){
+	    var dt = new Date();
+	    var html = AnyBalance.requestGet(baseurl + '/cabinet/profile/?ajax=profile&action=default&_=' + dt.getTime(), addHeaders({
+		    'Accept': 'application/json, text/plain, */*',
+		    'Referer': baseurl + '/cabinet/profile/'
+	    }));
+        
+	    var json = getJson(html);
+	    AnyBalance.trace('Профиль: ' + JSON.stringify(json));
+	    
+	    getParam(json.info.address.City, result, 'city');
+	    getParam(json.info.email, result, 'email');
+	    getParam(json.info.phone, result, 'phone', null, replaceNumber);
+	}
 
     AnyBalance.setResult(result);
 }
@@ -87,7 +133,13 @@ function loginSite(prefs){
 	html = AnyBalance.requestGet(baseurl + '/', g_headers);
 	
     var captchaKey = getParam(html, null, null, /captcha-key="([^"]*)/i);
-	var captcha = solveRecaptcha('Пожалуйста, подтвердите, что вы не робот', AnyBalance.getLastUrl(), captchaKey, {USERAGENT: g_headers['User-Agent']});
+	
+	if(captchaKey){
+		AnyBalance.trace('Сайт затребовал проверку reCAPTCHA');
+	    var captcha = solveRecaptcha('Пожалуйста, подтвердите, что вы не робот', AnyBalance.getLastUrl(), captchaKey, {USERAGENT: g_headers['User-Agent']});
+	}else{
+		AnyBalance.trace('Не удалось найти ключ reCAPTCHA. Возможно, проверка не требуется');
+	}
 	
 	var html = AnyBalance.requestPost(baseurl + '/ajax.php?component=auth_form&template=header&lang=ru&action=auth', {
 		'username': prefs.login,

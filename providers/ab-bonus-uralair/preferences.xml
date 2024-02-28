@@ -2,12 +2,12 @@
 <PreferenceScreen>
     <EditTextPreference
 		obligatory="true"
-        title="Номер карты" 
+        title="Логин" 
         positiveButtonText="ОК" 
-        summary="Номер карты для входа в личный кабинет|Введите номер карты\n|{@s}\n" 
-        dialogTitle="Номер карты" 
+        summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n" 
+        dialogTitle="Логин" 
         negativeButtonText="Отмена" 
-        dialogMessage="Введите номер карты, используемый для входа в личный кабинет"
+        dialogMessage="Введите логин, используемый для входа в личный кабинет"
         key="login">
     </EditTextPreference>
     <EditTextPreference

@@ -301,26 +301,26 @@ function main() {
 		
 		if(isAvailable(['oper_sum', 'oper_desc', 'oper_date'])){
 			try {
-		        var opa = JSON.parse(getDefaultPropName(json.widgetStates, 'paymentsHistory'));
+		        var opb = JSON.parse(getDefaultPropName(json.widgetStates, 'paymentsHistory'));
 		    } catch (e) {
-                AnyBalance.trace('opa: ' + e.message);
+                AnyBalance.trace('opb: ' + e.message);
             }
 			
-//			AnyBalance.trace('Операции с баллами: ' + JSON.stringify(opa));
-		    if (opa && opa.history && opa.history.length > 0) {
-				var opa = opa.history[0];
-		        for(var i=0; opa.items && i<opa.items.length; ++i){
-		        	var oper = opa.items[i];
-		        	AnyBalance.trace('Нашли операцию "' + oper.title + '" ');
+//			AnyBalance.trace('Операции с баллами: ' + JSON.stringify(opb));
+		    if (opb && opb.history && opb.history.length > 0) {
+				var opb = opb.history[0];
+		        for(var i=0; opb.items && i<opb.items.length; ++i){
+		        	var oper = opb.items[i];
+		        	AnyBalance.trace('Нашли операцию с баллами "' + oper.title + '" ');
 		    
                     getParam(oper.amount, result, 'oper_sum', null, null, parseBalance);
                     getParam(oper.title, result, 'oper_desc');
-			        getParam(opa.date, result, 'oper_date', null, null, parseSmallDateSilent);
+			        getParam(opb.date, result, 'oper_date', null, null, parseSmallDateSilent);
 				
 			        break;
 		        }
             }else{
-		    	AnyBalance.trace('Не удалось получить данные по последней операции');
+		    	AnyBalance.trace('Не удалось получить данные по операциям с баллами');
 		    }
 		}
 		
@@ -344,6 +344,34 @@ function main() {
 			result.__tariff = prefs.login;
 		}
 		getParam(prefs.login, result, 'phone', null, replaceNumber);
+	}
+	
+	if (isAvailable(['rub_oper_sum', 'rub_oper_desc', 'rub_oper_state', 'rub_oper_date'])) {
+	    json = callWebApi('composer-api.bx/page/json/v2?url=%2Fmy%2Faccount');
+//		AnyBalance.trace('account: ' + JSON.stringify(json));
+		
+		try {
+		    var opr = JSON.parse(getDefaultPropName(json.widgetStates, 'history'));
+		} catch (e) {
+            AnyBalance.trace('opr: ' + e.message);
+        }
+        
+//		AnyBalance.trace('Операции с балансом: ' + JSON.stringify(items));
+		if (opr && opr.items && opr.items.length > 0) {
+		    for(var i=0; opr.items && i<opr.items.length; ++i){
+		        var oper = opr.items[i];
+		        AnyBalance.trace('Нашли операцию с балансом "' + oper.operation + '" ');
+		        
+                getParam(oper.sum, result, 'rub_oper_sum', null, null, parseBalance);
+                getParam(oper.operation, result, 'rub_oper_desc');
+				getParam(oper.status, result, 'rub_oper_state');
+			    getParam(oper.date, result, 'rub_oper_date', null, null, parseDateISO);
+				
+			    break;
+		    }
+        }else{
+		    AnyBalance.trace('Не удалось получить данные по операциям с балансом');
+		}
 	}
 	
 	if (isAvailable(['ozoncard_balance', 'favourites', 'notifications'])) {

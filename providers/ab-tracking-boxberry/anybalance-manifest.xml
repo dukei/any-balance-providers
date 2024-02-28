@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-tracking-boxberry</id>
+	<id version="4">ab-tracking-boxberry</id>
 	<api flags="no_browser"/>
-	<name>BoxBerry</name>
+	<name>Boxberry</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о состоянии, дате и времени изменения, местонахождении и другую информацию для пользователей услуг доставки BoxBerry (https://boxberry.ru/).</p>
-	<p>Информация берется со страницы отслеживания посылок на сайте https://boxberry.ru/.</p>
+	<p>Предоставляет информацию о состоянии, дате и времени изменения, местонахождении и другую информацию для пользователей услуг доставки Boxberry (https://boxberry.ru/).</p>
+	<p>Информация берется со страницы отслеживания посылок на сайте https://boxberry.ru/tracking-page.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Для работы провайдера требуется ввести трек-номер отправления.</p>
@@ -23,12 +23,13 @@
 	<counters>
 		<counter id="orderNum" name="Номер заказа магазина" type="text"/>
 		<counter id="storeName" name="Название магазина" type="text"/>
-		<counter id="orderNumBox" name="Номер заказа BoxBerry" type="text"/>
+		<counter id="orderNumBox" name="Номер заказа Boxberry" type="text"/>
 		<counter id="dest" name="Город назначения" type="text"/>
 		<counter id="weight" name="Вес" units=" кг"/>
 		<counter id="toPay" name="К оплате" units=" ₽"/>
 		<counter id="point" name="Пункт выдачи" type="text"/>
-		<counter id="status" name="Состояние" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="status" name="Статус заказа" type="text"/>
 		<counter id="date" name="Время изменения" type="time" format="dd.MM.yyyy HH:mm"/>
 		<counter id="all" name="Сводка" type="text"/>
 	</counters>

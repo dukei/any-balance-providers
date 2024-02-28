@@ -57,7 +57,8 @@ function main() {
 		infoWeight = (info && info.Weight) || 0,
 		infoToPay = (info && info.sum) || 0,
 		infoPointCity = (info && info.point_city) || '???',
-		infoAddressCD = (info && info.addressCD) || '???',
+		infoPointAddress = (info && info.point_address) || '???',
+		infoPointPhone = (info && info.point_phone) || '???',
 		infoTrackNum = (info && info.ProgramNumber) || '',
 		infoTrackId = (info && info.track_id) || '';
 
@@ -76,14 +77,15 @@ function main() {
     getParam(statusDate, result, 'date', null, [/\(|\)/g, ''], parseDate);
 	getParam(infoPointCity, result, 'dest');
 	getParam(infoToPay, result, 'toPay');
-    getParam(infoAddressCD, result, 'point');
+    getParam(infoPointAddress, result, 'point');
+	getParam(infoPointPhone, result, 'phone', null, [/\(|\)/g, ' ']);
     getParam(statusName, result, 'status');
 	getParam(infoWeight, result, 'weight');
 	
 	if(isAvailable('all')) {
 		var items = json.Statuses;
-		if(items && items.length > 0) {
-			for(var i = 0; i < items.length; i++) {
+		if(items && items.length > 0){
+			for(var i=items.length-1; i>=0; i--){
 				var item = items[i];
                 
 				sumParam(item.date_time.replace(/\(|\)/g, '') + ': ' + item.name, result, 'all', null, null, null, create_aggregate_join('.\n '));

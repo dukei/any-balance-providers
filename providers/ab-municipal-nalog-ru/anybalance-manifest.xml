@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="16">ab-municipal-nalog-ru</id>
+	<id version="17">ab-municipal-nalog-ru</id>
 	<name>Федеральная Налоговая Служба (ФНС)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, задолженности и другие данные по налогам с сайта Федеральной Налоговой Службы (ФНС) https://nalog.ru/.</p>
@@ -40,8 +40,10 @@
 		<counter id="notifications" name="Сообщения" units=" шт"/>
 		<counter id="lastoperdate" name="Дата последней операции" type="time" format="dd.MM.yyyy"/>
 		<counter id="lastopersum" name="Сумма последней операции" units=" ₽"/>
-		<counter id="lastopertype" name="Тип последней операции" type="text"/>
-		<counter id="lastoperdesc" name="Описание последней операции" type="text"/>
+		<counter id="lastopertype" name="Вид последней операции" type="text"/>
+		<counter id="lastoperdesc" name="Обязательство последней операции" type="text"/>
+		<counter id="lastoperdoc" name="Основание последней операции" type="text"/>
+		<counter id="all2ndfl" name="Последняя сводка по форме 2-НДФЛ" type="text"/>
 <!--	<counter id="income" name="Зачислено" units=" ₽"/>
 		<counter id="paid" name="Уплачено" units=" ₽"/>
 		<counter id="unpaid" name="Начислено" units=" ₽"/> -->

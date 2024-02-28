@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="17" date="2024-01-23">
+	- Поддержка изменений на сайте
+	- Добавлены дополнительные счетчики
+	</change>
 	<change version="16" date="2024-01-05">
 	- Исправлено получение переплаты
 	</change>

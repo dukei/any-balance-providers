@@ -2,7 +2,7 @@
 <provider>
 	<id version="6">ab-internet-netberry</id>
 	<api flags="no_browser"/>
-	<name>NetBerry (Белоруссия)</name>
+	<name>NetBerry (Беларусь)</name>
 	<description html="true"><![CDATA[
 	<p>Получает баланс и информацию о тарифном плане для белорусского интернет-провайдера NetBerry <a href="http://nbr.by">http://nbr.by</a>.</p>
 	<p>Информация берется из личного кабинета <a href="https://user.nbr.by/bgbilling/webexecuter">https://user.nbr.by/bgbilling/webexecuter</a>.</p>

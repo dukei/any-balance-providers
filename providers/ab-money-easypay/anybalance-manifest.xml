@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
   <id version="1">ab-money-easypay</id>
-  <name>EasyPay (Белоруссия)</name>
+  <name>EasyPay (Беларусь)</name>
   <description>
     Получает текущий остаток и номер кошелька в EasyPay - системе приятных электронных платежей ( https://www.easypay.by ).
 

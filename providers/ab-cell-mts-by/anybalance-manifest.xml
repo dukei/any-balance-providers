@@ -50,7 +50,7 @@
 		<counter id="monthlypay" name="Ежемесячная плата" units=" р"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
 	</counters>
-	<keywords>Сотовый телефон, мобильный, мобильник, mts, белоруссия</keywords>
+	<keywords>Сотовый телефон, мобильный, мобильник, mts, беларусь</keywords>
 	<type>cell</type>
 	<country>by</country>
 </provider>

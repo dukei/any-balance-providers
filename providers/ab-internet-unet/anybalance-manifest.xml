@@ -2,7 +2,7 @@
 <provider>
 	<id version="4">ab-internet-unet</id>
 	<api flags="no_browser"/>
-	<name>Unet (Белоруссия)</name>
+	<name>Unet (Беларусь)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе интрнет провайдера Unet</p>
 	<p>Информация берется из личного кабинета https://my.unet.by/</p>

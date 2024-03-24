@@ -29,7 +29,7 @@
 		<counter id="last_pay_comment" name="Вид последнего платежа" type="text"/>
 		<counter id="login" name="Логин" type="text"/>
 	</counters>
-	<keywords>провайдер интернет белоруссия байфлай</keywords>
+	<keywords>провайдер интернет беларусь байфлай</keywords>
 	<type>internet</type>
 	<country>by</country>
 </provider>

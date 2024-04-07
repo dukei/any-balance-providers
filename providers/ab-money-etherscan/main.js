@@ -22,18 +22,11 @@ function main() {
 
 	var result = {success: true};
 
-	if(AnyBalance.isAvailable('rate', 'rate_btc', 'usd', 'btc', 'gasprice', 'basefee')){
-		var cf = Cloudflare(baseurl);
-		var html = AnyBalance.requestGet(baseurl, g_headers);
-		if(cf.isCloudflared(html))
-		    html = cf.executeScript(html);
-
-		var price = getElement(html, /<a[^>]+View Historical Ether Price/i, replaceTagsAndSpaces);
-
-		getParam(price, result, ['rate', 'usd'], /\$([\d\.,\s]*)/i, replaceTagsAndSpaces, parseBalance);
-		getParam(price, result, ['rate_btc', 'btc'], /@([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-
-		getParam(getElement(html, /<[^>]+gasPricePlaceHolder/i), result, 'gasprice', null, replaceTagsAndSpaces, parseBalance);
+	if(AnyBalance.isAvailable('gasprice', 'basefee')){
+		var html = AnyBalance.requestGet('https://api.owlracle.info/v4/eth/gas?apikey=4407d767cb5745f7b1469320d3728411', g_headers);
+		var json = getJson(html);
+		getParam(Math.round(json.speeds[0].baseFee*10)/10, result, 'basefee');
+		getParam(Math.round(json.speeds[0].maxFeePerGas*10)/10, result, 'gasprice');
 	}
 
 	if(AnyBalance.isAvailable('balance', 'usd', 'btc')){
@@ -42,14 +35,18 @@ function main() {
 		var balance = (+json.result)/1000000000000000000;
 		getParam(balance, result, 'balance');
 
-		if(AnyBalance.isAvailable('usd')){
-			getParam(Math.round(balance*result.rate*100)/100, result, 'usd');
-		}
-
-		if(AnyBalance.isAvailable('btc')){
-			getParam(balance*result.rate_btc, result, 'btc');
-		}
 	}
 
-	AnyBalance.setResult(result);
+        if(AnyBalance.isAvailable('usd', 'btc', 'rate', 'rate_btc')){
+		var html = AnyBalance.requestGet(baseurlApi + 'api?module=stats&action=ethprice&apikey=797R6CPKXY7ZUI7VTHFB9IINH1W4U959RM', g_headers);
+		var json = getJson(html);
+		getParam(Math.round(json.result.ethusd*100)/100, result, ['rate', 'usd']);
+		getParam(+json.result.ethbtc, result, ['rate_btc', 'btc']);
+		getParam(result.balance*json.result.ethbtc, result, 'btc');
+		getParam(result.balance*json.result.ethusd, result, 'usd');
+	}
+
+	AnyBalance.setResult(result);                              
 }
+
+

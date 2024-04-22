@@ -10,7 +10,7 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36;',
 };
 
-var baseurl = 'https://lk.kmv.ru/';
+var baseurl = 'https://oldlk.kmv.ru/';
 
 function main(){
     var prefs = AnyBalance.getPreferences();
@@ -20,7 +20,7 @@ function main(){
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-    var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'login', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() >= 500){
 		AnyBalance.trace(html);
@@ -61,9 +61,18 @@ function mainOld(html){
 		
 	html = AnyBalance.requestPost(joinUrl(baseurl, action), params, addHeaders({'Referer': AnyBalance.getLastUrl()}));
 	
-    if(!/new HupoApp\(\{/i.test(html)){
-        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
-    }
+	if(/Welcome to nginx!/i.test(html)){
+		AnyBalance.trace('Перенаправлены на приветственную страницу nginx. Пробуем открыть главную принудительно...');
+	    html = AnyBalance.requestGet(baseurl, g_headers);
+	}
+	
+	if(!/new HupoApp/i.test(html)){
+		if(/\/login/i.test(AnyBalance.getLastUrl()) && AnyBalance.getLastStatusCode() == 404)
+			throw new AnyBalance.Error('Неверный логин или пароль');
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
+	}
 	
     var result = {success: true};
 	
@@ -171,19 +180,20 @@ function mainOld(html){
 
 function mainNew(html){
 	var prefs = AnyBalance.getPreferences();
+	var baseurl = 'https://lk.kmv.ru/';
     
     AnyBalance.setDefaultCharset('utf-8');
 	
-	var form = getElement(html, /<form[^>]+role="form"[^>]*>/i);
+	var form = getElement(html, /<form[^>]+login-form[^>]*>/i);
     if(!form){
         AnyBalance.trace(form);
         throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
     }
 	
 	var params = createFormParams(form, function(params, str, name, value) {
-	   	if(name == 'username') {
+	   	if(name == 'LoginForm[username]') {
 	   		return prefs.login;
-    	}else if(name == 'password'){
+    	}else if(name == 'LoginForm[password]'){
 	    	return prefs.password;
 	    }
         	        
@@ -224,13 +234,34 @@ function mainNew(html){
 			}else if(/Кредитный лимит/i.test(item)){
                 getParam(item, result, 'credit', /<h5[^>]*>([\s\S]*?)<\/h5>\s*?<p[^>]*>Кредитный лимит/i, replaceTagsAndSpaces, parseBalance);
 			}else if(/Лицевой сч[её]т/i.test(item)){
-//				getParam(item, result, '__tariff', /<p[^>]*>Лицевой сч[её]т\s?№?\s?([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
 	            getParam(item, result, 'acc_num', /<p[^>]*>Лицевой сч[её]т\s?№?\s?([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
 				getParam(item, result, 'fio', /<h5[^>]*>([\s\S]*?)<\/h5>\s*?<p[^>]*>Лицевой сч[её]т/i, replaceTagsAndSpaces);
 			}
 	    }
 	}else{
 		AnyBalance.trace('Не удалось получить информацию по виджетам');
+	}
+	
+	html = AnyBalance.requestGet(baseurl + 'lk/goods', addHeaders({
+	    'Referer': baseurl + 'lk/index',
+	}));
+	
+	var serv = getElements(html, /<div[^>]+class="card"[^>]*>/ig);
+	
+	if(serv && serv.length > 0){
+		AnyBalance.trace('Найдено подключенных услуг: ' + serv.length);
+		for(var i=0; i<serv.length; ++i){
+	        var s = serv[i];
+			AnyBalance.trace(s);
+			
+			sumParam(s, result, '__tariff', /<h5[^>]*>([\s\S]*?)<\/h5>/i, replaceTagsAndSpaces, null, create_aggregate_join(', '));
+			sumParam(s, result, 'abon', /<h6[^>]*>([\s\S]*?)<\/h6>/i, replaceTagsAndSpaces, parseBalanceSilent, aggregate_sum);
+		}
+		
+		getParam(html, result, 'date_start', /Расч[её]тный период:([\s\S]*?)-[\s\S]*?</i, replaceTagsAndSpaces, parseDate);
+	    getParam(html, result, 'date_till', /Расч[её]тный период:[\s\S]*?-([\s\S]*?)</i, replaceTagsAndSpaces, parseDate);
+	}else{
+		AnyBalance.trace('Не удалось найти информацию по подключенным услугам');
 	}
 	
     AnyBalance.setResult(result);

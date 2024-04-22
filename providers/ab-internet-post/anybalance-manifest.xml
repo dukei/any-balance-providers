@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="4">ab-internet-post</id>
+	<id version="5">ab-internet-post</id>
 	<name>Post Ltd (Пятигорск)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и тарифном плане для пользователей интернет-провайдера <a href="https://www.kmv.ru/">Post Ltd</a>.</p>

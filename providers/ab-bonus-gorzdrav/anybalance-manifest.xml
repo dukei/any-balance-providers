@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-bonus-gorzdrav</id>
+	<id version="4">ab-bonus-gorzdrav</id>
 	<api flags="no_browser"/>
 	<name>Горздрав (Бонусы)</name>
 	<description html="true"><![CDATA[
@@ -30,11 +30,16 @@
 		<counter id="bonuses_till" name="Ближайшая дата сгорания" type="time" format="dd.MM.yyyy"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
 		<counter id="cardstate" name="Статус карты" type="text"/>
+		<counter id="curr_level" name="Текущий уровень" type="text"/>
+		<counter id="next_level" name="Следующий уровень" type="text"/>
+		<counter id="to_next_level" name="Покупок до след. уровня" units=" ₽"/>
+		<counter id="favour" name="Избранное" units=" шт"/>
+		<counter id="basket" name="Корзина" units=" шт"/>
 		<counter id="email" name="E-mail" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords>Gorzdrav, Горздрав</keywords>
+	<keywords>Gorzdrav, Горздрав, аптеки</keywords>
 	<type>bonus</type>
 	<country>ru</country>
 </provider>

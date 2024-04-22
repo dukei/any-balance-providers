@@ -50,6 +50,10 @@ function main() {
 	html = AnyBalance.requestGet(baseurl + '/my-account/my-profile', g_headers);
 	
 	getParam(html, result, 'email', /name="email"[\s\S]*?value="([\s\S]*?)"/i, replaceTagsAndSpaces);
+	
+	if (!result.email)
+		result.email = 'Не указан';
+	
 	getParam(html, result, 'phone', /name="phone"[\s\S]*?value="([\s\S]*?)"/i, replaceNumber);
 	
 	var firstName = getParam(html, null, null, /name="firstName"[\s\S]*?value="([\s\S]*?)"/i, replaceTagsAndSpaces);
@@ -64,23 +68,43 @@ function main() {
 	
 	var csrfToken = getParam(html, /name="CSRFToken"[^>]*value="([^"]*)/i, replaceHtmlEntities);
 	
-	html = AnyBalance.requestPost(baseurl + '/loyaltyCard', {'CSRFToken': csrfToken}, addHeaders({
-		'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-		'Referer': baseurl + '/profile'
-	}));
+	html = AnyBalance.requestGet(baseurl + '/my-account/loyalty-card', addHeaders({Referer: baseurl + '/my-account/my-profile'}));
 	
-	var json = getJson(html);
+	getParam(html, result, 'balance', /Bonuses-card__title[^>]*>([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'bonuses_active', /Bonuses-card__title[^>]*>([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'bonuses_burn', /Bonuses-card__bonuses-expiration[^>]*>([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'bonuses_till', /Bonuses-card__bonuses-expiration[^>]*>([\s\S]*?)</i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, '__tariff', /Bonuses-card__level-name[^>]*>([\s\S]*?)</i, [replaceTagsAndSpaces, /Уровень:/i, '']);
+	getParam(html, result, 'curr_level', /Bonuses-card__level-name[^>]*>([\s\S]*?)</i, [replaceTagsAndSpaces, /Уровень:/i, '']);
+	getParam(html, result, 'favour', /Избранное[\s\S]*?js-favorites-count[^>]*>([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'basket', /Корзина[\s\S]*?js-mini-cart-count[^>]*>([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
 	
-	getParam(json.active, result, 'balance', null, null, parseBalance);
-	getParam(json.active, result, 'bonuses_active', null, null, parseBalance);
-	getParam(json.inactive, result, 'bonuses_inactive', null, null, parseBalance);
-	getParam(json.amounts[0].amount, result, 'bonuses_burn', null, null, parseBalance);
-	getParam(json.amounts[0].expirationDate, result, 'bonuses_till', null, null, parseDateISO);
-	
-	getParam(json.barcode, result, '__tariff');
-	getParam(json.barcode, result, 'cardnum');
-	getParam(g_status[json.status]||json.status, result, 'cardstate');
+	getParam(html, result, 'to_next_level', /Bonuses-card__next-level-amount[^>]*>([\s\S]*?)</i, replaceTagsAndSpaces, parseBalance);
+	getParam(!/Золотой/i.test(result.__tariff) ? 'Золотой' : 'Достигнут', result, 'next_level');
 
+	try {
+		html = AnyBalance.requestPost(baseurl + '/loyaltyCard', {'CSRFToken': csrfToken}, addHeaders({
+		    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+		    'Referer': baseurl + '/profile'
+	    }));
+	    
+	    var json = getJson(html);
+	    
+//	    getParam(json.active, result, 'balance', null, null, parseBalance);
+//	    getParam(json.active, result, 'bonuses_active', null, null, parseBalance);
+	    getParam(json.inactive, result, 'bonuses_inactive', null, null, parseBalance);
+	    
+//      if (json.amounts && json.amounts.length > 0) {
+//	        getParam(json.amounts[0].amount, result, 'bonuses_burn', null, null, parseBalance);
+//	        getParam(json.amounts[0].expirationDate, result, 'bonuses_till', null, null, parseDateISO);
+//	    }
+	    
+	    getParam(json.barcode, result, 'cardnum');
+	    getParam(g_status[json.status]||json.status, result, 'cardstate');
+	} catch(e) {
+		AnyBalance.trace('Не удалось получить данные по программе лояльности');
+	}
+	
 	AnyBalance.setResult(result);
 }
 	

@@ -26,7 +26,7 @@ function main() {
 	g_savedData.restoreCookies();
 
     AnyBalance.trace ('Пробуем войти в личный кабинет...');
-
+	
 	var html = AnyBalance.requestGet(g_baseurl, g_headers);
 	
 	if (!html || AnyBalance.getLastStatusCode() >= 500 || /shadow-block|dot-flashing/i.test(html)){
@@ -70,7 +70,9 @@ function main() {
 
 	    checkEmpty(prefs.password, 'Введите пароль!');
 		
-		var html = AnyBalance.requestGet('https://esia.gosuslugi.ru/aas/oauth2/config', g_headers); // Требуется для установки куки "strelets"
+		var html = AnyBalance.requestGet(g_baseurl, g_headers);
+		
+		html = AnyBalance.requestGet('https://esia.gosuslugi.ru/aas/oauth2/config', g_headers); // Требуется для установки куки "strelets"
 		
 		html = AnyBalance.requestGet(g_baseurl + 'node-api/login/?redirectPage=/', g_headers); // Получаем куки сессии
 		
@@ -312,9 +314,30 @@ function main() {
 			    url = joinUrl('https://esia.gosuslugi.ru', redirectUrl);
 			}
 		
-            var html = AnyBalance.requestGet(url, addHeaders({Referer: AnyBalance.getLastUrl()}), g_headers);
+            html = AnyBalance.requestGet(url, addHeaders({Referer: AnyBalance.getLastUrl()}), g_headers);
 	    }
 		
+		var data = getJsonObject(html, /data:\s/);
+		
+		if (!data){
+			AnyBalance.trace('Требуется дологиниться...'); // Принудительный переход на главную страницу ЛК
+			
+			AnyBalance.setCookie('.gosuslugi.ru', 'w-r-ii', true);
+			html = AnyBalance.requestGet(url, addHeaders({Referer: AnyBalance.getLastUrl()}), g_headers);
+			
+			data = getJsonObject(html, /data:\s/);
+		}
+		
+		if (data && data.user && data.user.person) {
+		    AnyBalance.trace('Успешно залогинены на имя ' + data.user.person.person.firstName + ' ' + data.user.person.person.lastName + ' (' + prefs.login + ')');
+	    } else {
+			AnyBalance.trace(html);
+    	    throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменён?');
+		}
+		
+		var acc_t = AnyBalance.getCookie('acc_t');
+		
+		g_savedData.set('acc_t', acc_t); // access token на всякий случай
 		g_savedData.setCookies();
 	    g_savedData.save();
 	}

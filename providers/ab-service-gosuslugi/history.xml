@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1.2" version="863" date="2024-03-17">
+	- Поддержка изменений в процедуре входа
+	- Улучшена обработка ошибок
+	</change>
     <change major_version="1.2" version="862" date="2024-01-15">
 	- Обработка требования о подтверждении входа
 	</change>

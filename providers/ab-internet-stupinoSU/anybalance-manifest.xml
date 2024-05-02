@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-internet-stupinoSU</id>
+	<id version="5">ab-internet-stupinoSU</id>
 	<api flags="no_browser"/>
 	<name>stupino.su</name>
 	<description html="true"><![CDATA[
-	<p>Получает баланс и другую информацию для интернет провайдера stupino.su (http://stupino.su)</p>
-	<p>Информация берется из личного кабинета клиента: https://lk.stupino.su</p>
+	<p>Получает баланс и другую информацию для интернет провайдера stupino.net (https://stupino.net)</p>
+	<p>Информация берется из личного кабинета клиента: https://lk.stupino.net</p>
 	<p>Для данного провайдера рекомендуется отдельно подключать аккаунты для интернет, телефонии и Wimax.</p>
 	]]></description>
 	<author>Viktor Sinitsyn &lt;mousesport007@ya.ru&gt;</author>

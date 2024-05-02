@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="5" date="2024-05-02">
+	+ Поддержка изменений на сайте (Новый домен lk.stupino.net)
+	</change>
 	<change version="4" date="2020-12-22">
 	+ Поддержка изменений на сайте (Новый ЛК)
 	</change>

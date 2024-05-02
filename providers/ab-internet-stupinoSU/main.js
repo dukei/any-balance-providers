@@ -11,7 +11,7 @@ var g_headers = {
 function main(){  
 	var prefs = AnyBalance.getPreferences();
 
-	var baseurl = 'https://lk.stupino.su/';
+	var baseurl = 'https://lk.stupino.net/';
 		AnyBalance.setDefaultCharset('utf-8');
 
 	var html = AnyBalance.requestPost(baseurl, {

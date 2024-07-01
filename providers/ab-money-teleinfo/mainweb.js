@@ -10,7 +10,8 @@ var g_headers = {
 	'Origin': 'https://online.vtb.ru',
 	'Referer': 'https://online.vtb.ru/',
 	'Upgrade-Insecure-Requests': '1',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+	'X-Finger-Print': 'eyJvc0NwdSI6eyJkdXJhdGlvbiI6MH0sImxhbmd1YWdlcyI6eyJ2YWx1ZSI6W1sicnUtUlUiXV0sImR1cmF0aW9uIjowfSwiY29sb3JEZXB0aCI6eyJ2YWx1ZSI6MjQsImR1cmF0aW9uIjoxfSwiZGV2aWNlTWVtb3J5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInNjcmVlblJlc29sdXRpb24iOnsidmFsdWUiOls5MDAsMTYwMF0sImR1cmF0aW9uIjowfSwiYXZhaWxhYmxlU2NyZWVuUmVzb2x1dGlvbiI6eyJ2YWx1ZSI6Wzg3MCwxNjAwXSwiZHVyYXRpb24iOjB9LCJoYXJkd2FyZUNvbmN1cnJlbmN5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInRpbWV6b25lT2Zmc2V0Ijp7InZhbHVlIjotMTgwLCJkdXJhdGlvbiI6MH0sInRpbWV6b25lIjp7InZhbHVlIjoiRXVyb3BlL01vc2NvdyIsImR1cmF0aW9uIjowfSwic2Vzc2lvblN0b3JhZ2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwibG9jYWxTdG9yYWdlIjp7InZhbHVlIjp0cnVlLCJkdXJhdGlvbiI6MH0sImluZGV4ZWREQiI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjB9LCJvcGVuRGF0YWJhc2UiOnsidmFsdWUiOmZhbHNlLCJkdXJhdGlvbiI6MH0sImNwdUNsYXNzIjp7ImR1cmF0aW9uIjowfSwicGxhdGZvcm0iOnsidmFsdWUiOiJXaW4zMiIsImR1cmF0aW9uIjowfSwicGx1Z2lucyI6eyJ2YWx1ZSI6W3sibmFtZSI6IlBERiBWaWV3ZXIiLCJkZXNjcmlwdGlvbiI6IlBvcnRhYmxlIERvY3VtZW50IEZvcm1hdCIsIm1pbWVUeXBlcyI6W3sidHlwZSI6ImFwcGxpY2F0aW9uL3BkZiIsInN1ZmZpeGVzIjoicGRmIn0seyJ0eXBlIjoidGV4dC9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9XX0seyJuYW1lIjoiQ2hyb21lIFBERiBWaWV3ZXIiLCJkZXNjcmlwdGlvbiI6IlBvcnRhYmxlIERvY3VtZW50IEZvcm1hdCIsIm1pbWVUeXBlcyI6W3sidHlwZSI6ImFwcGxpY2F0aW9uL3BkZiIsInN1ZmZpeGVzIjoicGRmIn0seyJ0eXBlIjoidGV4dC9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9XX0seyJuYW1lIjoiQ2hyb21pdW0gUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJNaWNyb3NvZnQgRWRnZSBQREYgVmlld2VyIiwiZGVzY3JpcHRpb24iOiJQb3J0YWJsZSBEb2N1bWVudCBGb3JtYXQiLCJtaW1lVHlwZXMiOlt7InR5cGUiOiJhcHBsaWNhdGlvbi9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9LHsidHlwZSI6InRleHQvcGRmIiwic3VmZml4ZXMiOiJwZGYifV19LHsibmFtZSI6IldlYktpdCBidWlsdC1pbiBQREYiLCJkZXNjcmlwdGlvbiI6IlBvcnRhYmxlIERvY3VtZW50IEZvcm1hdCIsIm1pbWVUeXBlcyI6W3sidHlwZSI6ImFwcGxpY2F0aW9uL3BkZiIsInN1ZmZpeGVzIjoicGRmIn0seyJ0eXBlIjoidGV4dC9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9XX1dLCJkdXJhdGlvbiI6MX0sInRvdWNoU3VwcG9ydCI6eyJ2YWx1ZSI6eyJtYXhUb3VjaFBvaW50cyI6MCwidG91Y2hFdmVudCI6ZmFsc2UsInRvdWNoU3RhcnQiOmZhbHNlfSwiZHVyYXRpb24iOjB9LCJmb250cyI6eyJ2YWx1ZSI6WyJBZ2VuY3kgRkIiLCJDYWxpYnJpIiwiQ2VudHVyeSIsIkNlbnR1cnkgR290aGljIiwiRnJhbmtsaW4gR290aGljIiwiSGFldHRlbnNjaHdlaWxlciIsIkxlZWxhd2FkZWUiLCJMdWNpZGEgQnJpZ2h0IiwiTHVjaWRhIFNhbnMiLCJNUyBPdXRsb29rIiwiTVMgUmVmZXJlbmNlIFNwZWNpYWx0eSIsIk1TIFVJIEdvdGhpYyIsIk1UIEV4dHJhIiwiTWFybGV0dCIsIk1pY3Jvc29mdCBVaWdodXIiLCJNb25vdHlwZSBDb3JzaXZhIiwiUHJpc3RpbmEiLCJTZWdvZSBVSSBMaWdodCJdLCJkdXJhdGlvbiI6MjI0NX0sImF1ZGlvIjp7InZhbHVlIjoxMjQuMDQzNDc1Mjc1MTYwNzQsImR1cmF0aW9uIjozMH0sInBsdWdpbnNTdXBwb3J0Ijp7InZhbHVlIjp0cnVlLCJkdXJhdGlvbiI6MH0sInByb2R1Y3RTdWIiOnsidmFsdWUiOiIyMDAzMDEwNyIsImR1cmF0aW9uIjowfSwiZW1wdHlFdmFsTGVuZ3RoIjp7InZhbHVlIjozMywiZHVyYXRpb24iOjB9LCJlcnJvckZGIjp7InZhbHVlIjpmYWxzZSwiZHVyYXRpb24iOjB9LCJ2ZW5kb3IiOnsidmFsdWUiOiJHb29nbGUgSW5jLiIsImR1cmF0aW9uIjowfSwiY2hyb21lIjp7InZhbHVlIjp0cnVlLCJkdXJhdGlvbiI6MH0sImNvb2tpZXNFbmFibGVkIjp7InZhbHVlIjp0cnVlLCJkdXJhdGlvbiI6MX19'
 };
 
 var baseurl = 'https://online.vtb.ru/';
@@ -35,12 +36,11 @@ function mainWeb() {
 		'refresh_token': refreshToken,
         'grant_type': 'refresh_token',
         'scope': 'openid',
-        'ac20_sms': false,
+        'ac20_sms': true
     }, addHeaders({
 		'Accept': 'application/json, text/plain, */*',
 	    'Authorization': 'Basic QzJWWXYzYjZSSEVpZzJuXzU2YmZubjNHZkk0YTpjdlllaUFwdkZuQVBHbl9vUUNFelVXdmpTajhh',
-		'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-	    'x-finger-print': 'eyJvc0NwdSI6eyJkdXJhdGlvbiI6MH0sImxhbmd1YWdlcyI6eyJ2YWx1ZSI6W1sicnUtUlUiXV0sImR1cmF0aW9uIjowfSwiY29sb3JEZXB0aCI6eyJ2YWx1ZSI6MjQsImR1cmF0aW9uIjowfSwiZGV2aWNlTWVtb3J5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInNjcmVlblJlc29sdXRpb24iOnsidmFsdWUiOls5MDAsMTYwMF0sImR1cmF0aW9uIjoxfSwiYXZhaWxhYmxlU2NyZWVuUmVzb2x1dGlvbiI6eyJ2YWx1ZSI6Wzg3MCwxNjAwXSwiZHVyYXRpb24iOjB9LCJoYXJkd2FyZUNvbmN1cnJlbmN5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInRpbWV6b25lT2Zmc2V0Ijp7InZhbHVlIjotMTgwLCJkdXJhdGlvbiI6MH0sInRpbWV6b25lIjp7InZhbHVlIjoiRXVyb3BlL01vc2NvdyIsImR1cmF0aW9uIjowfSwic2Vzc2lvblN0b3JhZ2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwibG9jYWxTdG9yYWdlIjp7InZhbHVlIjp0cnVlLCJkdXJhdGlvbiI6MH0sImluZGV4ZWREQiI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjF9LCJvcGVuRGF0YWJhc2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwiY3B1Q2xhc3MiOnsiZHVyYXRpb24iOjB9LCJwbGF0Zm9ybSI6eyJ2YWx1ZSI6IldpbjMyIiwiZHVyYXRpb24iOjB9LCJwbHVnaW5zIjp7InZhbHVlIjpbeyJuYW1lIjoiUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJDaHJvbWUgUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJDaHJvbWl1bSBQREYgVmlld2VyIiwiZGVzY3JpcHRpb24iOiJQb3J0YWJsZSBEb2N1bWVudCBGb3JtYXQiLCJtaW1lVHlwZXMiOlt7InR5cGUiOiJhcHBsaWNhdGlvbi9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9LHsidHlwZSI6InRleHQvcGRmIiwic3VmZml4ZXMiOiJwZGYifV19LHsibmFtZSI6Ik1pY3Jvc29mdCBFZGdlIFBERiBWaWV3ZXIiLCJkZXNjcmlwdGlvbiI6IlBvcnRhYmxlIERvY3VtZW50IEZvcm1hdCIsIm1pbWVUeXBlcyI6W3sidHlwZSI6ImFwcGxpY2F0aW9uL3BkZiIsInN1ZmZpeGVzIjoicGRmIn0seyJ0eXBlIjoidGV4dC9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9XX0seyJuYW1lIjoiV2ViS2l0IGJ1aWx0LWluIFBERiIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfV0sImR1cmF0aW9uIjowfSwidG91Y2hTdXBwb3J0Ijp7InZhbHVlIjp7Im1heFRvdWNoUG9pbnRzIjowLCJ0b3VjaEV2ZW50IjpmYWxzZSwidG91Y2hTdGFydCI6ZmFsc2V9LCJkdXJhdGlvbiI6MH0sImZvbnRzIjp7InZhbHVlIjpbIkFnZW5jeSBGQiIsIkNhbGlicmkiLCJDZW50dXJ5IiwiQ2VudHVyeSBHb3RoaWMiLCJGcmFua2xpbiBHb3RoaWMiLCJIYWV0dGVuc2Nod2VpbGVyIiwiTGVlbGF3YWRlZSIsIkx1Y2lkYSBCcmlnaHQiLCJMdWNpZGEgU2FucyIsIk1TIE91dGxvb2siLCJNUyBSZWZlcmVuY2UgU3BlY2lhbHR5IiwiTVMgVUkgR290aGljIiwiTVQgRXh0cmEiLCJNYXJsZXR0IiwiTWljcm9zb2Z0IFVpZ2h1ciIsIk1vbm90eXBlIENvcnNpdmEiLCJQcmlzdGluYSIsIlNlZ29lIFVJIExpZ2h0Il0sImR1cmF0aW9uIjo0MTh9LCJhdWRpbyI6eyJ2YWx1ZSI6MTI0LjA0MzQ3NTI3NTE2MDc0LCJkdXJhdGlvbiI6MjR9LCJwbHVnaW5zU3VwcG9ydCI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjB9LCJwcm9kdWN0U3ViIjp7InZhbHVlIjoiMjAwMzAxMDciLCJkdXJhdGlvbiI6MH0sImVtcHR5RXZhbExlbmd0aCI6eyJ2YWx1ZSI6MzMsImR1cmF0aW9uIjowfSwiZXJyb3JGRiI6eyJ2YWx1ZSI6ZmFsc2UsImR1cmF0aW9uIjowfSwidmVuZG9yIjp7InZhbHVlIjoiR29vZ2xlIEluYy4iLCJkdXJhdGlvbiI6MH0sImNocm9tZSI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjF9LCJjb29raWVzRW5hYmxlZCI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjEwfX0='
+		'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
 	}));
 
     AnyBalance.trace(html);
@@ -65,18 +65,27 @@ function mainWeb() {
             AnyBalance.trace(html);
             throw new AnyBalance.Error('Сайт ВТБ Онлайн временно недоступен. Попробуйте еще раз позже');
         }
+		
+		var params = {'scope': 'openid', 'ac20_sms': true};
+		
+		if(/^\d{16}$/i.test(prefs.login.replace(/\s+/ig, ''))){
+    	    AnyBalance.trace('Входить будем по номеру карты');
+			params.cardNumber = prefs.login.replace(/\s+/ig, '');
+			params.grant_type = 'card_number_new';
+        }else if(/^\d{9,10}$/i.test(prefs.login.replace(/[\+\s\-()]+/ig, ''))){
+    	    AnyBalance.trace('Входить будем по номеру телефона');
+			params.phone_number = prefs.login.replace(/[\+\s\-()]+/ig, '');
+			params.grant_type = 'phone';
+        }else{
+    	    AnyBalance.trace('Входить будем по логину');
+			params.login = prefs.login.replace(/\s+/ig, '');
+			params.grant_type = 'login_new';
+        }
 	
-	    html = AnyBalance.requestPost('https://sso-app4.vtb.ru/oauth2/token', {
-	    	'login': prefs.login,
-            'password': prefs.password,
-            'grant_type': 'login',
-            'scope': 'openid',
-            'ac20_sms': false,
-        }, addHeaders({
+	    html = AnyBalance.requestPost('https://sso-app4.vtb.ru/oauth2/token', params, addHeaders({
 			'Accept': 'application/json, text/plain, */*',
 			'Authorization': 'Basic QzJWWXYzYjZSSEVpZzJuXzU2YmZubjNHZkk0YTpjdlllaUFwdkZuQVBHbl9vUUNFelVXdmpTajhh',
 			'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-	        'x-finger-print': 'eyJvc0NwdSI6eyJkdXJhdGlvbiI6MH0sImxhbmd1YWdlcyI6eyJ2YWx1ZSI6W1sicnUtUlUiXV0sImR1cmF0aW9uIjowfSwiY29sb3JEZXB0aCI6eyJ2YWx1ZSI6MjQsImR1cmF0aW9uIjowfSwiZGV2aWNlTWVtb3J5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInNjcmVlblJlc29sdXRpb24iOnsidmFsdWUiOls5MDAsMTYwMF0sImR1cmF0aW9uIjoxfSwiYXZhaWxhYmxlU2NyZWVuUmVzb2x1dGlvbiI6eyJ2YWx1ZSI6Wzg3MCwxNjAwXSwiZHVyYXRpb24iOjB9LCJoYXJkd2FyZUNvbmN1cnJlbmN5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInRpbWV6b25lT2Zmc2V0Ijp7InZhbHVlIjotMTgwLCJkdXJhdGlvbiI6MH0sInRpbWV6b25lIjp7InZhbHVlIjoiRXVyb3BlL01vc2NvdyIsImR1cmF0aW9uIjowfSwic2Vzc2lvblN0b3JhZ2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwibG9jYWxTdG9yYWdlIjp7InZhbHVlIjp0cnVlLCJkdXJhdGlvbiI6MH0sImluZGV4ZWREQiI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjF9LCJvcGVuRGF0YWJhc2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwiY3B1Q2xhc3MiOnsiZHVyYXRpb24iOjB9LCJwbGF0Zm9ybSI6eyJ2YWx1ZSI6IldpbjMyIiwiZHVyYXRpb24iOjB9LCJwbHVnaW5zIjp7InZhbHVlIjpbeyJuYW1lIjoiUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJDaHJvbWUgUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJDaHJvbWl1bSBQREYgVmlld2VyIiwiZGVzY3JpcHRpb24iOiJQb3J0YWJsZSBEb2N1bWVudCBGb3JtYXQiLCJtaW1lVHlwZXMiOlt7InR5cGUiOiJhcHBsaWNhdGlvbi9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9LHsidHlwZSI6InRleHQvcGRmIiwic3VmZml4ZXMiOiJwZGYifV19LHsibmFtZSI6Ik1pY3Jvc29mdCBFZGdlIFBERiBWaWV3ZXIiLCJkZXNjcmlwdGlvbiI6IlBvcnRhYmxlIERvY3VtZW50IEZvcm1hdCIsIm1pbWVUeXBlcyI6W3sidHlwZSI6ImFwcGxpY2F0aW9uL3BkZiIsInN1ZmZpeGVzIjoicGRmIn0seyJ0eXBlIjoidGV4dC9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9XX0seyJuYW1lIjoiV2ViS2l0IGJ1aWx0LWluIFBERiIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfV0sImR1cmF0aW9uIjowfSwidG91Y2hTdXBwb3J0Ijp7InZhbHVlIjp7Im1heFRvdWNoUG9pbnRzIjowLCJ0b3VjaEV2ZW50IjpmYWxzZSwidG91Y2hTdGFydCI6ZmFsc2V9LCJkdXJhdGlvbiI6MH0sImZvbnRzIjp7InZhbHVlIjpbIkFnZW5jeSBGQiIsIkNhbGlicmkiLCJDZW50dXJ5IiwiQ2VudHVyeSBHb3RoaWMiLCJGcmFua2xpbiBHb3RoaWMiLCJIYWV0dGVuc2Nod2VpbGVyIiwiTGVlbGF3YWRlZSIsIkx1Y2lkYSBCcmlnaHQiLCJMdWNpZGEgU2FucyIsIk1TIE91dGxvb2siLCJNUyBSZWZlcmVuY2UgU3BlY2lhbHR5IiwiTVMgVUkgR290aGljIiwiTVQgRXh0cmEiLCJNYXJsZXR0IiwiTWljcm9zb2Z0IFVpZ2h1ciIsIk1vbm90eXBlIENvcnNpdmEiLCJQcmlzdGluYSIsIlNlZ29lIFVJIExpZ2h0Il0sImR1cmF0aW9uIjo0MTh9LCJhdWRpbyI6eyJ2YWx1ZSI6MTI0LjA0MzQ3NTI3NTE2MDc0LCJkdXJhdGlvbiI6MjR9LCJwbHVnaW5zU3VwcG9ydCI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjB9LCJwcm9kdWN0U3ViIjp7InZhbHVlIjoiMjAwMzAxMDciLCJkdXJhdGlvbiI6MH0sImVtcHR5RXZhbExlbmd0aCI6eyJ2YWx1ZSI6MzMsImR1cmF0aW9uIjowfSwiZXJyb3JGRiI6eyJ2YWx1ZSI6ZmFsc2UsImR1cmF0aW9uIjowfSwidmVuZG9yIjp7InZhbHVlIjoiR29vZ2xlIEluYy4iLCJkdXJhdGlvbiI6MH0sImNocm9tZSI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjF9LCJjb29raWVzRW5hYmxlZCI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjEwfX0='
 		}));
 
         AnyBalance.trace(html);
@@ -86,26 +95,58 @@ function mainWeb() {
 	    if(json.type && json.type == 'second_factor_required'){
 	    	AnyBalance.trace('ВТБ затребовал код подтверждения из SMS');
 	    	var addProperties = json.additional_properties;
+			if(!addProperties)
+				throw new AnyBalance.Error('Не удалось получить параметры авторизации. Сайт изменен?', null, true);
 	    	var mobile = addProperties.mobile;
 	    	var sessionDataKey = addProperties.sessionDataKey;
-	    	var transactionId = addProperties.transactionId;
             
 			var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, высланный на номер ' + mobile, null, {inputType: 'number', time: 180000});
 		
 	    	html = AnyBalance.requestPost('https://sso-app4.vtb.ru/oauth2/token', {
-	        	'login': prefs.login,
-                'password': prefs.password,
-	        	'transactionId': transactionId,
-	        	'otp': code,
+				'login': prefs.login,
+                'otp': code,
                 'sessionDataKey': sessionDataKey,
-                'grant_type': 'login',
+                'grant_type': 'login_new',
                 'scope': 'openid',
-                'ac20_sms': false,
+                'ac20_sms': true
             }, addHeaders({
 				'Accept': 'application/json, text/plain, */*',
 				'Authorization': 'Basic QzJWWXYzYjZSSEVpZzJuXzU2YmZubjNHZkk0YTpjdlllaUFwdkZuQVBHbl9vUUNFelVXdmpTajhh',
-				'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-	            'x-finger-print': 'eyJvc0NwdSI6eyJkdXJhdGlvbiI6MH0sImxhbmd1YWdlcyI6eyJ2YWx1ZSI6W1sicnUtUlUiXV0sImR1cmF0aW9uIjowfSwiY29sb3JEZXB0aCI6eyJ2YWx1ZSI6MjQsImR1cmF0aW9uIjowfSwiZGV2aWNlTWVtb3J5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInNjcmVlblJlc29sdXRpb24iOnsidmFsdWUiOls5MDAsMTYwMF0sImR1cmF0aW9uIjoxfSwiYXZhaWxhYmxlU2NyZWVuUmVzb2x1dGlvbiI6eyJ2YWx1ZSI6Wzg3MCwxNjAwXSwiZHVyYXRpb24iOjB9LCJoYXJkd2FyZUNvbmN1cnJlbmN5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInRpbWV6b25lT2Zmc2V0Ijp7InZhbHVlIjotMTgwLCJkdXJhdGlvbiI6MH0sInRpbWV6b25lIjp7InZhbHVlIjoiRXVyb3BlL01vc2NvdyIsImR1cmF0aW9uIjowfSwic2Vzc2lvblN0b3JhZ2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwibG9jYWxTdG9yYWdlIjp7InZhbHVlIjp0cnVlLCJkdXJhdGlvbiI6MH0sImluZGV4ZWREQiI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjF9LCJvcGVuRGF0YWJhc2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwiY3B1Q2xhc3MiOnsiZHVyYXRpb24iOjB9LCJwbGF0Zm9ybSI6eyJ2YWx1ZSI6IldpbjMyIiwiZHVyYXRpb24iOjB9LCJwbHVnaW5zIjp7InZhbHVlIjpbeyJuYW1lIjoiUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJDaHJvbWUgUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJDaHJvbWl1bSBQREYgVmlld2VyIiwiZGVzY3JpcHRpb24iOiJQb3J0YWJsZSBEb2N1bWVudCBGb3JtYXQiLCJtaW1lVHlwZXMiOlt7InR5cGUiOiJhcHBsaWNhdGlvbi9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9LHsidHlwZSI6InRleHQvcGRmIiwic3VmZml4ZXMiOiJwZGYifV19LHsibmFtZSI6Ik1pY3Jvc29mdCBFZGdlIFBERiBWaWV3ZXIiLCJkZXNjcmlwdGlvbiI6IlBvcnRhYmxlIERvY3VtZW50IEZvcm1hdCIsIm1pbWVUeXBlcyI6W3sidHlwZSI6ImFwcGxpY2F0aW9uL3BkZiIsInN1ZmZpeGVzIjoicGRmIn0seyJ0eXBlIjoidGV4dC9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9XX0seyJuYW1lIjoiV2ViS2l0IGJ1aWx0LWluIFBERiIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfV0sImR1cmF0aW9uIjowfSwidG91Y2hTdXBwb3J0Ijp7InZhbHVlIjp7Im1heFRvdWNoUG9pbnRzIjowLCJ0b3VjaEV2ZW50IjpmYWxzZSwidG91Y2hTdGFydCI6ZmFsc2V9LCJkdXJhdGlvbiI6MH0sImZvbnRzIjp7InZhbHVlIjpbIkFnZW5jeSBGQiIsIkNhbGlicmkiLCJDZW50dXJ5IiwiQ2VudHVyeSBHb3RoaWMiLCJGcmFua2xpbiBHb3RoaWMiLCJIYWV0dGVuc2Nod2VpbGVyIiwiTGVlbGF3YWRlZSIsIkx1Y2lkYSBCcmlnaHQiLCJMdWNpZGEgU2FucyIsIk1TIE91dGxvb2siLCJNUyBSZWZlcmVuY2UgU3BlY2lhbHR5IiwiTVMgVUkgR290aGljIiwiTVQgRXh0cmEiLCJNYXJsZXR0IiwiTWljcm9zb2Z0IFVpZ2h1ciIsIk1vbm90eXBlIENvcnNpdmEiLCJQcmlzdGluYSIsIlNlZ29lIFVJIExpZ2h0Il0sImR1cmF0aW9uIjo0MTh9LCJhdWRpbyI6eyJ2YWx1ZSI6MTI0LjA0MzQ3NTI3NTE2MDc0LCJkdXJhdGlvbiI6MjR9LCJwbHVnaW5zU3VwcG9ydCI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjB9LCJwcm9kdWN0U3ViIjp7InZhbHVlIjoiMjAwMzAxMDciLCJkdXJhdGlvbiI6MH0sImVtcHR5RXZhbExlbmd0aCI6eyJ2YWx1ZSI6MzMsImR1cmF0aW9uIjowfSwiZXJyb3JGRiI6eyJ2YWx1ZSI6ZmFsc2UsImR1cmF0aW9uIjowfSwidmVuZG9yIjp7InZhbHVlIjoiR29vZ2xlIEluYy4iLCJkdXJhdGlvbiI6MH0sImNocm9tZSI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjF9LCJjb29raWVzRW5hYmxlZCI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjEwfX0='
+				'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+			}));
+
+            AnyBalance.trace(html);
+	
+	        var json = getJson(html);
+			
+			if(json.type && json.type == 'authentication_failed'){
+	    	    var error = json.message;
+                if (error)
+                    throw new AnyBalance.Error(error, null, /логин|код/i.test(error));
+    
+                AnyBalance.trace(html);
+			    throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
+            }
+	    }
+		
+		if(json.type && json.type == 'password_required'){
+	    	AnyBalance.trace('ВТБ затребовал пароль');
+	    	var addProperties = json.additional_properties;
+			if(!addProperties)
+				throw new AnyBalance.Error('Не удалось получить параметры авторизации. Сайт изменен?', null, true);
+	    	var sessionDataKey = addProperties.sessionDataKey;
+		
+	    	html = AnyBalance.requestPost('https://sso-app4.vtb.ru/oauth2/token', {
+				'login': prefs.login,
+                'password': prefs.password,
+                'sessionDataKey': sessionDataKey,
+                'grant_type': 'login_new',
+                'scope': 'openid',
+                'ac20_sms': true
+            }, addHeaders({
+				'Accept': 'application/json, text/plain, */*',
+				'Authorization': 'Basic QzJWWXYzYjZSSEVpZzJuXzU2YmZubjNHZkk0YTpjdlllaUFwdkZuQVBHbl9vUUNFelVXdmpTajhh',
+				'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
 			}));
 
             AnyBalance.trace(html);
@@ -116,7 +157,7 @@ function mainWeb() {
 	    if(!json.access_token){
 	    	var error = json.message;
             if (error)
-                throw new AnyBalance.Error(error, null, /Логин или пароль введены неверно/i.test(error));
+                throw new AnyBalance.Error(error, null, /логин|парол|код/i.test(error));
     
             AnyBalance.trace(html);
 			throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
@@ -137,9 +178,7 @@ function mainWeb() {
 	html = AnyBalance.requestGet(baseurl + 'msa/api-gw/private/portfolio/portfolio-main-page/portfolios/active', addHeaders({
 		'Accept': 'application/json, text/plain, */*',
 		'Authorization': 'Bearer ' + idToken,
-		'x-channel': 'WWW2',
-	    'x-finger-print': 'eyJvc0NwdSI6eyJkdXJhdGlvbiI6MH0sImxhbmd1YWdlcyI6eyJ2YWx1ZSI6W1sicnUtUlUiXV0sImR1cmF0aW9uIjowfSwiY29sb3JEZXB0aCI6eyJ2YWx1ZSI6MjQsImR1cmF0aW9uIjowfSwiZGV2aWNlTWVtb3J5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInNjcmVlblJlc29sdXRpb24iOnsidmFsdWUiOls5MDAsMTYwMF0sImR1cmF0aW9uIjoxfSwiYXZhaWxhYmxlU2NyZWVuUmVzb2x1dGlvbiI6eyJ2YWx1ZSI6Wzg3MCwxNjAwXSwiZHVyYXRpb24iOjB9LCJoYXJkd2FyZUNvbmN1cnJlbmN5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInRpbWV6b25lT2Zmc2V0Ijp7InZhbHVlIjotMTgwLCJkdXJhdGlvbiI6MH0sInRpbWV6b25lIjp7InZhbHVlIjoiRXVyb3BlL01vc2NvdyIsImR1cmF0aW9uIjowfSwic2Vzc2lvblN0b3JhZ2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwibG9jYWxTdG9yYWdlIjp7InZhbHVlIjp0cnVlLCJkdXJhdGlvbiI6MH0sImluZGV4ZWREQiI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjF9LCJvcGVuRGF0YWJhc2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwiY3B1Q2xhc3MiOnsiZHVyYXRpb24iOjB9LCJwbGF0Zm9ybSI6eyJ2YWx1ZSI6IldpbjMyIiwiZHVyYXRpb24iOjB9LCJwbHVnaW5zIjp7InZhbHVlIjpbeyJuYW1lIjoiUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJDaHJvbWUgUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJDaHJvbWl1bSBQREYgVmlld2VyIiwiZGVzY3JpcHRpb24iOiJQb3J0YWJsZSBEb2N1bWVudCBGb3JtYXQiLCJtaW1lVHlwZXMiOlt7InR5cGUiOiJhcHBsaWNhdGlvbi9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9LHsidHlwZSI6InRleHQvcGRmIiwic3VmZml4ZXMiOiJwZGYifV19LHsibmFtZSI6Ik1pY3Jvc29mdCBFZGdlIFBERiBWaWV3ZXIiLCJkZXNjcmlwdGlvbiI6IlBvcnRhYmxlIERvY3VtZW50IEZvcm1hdCIsIm1pbWVUeXBlcyI6W3sidHlwZSI6ImFwcGxpY2F0aW9uL3BkZiIsInN1ZmZpeGVzIjoicGRmIn0seyJ0eXBlIjoidGV4dC9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9XX0seyJuYW1lIjoiV2ViS2l0IGJ1aWx0LWluIFBERiIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfV0sImR1cmF0aW9uIjowfSwidG91Y2hTdXBwb3J0Ijp7InZhbHVlIjp7Im1heFRvdWNoUG9pbnRzIjowLCJ0b3VjaEV2ZW50IjpmYWxzZSwidG91Y2hTdGFydCI6ZmFsc2V9LCJkdXJhdGlvbiI6MH0sImZvbnRzIjp7InZhbHVlIjpbIkFnZW5jeSBGQiIsIkNhbGlicmkiLCJDZW50dXJ5IiwiQ2VudHVyeSBHb3RoaWMiLCJGcmFua2xpbiBHb3RoaWMiLCJIYWV0dGVuc2Nod2VpbGVyIiwiTGVlbGF3YWRlZSIsIkx1Y2lkYSBCcmlnaHQiLCJMdWNpZGEgU2FucyIsIk1TIE91dGxvb2siLCJNUyBSZWZlcmVuY2UgU3BlY2lhbHR5IiwiTVMgVUkgR290aGljIiwiTVQgRXh0cmEiLCJNYXJsZXR0IiwiTWljcm9zb2Z0IFVpZ2h1ciIsIk1vbm90eXBlIENvcnNpdmEiLCJQcmlzdGluYSIsIlNlZ29lIFVJIExpZ2h0Il0sImR1cmF0aW9uIjo0MTh9LCJhdWRpbyI6eyJ2YWx1ZSI6MTI0LjA0MzQ3NTI3NTE2MDc0LCJkdXJhdGlvbiI6MjR9LCJwbHVnaW5zU3VwcG9ydCI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjB9LCJwcm9kdWN0U3ViIjp7InZhbHVlIjoiMjAwMzAxMDciLCJkdXJhdGlvbiI6MH0sImVtcHR5RXZhbExlbmd0aCI6eyJ2YWx1ZSI6MzMsImR1cmF0aW9uIjowfSwiZXJyb3JGRiI6eyJ2YWx1ZSI6ZmFsc2UsImR1cmF0aW9uIjowfSwidmVuZG9yIjp7InZhbHVlIjoiR29vZ2xlIEluYy4iLCJkdXJhdGlvbiI6MH0sImNocm9tZSI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjF9LCJjb29raWVzRW5hYmxlZCI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjEwfX0=',
-	    'x-referrer': baseurl
+	    'X-Referrer': baseurl
 	}));
 	
 	var json = getJson(html);
@@ -199,10 +238,7 @@ function getInfo(result){
 	var html = AnyBalance.requestGet(baseurl + 'msa/api-gw/private/core/core-session-context/user-info', addHeaders({
 		'Accept': 'application/json, text/plain, */*',
 		'Authorization': 'Bearer ' + idToken,
-		'x-channel': 'WWW2',
-		'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-	    'x-finger-print': 'eyJvc0NwdSI6eyJkdXJhdGlvbiI6MH0sImxhbmd1YWdlcyI6eyJ2YWx1ZSI6W1sicnUtUlUiXV0sImR1cmF0aW9uIjowfSwiY29sb3JEZXB0aCI6eyJ2YWx1ZSI6MjQsImR1cmF0aW9uIjowfSwiZGV2aWNlTWVtb3J5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInNjcmVlblJlc29sdXRpb24iOnsidmFsdWUiOls5MDAsMTYwMF0sImR1cmF0aW9uIjoxfSwiYXZhaWxhYmxlU2NyZWVuUmVzb2x1dGlvbiI6eyJ2YWx1ZSI6Wzg3MCwxNjAwXSwiZHVyYXRpb24iOjB9LCJoYXJkd2FyZUNvbmN1cnJlbmN5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInRpbWV6b25lT2Zmc2V0Ijp7InZhbHVlIjotMTgwLCJkdXJhdGlvbiI6MH0sInRpbWV6b25lIjp7InZhbHVlIjoiRXVyb3BlL01vc2NvdyIsImR1cmF0aW9uIjowfSwic2Vzc2lvblN0b3JhZ2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwibG9jYWxTdG9yYWdlIjp7InZhbHVlIjp0cnVlLCJkdXJhdGlvbiI6MH0sImluZGV4ZWREQiI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjF9LCJvcGVuRGF0YWJhc2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwiY3B1Q2xhc3MiOnsiZHVyYXRpb24iOjB9LCJwbGF0Zm9ybSI6eyJ2YWx1ZSI6IldpbjMyIiwiZHVyYXRpb24iOjB9LCJwbHVnaW5zIjp7InZhbHVlIjpbeyJuYW1lIjoiUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJDaHJvbWUgUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJDaHJvbWl1bSBQREYgVmlld2VyIiwiZGVzY3JpcHRpb24iOiJQb3J0YWJsZSBEb2N1bWVudCBGb3JtYXQiLCJtaW1lVHlwZXMiOlt7InR5cGUiOiJhcHBsaWNhdGlvbi9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9LHsidHlwZSI6InRleHQvcGRmIiwic3VmZml4ZXMiOiJwZGYifV19LHsibmFtZSI6Ik1pY3Jvc29mdCBFZGdlIFBERiBWaWV3ZXIiLCJkZXNjcmlwdGlvbiI6IlBvcnRhYmxlIERvY3VtZW50IEZvcm1hdCIsIm1pbWVUeXBlcyI6W3sidHlwZSI6ImFwcGxpY2F0aW9uL3BkZiIsInN1ZmZpeGVzIjoicGRmIn0seyJ0eXBlIjoidGV4dC9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9XX0seyJuYW1lIjoiV2ViS2l0IGJ1aWx0LWluIFBERiIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfV0sImR1cmF0aW9uIjowfSwidG91Y2hTdXBwb3J0Ijp7InZhbHVlIjp7Im1heFRvdWNoUG9pbnRzIjowLCJ0b3VjaEV2ZW50IjpmYWxzZSwidG91Y2hTdGFydCI6ZmFsc2V9LCJkdXJhdGlvbiI6MH0sImZvbnRzIjp7InZhbHVlIjpbIkFnZW5jeSBGQiIsIkNhbGlicmkiLCJDZW50dXJ5IiwiQ2VudHVyeSBHb3RoaWMiLCJGcmFua2xpbiBHb3RoaWMiLCJIYWV0dGVuc2Nod2VpbGVyIiwiTGVlbGF3YWRlZSIsIkx1Y2lkYSBCcmlnaHQiLCJMdWNpZGEgU2FucyIsIk1TIE91dGxvb2siLCJNUyBSZWZlcmVuY2UgU3BlY2lhbHR5IiwiTVMgVUkgR290aGljIiwiTVQgRXh0cmEiLCJNYXJsZXR0IiwiTWljcm9zb2Z0IFVpZ2h1ciIsIk1vbm90eXBlIENvcnNpdmEiLCJQcmlzdGluYSIsIlNlZ29lIFVJIExpZ2h0Il0sImR1cmF0aW9uIjo0MTh9LCJhdWRpbyI6eyJ2YWx1ZSI6MTI0LjA0MzQ3NTI3NTE2MDc0LCJkdXJhdGlvbiI6MjR9LCJwbHVnaW5zU3VwcG9ydCI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjB9LCJwcm9kdWN0U3ViIjp7InZhbHVlIjoiMjAwMzAxMDciLCJkdXJhdGlvbiI6MH0sImVtcHR5RXZhbExlbmd0aCI6eyJ2YWx1ZSI6MzMsImR1cmF0aW9uIjowfSwiZXJyb3JGRiI6eyJ2YWx1ZSI6ZmFsc2UsImR1cmF0aW9uIjowfSwidmVuZG9yIjp7InZhbHVlIjoiR29vZ2xlIEluYy4iLCJkdXJhdGlvbiI6MH0sImNocm9tZSI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjF9LCJjb29raWVzRW5hYmxlZCI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjEwfX0=',
-	    'x-referrer': baseurl
+	    'X-Referrer': baseurl
 	}));
 	
 	var json = getJson(html);
@@ -222,25 +258,47 @@ function getInfo(result){
 	    getParam(json.maskedTrustedPhoneNumber.replace(/.*(\d{3})(\D+)(\d)(\d{2})$/i, '+7 $1 ***-*$3-$4'), result, 'phone');
 }
 
-function fetchBonuses(result){
+function fetchCashback(result){
 	var prefs = AnyBalance.getPreferences();
 		
 	var idToken = AnyBalance.getData(prefs.login + 'idToken');
-
-    var html = AnyBalance.requestGet(baseurl + 'msa/api-gw/private/dks/dks-pu-bonus/balance', addHeaders({
+	
+	var html = AnyBalance.requestGet(baseurl + 'msa/api-gw/private/loya/loya-web/bonus/state', addHeaders({
 		'Accept': 'application/json, text/plain, */*',
 		'Authorization': 'Bearer ' + idToken,
-		'x-channel': 'WWW2',
-		'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-	    'x-finger-print': 'eyJvc0NwdSI6eyJkdXJhdGlvbiI6MH0sImxhbmd1YWdlcyI6eyJ2YWx1ZSI6W1sicnUtUlUiXV0sImR1cmF0aW9uIjowfSwiY29sb3JEZXB0aCI6eyJ2YWx1ZSI6MjQsImR1cmF0aW9uIjowfSwiZGV2aWNlTWVtb3J5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInNjcmVlblJlc29sdXRpb24iOnsidmFsdWUiOls5MDAsMTYwMF0sImR1cmF0aW9uIjoxfSwiYXZhaWxhYmxlU2NyZWVuUmVzb2x1dGlvbiI6eyJ2YWx1ZSI6Wzg3MCwxNjAwXSwiZHVyYXRpb24iOjB9LCJoYXJkd2FyZUNvbmN1cnJlbmN5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInRpbWV6b25lT2Zmc2V0Ijp7InZhbHVlIjotMTgwLCJkdXJhdGlvbiI6MH0sInRpbWV6b25lIjp7InZhbHVlIjoiRXVyb3BlL01vc2NvdyIsImR1cmF0aW9uIjowfSwic2Vzc2lvblN0b3JhZ2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwibG9jYWxTdG9yYWdlIjp7InZhbHVlIjp0cnVlLCJkdXJhdGlvbiI6MH0sImluZGV4ZWREQiI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjF9LCJvcGVuRGF0YWJhc2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwiY3B1Q2xhc3MiOnsiZHVyYXRpb24iOjB9LCJwbGF0Zm9ybSI6eyJ2YWx1ZSI6IldpbjMyIiwiZHVyYXRpb24iOjB9LCJwbHVnaW5zIjp7InZhbHVlIjpbeyJuYW1lIjoiUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJDaHJvbWUgUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJDaHJvbWl1bSBQREYgVmlld2VyIiwiZGVzY3JpcHRpb24iOiJQb3J0YWJsZSBEb2N1bWVudCBGb3JtYXQiLCJtaW1lVHlwZXMiOlt7InR5cGUiOiJhcHBsaWNhdGlvbi9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9LHsidHlwZSI6InRleHQvcGRmIiwic3VmZml4ZXMiOiJwZGYifV19LHsibmFtZSI6Ik1pY3Jvc29mdCBFZGdlIFBERiBWaWV3ZXIiLCJkZXNjcmlwdGlvbiI6IlBvcnRhYmxlIERvY3VtZW50IEZvcm1hdCIsIm1pbWVUeXBlcyI6W3sidHlwZSI6ImFwcGxpY2F0aW9uL3BkZiIsInN1ZmZpeGVzIjoicGRmIn0seyJ0eXBlIjoidGV4dC9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9XX0seyJuYW1lIjoiV2ViS2l0IGJ1aWx0LWluIFBERiIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfV0sImR1cmF0aW9uIjowfSwidG91Y2hTdXBwb3J0Ijp7InZhbHVlIjp7Im1heFRvdWNoUG9pbnRzIjowLCJ0b3VjaEV2ZW50IjpmYWxzZSwidG91Y2hTdGFydCI6ZmFsc2V9LCJkdXJhdGlvbiI6MH0sImZvbnRzIjp7InZhbHVlIjpbIkFnZW5jeSBGQiIsIkNhbGlicmkiLCJDZW50dXJ5IiwiQ2VudHVyeSBHb3RoaWMiLCJGcmFua2xpbiBHb3RoaWMiLCJIYWV0dGVuc2Nod2VpbGVyIiwiTGVlbGF3YWRlZSIsIkx1Y2lkYSBCcmlnaHQiLCJMdWNpZGEgU2FucyIsIk1TIE91dGxvb2siLCJNUyBSZWZlcmVuY2UgU3BlY2lhbHR5IiwiTVMgVUkgR290aGljIiwiTVQgRXh0cmEiLCJNYXJsZXR0IiwiTWljcm9zb2Z0IFVpZ2h1ciIsIk1vbm90eXBlIENvcnNpdmEiLCJQcmlzdGluYSIsIlNlZ29lIFVJIExpZ2h0Il0sImR1cmF0aW9uIjo0MTh9LCJhdWRpbyI6eyJ2YWx1ZSI6MTI0LjA0MzQ3NTI3NTE2MDc0LCJkdXJhdGlvbiI6MjR9LCJwbHVnaW5zU3VwcG9ydCI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjB9LCJwcm9kdWN0U3ViIjp7InZhbHVlIjoiMjAwMzAxMDciLCJkdXJhdGlvbiI6MH0sImVtcHR5RXZhbExlbmd0aCI6eyJ2YWx1ZSI6MzMsImR1cmF0aW9uIjowfSwiZXJyb3JGRiI6eyJ2YWx1ZSI6ZmFsc2UsImR1cmF0aW9uIjowfSwidmVuZG9yIjp7InZhbHVlIjoiR29vZ2xlIEluYy4iLCJkdXJhdGlvbiI6MH0sImNocm9tZSI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjF9LCJjb29raWVzRW5hYmxlZCI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjEwfX0=',
-	    'x-referrer': baseurl
+	    'X-Referrer': baseurl
 	}));
 	
-	AnyBalance.trace('Мультибонусы: ' + html);
+	AnyBalance.trace('Кешбэк: ' + html);
 	
 	var json = getJson(html);
 	
-	getParam(json.multibonus, result, 'bonuses', null, null, parseBalance);
+	if(json.balance){
+	    getParam(json.balance.amountMultibonus, result, 'bonuses', null, null, parseBalance);
+		getParam(json.balance.currentMonthRub, result, 'cashback', null, null, parseBalance);
+	}
+	
+	var html = AnyBalance.requestGet(baseurl + 'msa/api-gw/private/loya/loya-web/bonus/categories', addHeaders({
+		'Accept': 'application/json, text/plain, */*',
+		'Authorization': 'Bearer ' + idToken,
+	    'X-Referrer': baseurl
+	}));
+	
+	AnyBalance.trace('Категории месяца: ' + html);
+	
+	var json = getJson(html);
+	
+	if(json.categories && json.categories.length > 0){
+		AnyBalance.trace('Найдено категорий: ' + json.categories.length);
+		for(var i=0; i<json.categories.length; ++i){
+	        var category = json.categories[i];
+			
+			sumParam(category.displayName + ': ' + (category.percent / 100) + '%', result, 'cashback_category', null, null, null, create_aggregate_join(',<br> '));
+		}
+	}else{
+		AnyBalance.trace('Не удалось найти информацию по категориям месяца');
+		result.cashback_category = 'Не выбраны';
+	}
 }
 
 function getTransactions(result){
@@ -256,10 +314,7 @@ function getTransactions(result){
     var html = AnyBalance.requestGet(baseurl + 'msa/api-gw/private/history-hub/history-hub-homer/v1/history/byUser?dateFrom=' + dateFrom + '&dateTo=' + dateTo, addHeaders({
 		'Accept': 'application/json, text/plain, */*',
 		'Authorization': 'Bearer ' + idToken,
-		'x-channel': 'WWW2',
-		'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-	    'x-finger-print': 'eyJvc0NwdSI6eyJkdXJhdGlvbiI6MH0sImxhbmd1YWdlcyI6eyJ2YWx1ZSI6W1sicnUtUlUiXV0sImR1cmF0aW9uIjowfSwiY29sb3JEZXB0aCI6eyJ2YWx1ZSI6MjQsImR1cmF0aW9uIjowfSwiZGV2aWNlTWVtb3J5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInNjcmVlblJlc29sdXRpb24iOnsidmFsdWUiOls5MDAsMTYwMF0sImR1cmF0aW9uIjoxfSwiYXZhaWxhYmxlU2NyZWVuUmVzb2x1dGlvbiI6eyJ2YWx1ZSI6Wzg3MCwxNjAwXSwiZHVyYXRpb24iOjB9LCJoYXJkd2FyZUNvbmN1cnJlbmN5Ijp7InZhbHVlIjo4LCJkdXJhdGlvbiI6MH0sInRpbWV6b25lT2Zmc2V0Ijp7InZhbHVlIjotMTgwLCJkdXJhdGlvbiI6MH0sInRpbWV6b25lIjp7InZhbHVlIjoiRXVyb3BlL01vc2NvdyIsImR1cmF0aW9uIjowfSwic2Vzc2lvblN0b3JhZ2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwibG9jYWxTdG9yYWdlIjp7InZhbHVlIjp0cnVlLCJkdXJhdGlvbiI6MH0sImluZGV4ZWREQiI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjF9LCJvcGVuRGF0YWJhc2UiOnsidmFsdWUiOnRydWUsImR1cmF0aW9uIjowfSwiY3B1Q2xhc3MiOnsiZHVyYXRpb24iOjB9LCJwbGF0Zm9ybSI6eyJ2YWx1ZSI6IldpbjMyIiwiZHVyYXRpb24iOjB9LCJwbHVnaW5zIjp7InZhbHVlIjpbeyJuYW1lIjoiUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJDaHJvbWUgUERGIFZpZXdlciIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfSx7Im5hbWUiOiJDaHJvbWl1bSBQREYgVmlld2VyIiwiZGVzY3JpcHRpb24iOiJQb3J0YWJsZSBEb2N1bWVudCBGb3JtYXQiLCJtaW1lVHlwZXMiOlt7InR5cGUiOiJhcHBsaWNhdGlvbi9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9LHsidHlwZSI6InRleHQvcGRmIiwic3VmZml4ZXMiOiJwZGYifV19LHsibmFtZSI6Ik1pY3Jvc29mdCBFZGdlIFBERiBWaWV3ZXIiLCJkZXNjcmlwdGlvbiI6IlBvcnRhYmxlIERvY3VtZW50IEZvcm1hdCIsIm1pbWVUeXBlcyI6W3sidHlwZSI6ImFwcGxpY2F0aW9uL3BkZiIsInN1ZmZpeGVzIjoicGRmIn0seyJ0eXBlIjoidGV4dC9wZGYiLCJzdWZmaXhlcyI6InBkZiJ9XX0seyJuYW1lIjoiV2ViS2l0IGJ1aWx0LWluIFBERiIsImRlc2NyaXB0aW9uIjoiUG9ydGFibGUgRG9jdW1lbnQgRm9ybWF0IiwibWltZVR5cGVzIjpbeyJ0eXBlIjoiYXBwbGljYXRpb24vcGRmIiwic3VmZml4ZXMiOiJwZGYifSx7InR5cGUiOiJ0ZXh0L3BkZiIsInN1ZmZpeGVzIjoicGRmIn1dfV0sImR1cmF0aW9uIjowfSwidG91Y2hTdXBwb3J0Ijp7InZhbHVlIjp7Im1heFRvdWNoUG9pbnRzIjowLCJ0b3VjaEV2ZW50IjpmYWxzZSwidG91Y2hTdGFydCI6ZmFsc2V9LCJkdXJhdGlvbiI6MH0sImZvbnRzIjp7InZhbHVlIjpbIkFnZW5jeSBGQiIsIkNhbGlicmkiLCJDZW50dXJ5IiwiQ2VudHVyeSBHb3RoaWMiLCJGcmFua2xpbiBHb3RoaWMiLCJIYWV0dGVuc2Nod2VpbGVyIiwiTGVlbGF3YWRlZSIsIkx1Y2lkYSBCcmlnaHQiLCJMdWNpZGEgU2FucyIsIk1TIE91dGxvb2siLCJNUyBSZWZlcmVuY2UgU3BlY2lhbHR5IiwiTVMgVUkgR290aGljIiwiTVQgRXh0cmEiLCJNYXJsZXR0IiwiTWljcm9zb2Z0IFVpZ2h1ciIsIk1vbm90eXBlIENvcnNpdmEiLCJQcmlzdGluYSIsIlNlZ29lIFVJIExpZ2h0Il0sImR1cmF0aW9uIjo0MTh9LCJhdWRpbyI6eyJ2YWx1ZSI6MTI0LjA0MzQ3NTI3NTE2MDc0LCJkdXJhdGlvbiI6MjR9LCJwbHVnaW5zU3VwcG9ydCI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjB9LCJwcm9kdWN0U3ViIjp7InZhbHVlIjoiMjAwMzAxMDciLCJkdXJhdGlvbiI6MH0sImVtcHR5RXZhbExlbmd0aCI6eyJ2YWx1ZSI6MzMsImR1cmF0aW9uIjowfSwiZXJyb3JGRiI6eyJ2YWx1ZSI6ZmFsc2UsImR1cmF0aW9uIjowfSwidmVuZG9yIjp7InZhbHVlIjoiR29vZ2xlIEluYy4iLCJkdXJhdGlvbiI6MH0sImNocm9tZSI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjF9LCJjb29raWVzRW5hYmxlZCI6eyJ2YWx1ZSI6dHJ1ZSwiZHVyYXRpb24iOjEwfX0=',
-	    'x-referrer': baseurl
+	    'X-Referrer': baseurl
 	}));
 	
 	AnyBalance.trace('Операции: ' + html);
@@ -279,6 +334,65 @@ function getTransactions(result){
 	    }
 	}else{
 		AnyBalance.trace('Не удалось получить информацию о последней операции');
+	}
+}
+
+function getRates(result) {
+    var prefs = AnyBalance.getPreferences();
+		
+	var idToken = AnyBalance.getData(prefs.login + 'idToken');
+	
+	var html = AnyBalance.requestGet(baseurl + 'msa/api-gw/private/portfolio/portfolio-rates/currency_rates/vtbonlinemass', addHeaders({
+		'Accept': 'application/json, text/plain, */*',
+		'Authorization': 'Bearer ' + idToken,
+	    'X-Referrer': baseurl
+	}));
+	
+//	AnyBalance.trace('Курсы валют: ' + html);
+	
+	var json = getJson(html);
+	
+	if(json.categories && json.categories.length > 0){
+		for(var i=0; i<json.categories.length; ++i){
+			if(json.categories[i].category == 'vtbonlinemass'){
+				var currencyPairs = json.categories[i].currencyPairs;
+				break;
+			}else{
+				continue;
+			}
+		}
+	}
+	
+	if(currencyPairs && currencyPairs.length > 0){
+		AnyBalance.trace('Найдено валютных пар: ' + currencyPairs.length);
+		
+		for(var i = 0; i < currencyPairs.length; i++) {
+	    	var currencyPair = currencyPairs[i];
+			
+			if(currencyPair.currencyBase.alphaCode == 'USD' && currencyPair.currencyQuote.alphaCode == 'RUB'){
+				AnyBalance.trace('Валютная пара ' + currencyPair.currencyBase.alphaCode + '/' + currencyPair.currencyQuote.alphaCode + ': ' + JSON.stringify(currencyPair));
+			    
+				for(var j = 0; j < currencyPair.amountRanges.length; j++) { // Получаем только первые значения (от 0 до 100 уе)
+					getParam(currencyPair.amountRanges[0].bid, result, 'usd_purch', null, null, parseBalance);
+				    getParam(currencyPair.amountRanges[0].offer, result, 'usd_sell', null, null, parseBalance);
+					
+					break;
+				}
+			}else if(currencyPair.currencyBase.alphaCode === 'EUR' && currencyPair.currencyQuote.alphaCode == 'RUB'){
+				AnyBalance.trace('Валютная пара ' + currencyPair.currencyBase.alphaCode + '/' + currencyPair.currencyQuote.alphaCode + ': ' + JSON.stringify(currencyPair));
+				
+				for(var j = 0; j < currencyPair.amountRanges.length; j++) { // Получаем только первые значения (от 0 до 100 уе)
+					getParam(currencyPair.amountRanges[0].bid, result, 'eur_purch', null, null, parseBalance);
+				    getParam(currencyPair.amountRanges[0].offer, result, 'eur_sell', null, null, parseBalance);
+					
+					break;
+				}
+			}else{
+				continue;
+			}
+	    }
+	}else{
+		AnyBalance.trace('Не удалось получить информацию о курсах валют');
 	}
 }
 
@@ -336,15 +450,17 @@ function fetchCardNew(baseurl, html, json) {
 	    getParam(currCard.interestRate, result, 'pct', null, null, parseBalance);
     getParam(g_statusCard[currCard.status]||currCard.status, result, 'status'); //ACTIVE, Изготовлена
 	
-	
-	if(AnyBalance.isAvailable('bonuses'))
-		fetchBonuses(result);
+	if(AnyBalance.isAvailable('bonuses', 'cashback', 'cashback_category'))
+		fetchCashback(result);
 	
 	if(AnyBalance.isAvailable('fio', 'holder', 'phone'))
 		getInfo(result);
 	
 	if(AnyBalance.isAvailable('lastoperdate', 'lastopersum', 'lastoperdesc'))
-	    getTransactions(result)
+	    getTransactions(result);
+	
+	if(AnyBalance.isAvailable('usd_purch', 'usd_sell', 'eur_purch', 'eur_sell'))
+		getRates(result);
 	
     AnyBalance.setResult(result);
 }
@@ -388,14 +504,17 @@ function fetchAccountNew(baseurl, html, json) {
 	getParam(g_type[currAcc.type]||currAcc.type, result, 'type'); // Мастер-счет, Инвест. соглашение
     getParam(g_statusAcc[currAcc.status]||currAcc.status, result, 'status'); //ACTIVE, Изготовлена
 	
-	if(AnyBalance.isAvailable('bonuses'))
-		fetchBonuses(result);
+	if(AnyBalance.isAvailable('bonuses', 'cashback', 'cashback_category'))
+		fetchCashback(result);
 	
 	if(AnyBalance.isAvailable('fio', 'holder', 'phone'))
 		getInfo(result);
 	
 	if(AnyBalance.isAvailable('lastoperdate', 'lastopersum', 'lastoperdesc'))
-	    getTransactions(result)
+	    getTransactions(result);
+	
+	if(AnyBalance.isAvailable('usd_purch', 'usd_sell', 'eur_purch', 'eur_sell'))
+		getRates(result);
     
     AnyBalance.setResult(result);
 }
@@ -441,14 +560,17 @@ function fetchDepositNew(baseurl, html, json) {
     getParam(currDep.rate, result, 'pct', null, null, parseBalance);
     getParam(g_statusAcc[currDep.status]||currDep.status, result, 'status');
 	
-	if(AnyBalance.isAvailable('bonuses'))
-		fetchBonuses(result);
+	if(AnyBalance.isAvailable('bonuses', 'cashback', 'cashback_category'))
+		fetchCashback(result);
 	
 	if(AnyBalance.isAvailable('fio', 'holder', 'phone'))
 		getInfo(result);
 	
 	if(AnyBalance.isAvailable('lastoperdate', 'lastopersum', 'lastoperdesc'))
-	    getTransactions(result)
+	    getTransactions(result);
+	
+	if(AnyBalance.isAvailable('usd_purch', 'usd_sell', 'eur_purch', 'eur_sell'))
+		getRates(result);
     
     AnyBalance.setResult(result);
 }
@@ -495,14 +617,17 @@ function fetchCreditNew(baseurl, html, json) {
 	getParam(currCrd.rate, result, 'pct', null, null, parseBalance);
     getParam(g_statusAcc[currCrd.status]||currCrd.status, result, 'status');
 	
-	if(AnyBalance.isAvailable('bonuses'))
-		fetchBonuses(result);
+	if(AnyBalance.isAvailable('bonuses', 'cashback', 'cashback_category'))
+		fetchCashback(result);
 	
 	if(AnyBalance.isAvailable('fio', 'holder', 'phone'))
 		getInfo(result);
 	
 	if(AnyBalance.isAvailable('lastoperdate', 'lastopersum', 'lastoperdesc'))
-	    getTransactions(result)
+	    getTransactions(result);
+	
+	if(AnyBalance.isAvailable('usd_purch', 'usd_sell', 'eur_purch', 'eur_sell'))
+		getRates(result);
     
     AnyBalance.setResult(result);
 }

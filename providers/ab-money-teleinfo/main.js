@@ -46,12 +46,18 @@ var g_type = {
 var g_countersTable = {
 	common: {
 		"bonuses": "bonuses",
+		"cashback": "cashback",
+		"cashback_category": "cashback_category",
 		"phone": "phone",
 		"fio": "fio",
 		"holder": "holder",
 		"lastoperdate": "lastoperdate",
 		"lastopersum": "lastopersum",
-		"lastopername": "lastopername"
+		"lastopername": "lastopername",
+		'usd_purch': 'usd_purch',
+		'usd_sell': 'usd_sell',
+		'eur_purch': 'eur_purch',
+		'eur_sell': 'eur_sell'
     },
 	card: {
 		"currency": ["cards.currency", "accounts.currency"],

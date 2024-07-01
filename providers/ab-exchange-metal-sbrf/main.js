@@ -13,7 +13,7 @@ var g_headers = {
     'Connection': 'keep-alive',
     'cache-control': 'max-age=0',
     'upgrade-insecure-requests': '1',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36'
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
 };
 
 var g_iso_to2letters = {
@@ -28,48 +28,53 @@ function main(){
     AnyBalance.setDefaultCharset('utf-8');
 
     var region = findRegion(prefs.region).TRBANK_CODE;
+	
+	var html = AnyBalance.requestGet('https://www.sberbank.ru/ru/quotes/metalbeznal', g_headers);
   
     if (/office/.test(prefs.type)) {
-        var segType = '&segType=TRADITIONAL';
-		var enterType = '?tab=offices';
 		var sourceType = 'Офисы банка';
+		html = AnyBalance.requestGet('https://www.sberbank.ru/proxy/services/rates/public/v2/branchActual?rateType=PMR-3&isoCodes[]=A98&isoCodes[]=A99&isoCodes[]=A76&isoCodes[]=A33&id=38', addHeaders({
+            Accept: '*/*',
+  	        Referer: 'https://www.sberbank.ru/ru/quotes/metalbeznal?tab=office'
+        }));
 	} else {
-        var segType = '';
-		var enterType = '';
 		var sourceType = 'СберБанк Онлайн';
-    }	
-  
-  var html = AnyBalance.requestGet('https://www.sberbank.ru/ru/quotes/metalbeznal', g_headers);
-  
-  html = AnyBalance.requestGet('https://www.sberbank.ru/proxy/services/rates/public/actual?rateType=PMR-3&isoCodes[]=A98&isoCodes[]=A99&isoCodes[]=A76&isoCodes[]=A33&regionId=' + region + segType,
-  addHeaders({
-      accept: '*/*',
-  	  Referer: 'https://www.sberbank.ru/ru/quotes/metalbeznal' + enterType
-  }));
-  AnyBalance.trace(html);
+		html = AnyBalance.requestGet('https://www.sberbank.ru/proxy/services/rates/public/v2/actual?rateType=PMR-3&isoCodes[]=A98&isoCodes[]=A99&isoCodes[]=A76&isoCodes[]=A33&date=' + new Date().getTime() + '&regionId=' + region, addHeaders({
+            Accept: '*/*',
+  	        Referer: 'https://www.sberbank.ru/ru/quotes/metalbeznal'
+        }));
+    }
+	
+    AnyBalance.trace(html);
 
-  var json = getJson(html);
+    var json = getJson(html);
+	
+	if (/office/.test(prefs.type))
+		json = json.rates;
 
-  var result = {success: true};
+    var result = {success: true};
 
-  for(var key in json){
-  	  var metal = json[key];
-  	  var name = g_iso_to2letters[key];
-	  AnyBalance.trace(name + ': ' + JSON.stringify(metal));
-      if(AnyBalance.isAvailable(name + '_buy'))
-        result[name + '_buy'] = metal.rateList[0].rateBuy;
-      if(AnyBalance.isAvailable(name + '_sell'))
-        result[name + '_sell'] = metal.rateList[0].rateSell;
-      if(AnyBalance.isAvailable(name + '_weight') && (weight = getWeight(name)))
-        result[name + '_weight'] = metal.rateList[0].rateBuy * weight;
-	  if(AnyBalance.isAvailable('date'))
-        sumParam(metal.startDateTime, result, 'date', null, null, null, aggregate_max);
-	  if(AnyBalance.isAvailable('source'))
-        getParam(sourceType, result, 'source');
-	  getParam(getFormattedDate(null, new Date(metal.startDateTime)), result, '__tariff');
-  }
+    for(var key in json){
+  	    var metal = json[key];
+	    if(!metal.rateList)
+            continue;
+  	    var name = g_iso_to2letters[key];
+	    AnyBalance.trace(name + ': ' + JSON.stringify(metal));
+        if(AnyBalance.isAvailable(name + '_buy'))
+            result[name + '_buy'] = metal.rateList[0].rateBuy;
+        if(AnyBalance.isAvailable(name + '_sell'))
+            result[name + '_sell'] = metal.rateList[0].rateSell;
+        if(AnyBalance.isAvailable(name + '_weight') && (weight = getWeight(name)))
+            result[name + '_weight'] = metal.rateList[0].rateBuy * weight;
+	    if(AnyBalance.isAvailable('date') && metal.startDateTime)
+            sumParam(metal.startDateTime, result, 'date', null, null, null, aggregate_max);
+	    if(AnyBalance.isAvailable('source'))
+            getParam(sourceType, result, 'source');
+	    if(metal.startDateTime)
+		    getParam(getFormattedDate(null, new Date(metal.startDateTime)), result, '__tariff');
+    }
 
-  AnyBalance.setResult(result);
+    AnyBalance.setResult(result);
 }
 
 function getWeight(metal){

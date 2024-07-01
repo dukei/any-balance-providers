@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="13">ab-exchange-metal-sbrf</id>
+    <id version="15">ab-exchange-metal-sbrf</id>
     <api flags="no_browser"/>
-    <name>Курсы драгоценных металлов СБ РФ</name>
+    <name>Курсы металлов СберБанка</name>
     <description html="true"><![CDATA[
     <p>Предоставляет информацию о курсах драгоценных металлов ОМС от банка "СберБанк" со страницы https://www.sberbank.ru/ru/quotes/metalbeznal/.</p>
     <p>Позволяет также ввести вес имеющегося у вас металла и выводит ваш капитал в случае продажи всего металла СберБанку по текущей цене покупки.</p>
@@ -13,7 +13,7 @@
         <module id="framework/sbrf"/>
     </depends>
     <files>
-        <icon>icon.png</icon>
+		<icon>icon.png</icon>
         <js>main.js</js>
         <preferences>preferences.xml</preferences>
         <history>history.xml</history>

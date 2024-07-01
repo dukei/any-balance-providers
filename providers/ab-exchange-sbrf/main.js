@@ -24,14 +24,24 @@ var g_iso_to2letters = {
 	JPY: 'jpy',
 	NOK: 'nok',
 	SGD: 'sgd',
+	CZK: 'czk',
+	INR: 'inr',
 	SEK: 'sek',
 	CHF: 'chf',
 	GBP: 'gbp',
+	PLN: 'pln',
 	CNY: 'cny',
+	TRY: 'try',
+	BYN: 'byn',
 	HKD: 'hkd',
 	AUD: 'aud',
 	AED: 'aed',
 	KZT: 'kzt',
+	KRD: 'krd',
+	AMD: 'amd',
+	KGS: 'kgs',
+	TJS: 'tjs',
+	VND: 'vnd',
 };
 
 function main(){
@@ -51,8 +61,8 @@ function main(){
     }	
 	
 	var html = AnyBalance.requestGet('https://www.sberbank.ru/ru/quotes/currencies', g_headers);
-  
-    html = AnyBalance.requestGet('https://www.sberbank.ru/proxy/services/rates/public/actual?rateType=' + rateType + '&isoCodes[]=USD&isoCodes[]=EUR&isoCodes[]=CNY&isoCodes[]=GBP&isoCodes[]=KZT&isoCodes[]=AED&isoCodes[]=SGD&isoCodes[]=SEK&isoCodes[]=NOK&isoCodes[]=CAD&isoCodes[]=CHF&isoCodes[]=DKK&isoCodes[]=JPY&isoCodes[]=HKD&isoCodes[]=AUD&regionId=' + region,
+    
+    html = AnyBalance.requestGet('https://www.sberbank.ru/proxy/services/rates/public/v2/actual?rateType=' + rateType + '&isoCodes[]=USD&isoCodes[]=EUR&isoCodes[]=CNY&isoCodes[]=BYN&isoCodes[]=KZT&isoCodes[]=AED&isoCodes[]=GBP&isoCodes[]=SGD&isoCodes[]=INR&isoCodes[]=SEK&isoCodes[]=NOK&isoCodes[]=CAD&isoCodes[]=CHF&isoCodes[]=DKK&isoCodes[]=JPY&isoCodes[]=HKD&isoCodes[]=AUD&isoCodes[]=CZK&isoCodes[]=PLN&isoCodes[]=TRY&isoCodes[]=KRD&isoCodes[]=AMD&isoCodes[]=KGS&isoCodes[]=TJS&isoCodes[]=VND&regionId=' + region,
 	addHeaders({
 		accept: '*/*',
   		Referer: 'https://www.sberbank.ru/ru/quotes/currencies' + enterType
@@ -65,6 +75,8 @@ function main(){
 
     for(var key in json){
     	var valut = json[key];
+		if(!valut.rateList)
+            continue;
   	    var name = g_iso_to2letters[key];
 	    AnyBalance.trace(name + ': ' + JSON.stringify(valut));
         if(AnyBalance.isAvailable(name + '_purch'))
@@ -73,11 +85,12 @@ function main(){
             result[name + '_sell'] = valut.rateList[0].rateSell;
         if(AnyBalance.isAvailable(name + '_amount') && (amount = getAmount(name)))
             result[name + '_amount'] = valut.rateList[0].rateBuy * amount;
-	    if(AnyBalance.isAvailable('date'))
+	    if(AnyBalance.isAvailable('date') && valut.startDateTime)
             sumParam(valut.startDateTime, result, 'date', null, null, null, aggregate_max);
 	    if(AnyBalance.isAvailable('source'))
             getParam(sourceType, result, 'source');
-	    getParam(getFormattedDate(null, new Date(valut.startDateTime)), result, '__tariff');
+		if(valut.startDateTime)
+	        getParam(getFormattedDate(null, new Date(valut.startDateTime)), result, '__tariff');
     }
 
     AnyBalance.setResult(result);

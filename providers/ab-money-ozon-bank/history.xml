@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="9" date="2024-02-04">
+	- Исправлено получение доходности по счету
+	</change>
     <change version="8" date="2023-12-24">
 	- Исправлено получение доходности по счету
 	</change>

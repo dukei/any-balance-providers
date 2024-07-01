@@ -23,16 +23,21 @@ function callApi(action, params){
 		}
 	}
 	
+	AnyBalance.trace('Запрос: ' + url);
+	
 	var html = AnyBalance.requestPost(url, params, headers, {HTTP_METHOD: params ? 'POST' : 'GET'});
 	var json = {};
 	if(html){
 		json = JSON.parse(html);
-		if(!json.data && !json.access_token && !json.current_username){
+		if(json.message || (json.error_description && !/Security code[\s\S]*?empty/i.test(json.error_description))){
 			AnyBalance.trace(html);
 			var error = json.message || json.error_description || 'Ошибка обращения к API';
 			throw new AnyBalance.Error(error, null, /парол|Msisdn not found|password/i.test(error));
 		}
 	}
+	
+	AnyBalance.trace('Ответ: ' + JSON.stringify(json));
+	
 	return json.data || json;
 }
 
@@ -76,37 +81,39 @@ function loginBySMS() {
 	var json = callApi('validation/number/7' + prefs.login, {sender: 'Tele2'});
 
 	var code = AnyBalance.retrieveCode('Пожалуйста, введите код из SMS для входа в личный кабинет Tele2', null, {inputType: 'number', time: 180000});
-
+	
 	json = callApi('https://sso.tele2.ru/auth/realms/tele2-b2c/protocol/openid-connect/token?msisdn=7' + prefs.login + '&action=auth&authType=sms', {
 		__post: true,
 		username: '7' + prefs.login,
 		password: code,
 		grant_type: 'password',
 		client_id: 'android-app',
-		password_type:	'sms_code',
+		password_type:	'sms_code'
 	});
-
-	saveTokens(json);
-}
-
-function loginByAccessToken(){
-	var prefs = AnyBalance.getPreferences();
-	if(prefs.login !== AnyBalance.getData('login'))
-		return false;
-
-	g_headers.Authorization = 'Bearer ' + AnyBalance.getData('ac');
-
-	try{
-		json = callApi('https://sso.tele2.ru/auth/realms/tele2-b2c/protocol/openid-connect/userinfo');
-	}catch(e){
-		AnyBalance.trace('Не удалось войти по access token: ' + e.message);
-		return false;
+	
+	if(json.error && /Security code[\s\S]*?empty/i.test(json.error_description)){
+		AnyBalance.trace('Теле2 затребовал код подтверждения из письма');
+	    
+	    json = callApi('https://sso.tele2.ru/auth/realms/tele2-b2c/credential-management/security-codes', {
+		    username: '7' + prefs.login
+	    });
+	    
+	    var securityCodeToken = json.security_code_token;
+	    var securityCode = AnyBalance.retrieveCode('Пожалуйста, введите код из письма, отправленного на ваш E-mail', null, {inputType: 'number', time: 180000});
+        
+		json = callApi('https://sso.tele2.ru/auth/realms/tele2-b2c/protocol/openid-connect/token?msisdn=7' + prefs.login + '&action=auth&authType=sms', {
+		    __post: true,
+		    username: '7' + prefs.login,
+		    password: code,
+			security_code: securityCode,
+            security_code_token: securityCodeToken,
+		    grant_type: 'password',
+		    client_id: 'android-app',
+		    password_type:	'sms_code'
+	    });
 	}
 
-
-	AnyBalance.trace('Вошли по access token');
-
-	return true;
+	saveTokens(json);
 }
 
 function loginByAccessToken(){
@@ -156,15 +163,37 @@ function loginByRefreshToken(){
 
 function loginByPassword(){
 	var prefs = AnyBalance.getPreferences();
-
+	
 	json = callApi('https://sso.tele2.ru/auth/realms/tele2-b2c/protocol/openid-connect/token?msisdn=7' + prefs.login + '&action=auth&authType=pass', {
 		__post: true,
 		username: '7' + prefs.login,
 		password: prefs.password,
 		grant_type: 'password',
 		client_id: 'android-app',
-		password_type:	'password',
+		password_type:	'password'
 	});
+	
+	if(json.error && /Security code[\s\S]*?empty/i.test(json.error_description)){
+		AnyBalance.trace('Теле2 затребовал код подтверждения из письма');
+	    
+	    json = callApi('https://sso.tele2.ru/auth/realms/tele2-b2c/credential-management/security-codes', {
+		    username: '7' + prefs.login
+	    });
+	    
+	    var securityCodeToken = json.security_code_token;
+	    var securityCode = AnyBalance.retrieveCode('Пожалуйста, введите код из письма, отправленного на ваш E-mail', null, {inputType: 'number', time: 180000});
+        
+	    json = callApi('https://sso.tele2.ru/auth/realms/tele2-b2c/protocol/openid-connect/token?msisdn=7' + prefs.login + '&action=auth&authType=pass', {
+		    __post: true,
+		    username: '7' + prefs.login,
+		    password: prefs.password,
+			security_code: securityCode,
+            security_code_token: securityCodeToken,
+		    grant_type: 'password',
+		    client_id: 'android-app',
+		    password_type:	'password'
+	    });
+	}
 
 	saveTokens(json);
 }

@@ -309,6 +309,8 @@ function fetchAccountStatus(html, result) {
     html = sumParam(html, result, 'min_local', /off-net:\s*([\d\.,]+).*?мин[^\s]*/ig, replaceTagsAndSpaces, parseBalance, true, aggregate_sum);
     //Смарт офис международный
     html = sumParam(html, result, 'min_world', /межд:\s*([\d\.,]+).*?мин[^\s]*/ig, replaceTagsAndSpaces, parseBalance, true, aggregate_sum);
+	//Входящие Роуминг РФ
+    html = sumParam(html, result, 'min_world', /Входящие Роуминг Россия:\s*([\d\.,]+).*?мин[^\s]*/ig, replaceTagsAndSpaces, parseBalance, true, aggregate_sum);
     // Странные минуты, которые на самом деле секунды
 	html = sumParam(html, result, 'min_left', /[\d\.,]+\s+мин:[^<]*?[\d\.,]+\s*мин/ig, replaceTagsAndSpaces, parseOddSeconds, true, aggregate_sum);
 	// Пакет минут

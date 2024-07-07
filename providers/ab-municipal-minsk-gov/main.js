@@ -42,27 +42,26 @@ function main() {
 		enter: 'Получить информацию'
 	}, AB.addHeaders({ Referer: baseurl }));
 
-	if (!/och-search-result/i.test(html)) {
-		var error = AB.getParam(html, null, null, /(По вашему запросу(?:.(?!\/div>))+)/i, AB.replaceTagsAndSpaces);
-		if(error)
-			throw new AnyBalance.Error(error, null, /По вашему запросу/i.test(error));
-		error = getParam(html, null, null, /<\/form>([\s\S]*?)<div[^>]+id="foot-bar"/i, AB.replaceTagsAndSpaces);
-		if(error)
-			throw new AnyBalance.Error(error, null, /все поля/i.test(error));
+	var error = AB.getParam(html, null, null, /(По вашему запросу(?:.(?!\/div>))+)/i, AB.replaceTagsAndSpaces);
+	if (error) {
+		throw new AnyBalance.Error(error, null, /По вашему запросу/i.test(error));
+	}
+	error = getParam(html, null, null, /<\/form>([\s\S]*?)<div[^>]+id="foot-bar"/i, AB.replaceTagsAndSpaces);
+	if(error) {
+		throw new AnyBalance.Error(error, null, /все поля/i.test(error));
+	}
+	if (!/content/i.test(html)) {
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
 	}
 	
 	var result = { success: true };
 
-	var info = AB.getParam(html, null, null, /och-search-result[^>]*>(?:[^<]*<[^>]*>){3}([^<]+)/i, AB.replaceTagsAndSpaces);
-	
-	AB.getParam(info, result, 'family', /составом семьи (\d+) чел/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(info, result, 'general_date', /общем списке c (\d+[^\d]+\d+)/i, AB.replaceTagsAndSpaces);
-	AB.getParam(info, result, 'general_number', /под номером (\d+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-	AB.getParam(info, result, 'separate_date', /отдельный список c (\d+[^\d]+\d+)/i, AB.replaceTagsAndSpaces);
-	AB.getParam(info, result, 'separate_number', /в этом списке (\d+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
-
+	AB.getParam(html, result, 'family', /составом семьи (\d+) чел/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'general_date', /общем списке c (\d+[^\d]+\d+)/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'general_number', /под номером (\d+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
+	AB.getParam(html, result, 'separate_date', /отдельный список c (\d+[^\d]+\d+)/i, AB.replaceTagsAndSpaces);
+	AB.getParam(html, result, 'separate_number', /в этом списке (\d+)/i, AB.replaceTagsAndSpaces, AB.parseBalance);
 	AB.getParam(html, result, 'provider', /Информация предоставлена:([^<]+)Дата обновления/i, AB.replaceTagsAndSpaces);
 	AB.getParam(html, result, 'updated', /Дата обновления:\s*(\d+[^\d]+\d+)/i, AB.replaceTagsAndSpaces);
 

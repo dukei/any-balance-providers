@@ -1,5 +1,6 @@
 const BrowserAPI = (() => {
     const browserApiRelease = 'http://browser.anybalance.ru:4024';
+    const browserApiWinRelease = 'https://browin.anybalance.ru';
     const browserApiDebug = 'http://localhost:4024';
 
     /*
@@ -13,6 +14,7 @@ const BrowserAPI = (() => {
 
     type Options = {
         provider: string
+        win?: boolean
         debug?: boolean
         userAgent: string,
         singlePage?: boolean,
@@ -33,7 +35,7 @@ const BrowserAPI = (() => {
         }
 
         requestAPI(verb, json) {
-            const browserApi = this.options.debug ? browserApiDebug : browserApiRelease;
+            const browserApi = this.options.debug ? browserApiDebug : (this.options.win ? browserApiWinRelease : browserApiRelease);
             const html = json
                 ? AnyBalance.requestPost(browserApi + '/' + verb, JSON.stringify(json), {"Referer": this.options.provider + '', "Content-Type": "application/json"})
                 : AnyBalance.requestGet(browserApi + '/' + verb + (verb.indexOf('?') >= 0 ? '&' : '?') + '_=' + (+new Date()), {"Referer": this.options.provider + ''});

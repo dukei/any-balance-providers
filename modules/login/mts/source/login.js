@@ -144,7 +144,7 @@ function loadProtectedPage(fromUrl, headers){
                 resType: /^(image|stylesheet|font)$/.toString(),
                 action: 'abort',
             }, {
-                url: /_qrator\/qauth_utm_v2(?:_\w+)?\.js/.toString(),
+				url: /_qrator\/qauth_utm_v2(?:_\w+)?\.js/.toString(),
                 action: 'cache',
                 valid: 3600*1000
             }, {
@@ -547,7 +547,7 @@ function enterLKUI(html, options){
         else if (name == 'IDToken1')
             value = options.login;
         else if (name == 'IDToken2')
-            value = '{"screen":{"screenWidth":1600,"screenHeight":900,"screenColourDepth":24},"userAgent":"Mozilla/5.0+(Windows+NT+10.0;+WOW64)+AppleWebKit/537.36+(KHTML,+like+Gecko)+Chrome/107.0.0.0+Safari/537.36","platform":"Win32","language":"ru","timezone":{"timezone":-180},"plugins":{"installedPlugins":"internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;"},"fonts":{"installedFonts":"cursive;monospace;serif;sans-serif;fantasy;default;Arial;Arial+Black;Arial+Narrow;Bookman+Old+Style;Bradley+Hand+ITC;Century;Century+Gothic;Comic+Sans+MS;Courier;Courier+New;Georgia;Impact;Lucida+Console;Monotype+Corsiva;Papyrus;Tahoma;Times;Times+New+Roman;Trebuchet+MS;Verdana;"},"appName":"Netscape","appCodeName":"Mozilla","appVersion":"5.0+(Windows+NT+10.0;+WOW64)+AppleWebKit/537.36+(KHTML,+like+Gecko)+Chrome/107.0.0.0+Safari/537.36","product":"Gecko","productSub":"20030107","vendor":"Google+Inc."}';
+            value = '{"screen":{"screenWidth":1600,"screenHeight":900,"screenColourDepth":24},"userAgent":"Mozilla/5.0+(Windows+NT+10.0;+WOW64)+AppleWebKit/537.36+(KHTML,+like+Gecko)+Chrome/126.0.0.0+Safari/537.36","platform":"Win32","language":"ru","timezone":{"timezone":-180},"plugins":{"installedPlugins":"internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;"},"fonts":{"installedFonts":"cursive;monospace;serif;sans-serif;fantasy;default;Arial;Arial+Black;Arial+Narrow;Bookman+Old+Style;Bradley+Hand+ITC;Century;Century+Gothic;Comic+Sans+MS;Courier;Courier+New;Georgia;Impact;Lucida+Console;Monotype+Corsiva;Papyrus;Tahoma;Times;Times+New+Roman;Trebuchet+MS;Verdana;"},"appName":"Netscape","appCodeName":"Mozilla","appVersion":"5.0+(Windows+NT+10.0;+WOW64)+AppleWebKit/537.36+(KHTML,+like+Gecko)+Chrome/126.0.0.0+Safari/537.36","product":"Gecko","productSub":"20030107","vendor":"Google+Inc."}';
         else if (name == 'noscript')
             value = undef; //Снимаем галочку
         
@@ -704,7 +704,7 @@ function enterLKNUI(options){
 	
 	if (json.header == "device-match-hold") {
 		var params = json;
-		params.callbacks[0].input[0].value = '{"screen":{"screenWidth":1600,"screenHeight":900,"screenColourDepth":24},"userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36","platform":"Win32","language":"ru","timezone":{"timezone":-180},"plugins":{"installedPlugins":"internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;"},"fonts":{"installedFonts":"cursive;monospace;serif;sans-serif;fantasy;default;Arial;Arial Black;Arial Narrow;Bookman Old Style;Bradley Hand ITC;Century;Century Gothic;Comic Sans MS;Courier;Courier New;Georgia;Impact;Lucida Console;Monotype Corsiva;Papyrus;Tahoma;Times;Times New Roman;Trebuchet MS;Verdana;"},"appName":"Netscape","appCodeName":"Mozilla","appVersion":"5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36","product":"Gecko","productSub":"20030107","vendor":"Google Inc."}';
+		params.callbacks[0].input[0].value = '{"screen":{"screenWidth":1600,"screenHeight":900,"screenColourDepth":24},"userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36","platform":"Win32","language":"ru","timezone":{"timezone":-180},"plugins":{"installedPlugins":"internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;"},"fonts":{"installedFonts":"cursive;monospace;serif;sans-serif;fantasy;default;Arial;Arial Black;Arial Narrow;Bookman Old Style;Bradley Hand ITC;Century;Century Gothic;Comic Sans MS;Courier;Courier New;Georgia;Impact;Lucida Console;Monotype Corsiva;Papyrus;Tahoma;Times;Times New Roman;Trebuchet MS;Verdana;"},"appName":"Netscape","appCodeName":"Mozilla","appVersion":"5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36","product":"Gecko","productSub":"20030107","vendor":"Google Inc."}';
 		
 		html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
 	
@@ -723,7 +723,7 @@ function enterLKNUI(options){
 		var params = json;
 		params.callbacks[0].output[0].value = data;
 		params.callbacks[1].input[0].value = captcha;
-		params.callbacks[2].input[0].value = 1;
+		params.callbacks[2].input[0].value = "1";
 		
 		html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
 	
@@ -739,9 +739,22 @@ function enterLKNUI(options){
 	    }
 	}
 	
+	if (json.header == "radius-frontend-request") {
+		var params = json;
+		params.callbacks[0].input[0].value = "1";
+		
+		html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
+	
+	    var json = getJson(html);
+//        AnyBalance.trace('Проверка окружения: ' + JSON.stringify(json));
+        
+		if (json.header)
+		    AnyBalance.trace('Progress header: ' + json.header);
+	}
+	
 	if (json.header == "network-header-resource") {
 		var params = json;
-		params.callbacks[0].input[0].value = 1;
+		params.callbacks[0].input[0].value = "1";
 		
 		html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
 	
@@ -754,7 +767,7 @@ function enterLKNUI(options){
 			
 	if (json.header == "network-header") {
 		var params = json;
-		params.callbacks[1].input[0].value = 1;
+		params.callbacks[1].input[0].value = "1";
 		
 		html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
 	
@@ -768,7 +781,7 @@ function enterLKNUI(options){
 	if (json.header == "enter-phone") {
 		var params = json;
 		params.callbacks[0].input[0].value = "7" + options.login;
-		params.callbacks[1].input[0].value = 1;
+		params.callbacks[1].input[0].value = "1";
 		
 		html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
 	
@@ -792,7 +805,8 @@ function enterLKNUI(options){
 	if (json.header == "verify-password") {
 	    var params = json;
 		params.callbacks[0].input[0].value = options.password;
-		params.callbacks[1].input[0].value = 1;
+		params.callbacks[1].input[0].value = "1";
+		params.callbacks[3].input[0].value = "true"; // Для установки куки persistent ("Запомнить")
 		
 		html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
 	
@@ -817,7 +831,8 @@ function enterLKNUI(options){
 		
 		var params = json;
 		params.callbacks[0].input[0].value = code;
-		params.callbacks[1].input[0].value = 1;
+		params.callbacks[1].input[0].value = "1";
+		params.callbacks[3].input[0].value = "true"; // Для установки куки persistent ("Запомнить")
 		
 		html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
 	

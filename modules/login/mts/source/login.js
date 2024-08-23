@@ -136,7 +136,7 @@ function loadProtectedPage(fromUrl, headers){
         clearAllCookies();
 
         const bro = new BrowserAPI({
-            provider: 'mts-login',
+            provider: 'mts-login-q2',
             userAgent: headers["User-Agent"],
             headful: true,
             singlePage: true,
@@ -144,7 +144,7 @@ function loadProtectedPage(fromUrl, headers){
                 resType: /^(image|stylesheet|font)$/.toString(),
                 action: 'abort',
             }, {
-				url: /_qrator\/qauth_utm_v2(?:_\w+)?\.js/.toString(),
+		url: /_qrator\/qauth(?:_\w+)*\.js/.toString(),
                 action: 'cache',
                 valid: 3600*1000
             }, {

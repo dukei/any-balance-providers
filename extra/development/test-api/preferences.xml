@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <ListPreference
+        title="Client"
+        summary="Which HTTP client to use|Select|{@s} selected. "
+        key="client"
+        defaultValue="apache"
+        entries="Apache Client|OkHttp Client"
+        entryValues="apache|okhttp" />
+</PreferenceScreen>

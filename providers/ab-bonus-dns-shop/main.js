@@ -231,14 +231,16 @@ function loadProtectedPage(headers){
 
         const bro = new BrowserAPI({
             provider: 'dns-shop',
-            userAgent: g_headers["User-Agent"],
-	        singlePage: true,
-            headfull: true,
+            //userAgent: g_headers["User-Agent"],
+	    incognito: true,
+	    singlePage: true,
+            headful: true,
+	    noInterception: true,
             rules: [{
                 url: /^data:/.toString(),
                 action: 'abort',
             },{
-                resType: /^(image|stylesheet|font)$/.toString(),
+                accept: /^(image|css|font|script)$/.toString(),
                 action: 'abort',
             }, {
                 url: /_qrator\/qauth_utm_v2(?:_\w+)?\.js/.toString(),
@@ -248,10 +250,10 @@ function loadProtectedPage(headers){
                 url: /_qrator/.toString(),
                 action: 'request',
             }, {
-                resType: /^(image|stylesheet|font|script)$/i.toString(),
+                url: /\.(png|jpg|ico|svg|woff2|css)/.toString(),
                 action: 'abort',
             }, {
-                url: /\.(png|jpg|ico|svg)/.toString(),
+                url: /a\.dns-shop\.ru/i.toString(),
                 action: 'abort',
             }, {
                 url: /dns-shop\.ru/i.toString(),
@@ -260,11 +262,11 @@ function loadProtectedPage(headers){
 		        url: /.*/.toString(),
 		        action: 'abort'
             }],
-            additionalRequestHeaders: [{
-                headers: {
-			        'User-Agent': g_headers["User-Agent"]
-		        }
-		    }],
+            //additionalRequestHeaders: [{
+            //    headers: {
+		//	        'User-Agent': g_headers["User-Agent"]
+		//        }
+		//    }],
             debug: AnyBalance.getPreferences().debug
         });
 

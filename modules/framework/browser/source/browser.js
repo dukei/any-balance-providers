@@ -81,8 +81,11 @@ const BrowserAPI = (() => {
 			    if(hv.trim() === '')
 				continue;
                             const values = hv.split('\n');
-                            for (let i = 0; i < values.length; ++i)
+                            for (let i = 0; i < values.length; ++i){
+				if(name.toLowerCase() === 'content-length')
+					continue;
                                 headers.push([name, values[i]]);
+			    }
                         }
 
                         let additionalHeaders = {};

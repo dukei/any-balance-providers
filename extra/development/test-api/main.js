@@ -34,6 +34,8 @@ function test(result, comment, testFunc){
 
 function getSiteReceivedCookies(html){
 	const received_cookies_html = getParam(html, /Received cookies:.*?<ul>([\s\S]*?)<\/ul>/i);
+	if(!received_cookies_html)
+		return [];
 	const received_cookies = getElements(received_cookies_html, /<li>/g, AB.replaceTagsAndSpaces, text => text.split(/\s*=\s*/));
 	return received_cookies;
 }
@@ -44,6 +46,8 @@ function main() {
 		AnyBalance.trace("Setting client: " + prefs.client);
 		AnyBalance.setOptions({CLIENT: prefs.client});
 	}
+	if(prefs.cookies === undefined) prefs.cookies = true;
+	if(prefs.redirect === undefined) prefs.redirect = true;
 
 	var result = {
 		passed: 0,
@@ -52,6 +56,18 @@ function main() {
 		success: true
 	};
 
+	if(prefs.cookies)
+		testCookies(result);
+	if(prefs.redirect)
+		testRedirect(result);
+
+	AnyBalance.setResult(result);
+}
+
+
+function testCookies(result){
+	var prefs = AnyBalance.getPreferences();
+	
 	test(result, "Cookie store should be empty on start", () => {
 		const cookies = AnyBalance.getCookies();
 		return cookies.length !== 0 && `${cookies.length} in empty cookies store!`;
@@ -129,13 +145,60 @@ function main() {
 
 	test(result, "Should be able to remove all cookies", () => {
 		clearAllCookies();
+		const html = AnyBalance.requestGet("https://setcookie.net");
+		const received_cookies = getSiteReceivedCookies(html);
+		if(received_cookies.length > 0)
+			return `Site should not receive cookies! ` + JSON.stringify(received_cookies);
 		const cookies = AnyBalance.getCookies();
 		if(cookies.length !== 0)
-			return `Cookie store should be empty!`;
-		const html = AnyBalance.requestGet("https://setcookie.net");
-		if(/Received cookies:/i.test(html))
-			return `Site should not receive cookies!`;
+			return `Cookie store should be empty! ` + JSON.stringify(cookies);
+	});
+}
+
+function testRedirect(result){
+	var prefs = AnyBalance.getPreferences();
+	if(!AnyBalance.getCapabilities().manualRedirects){
+		AnyBalance.trace("Redirects capability is not supported, skipping redirection tests");
+		return;
+	}
+
+	test(result, "Should not follow redirects", () => {
+		AnyBalance.setOptions({
+			MANUAL_REDIRECTS: true
+                });
+		let html = AnyBalance.requestGet("http://ya.ru");
+		if(AnyBalance.getLastStatusCode() < 300 || 400 <= AnyBalance.getLastStatusCode())
+			return "Got no redirect status code! " + AnyBalance.getLastStatusCode();
+		html = AnyBalance.requestGet("http://ya.ru", null, {options: {MANUAL_REDIRECTS: false}});
+		if(300 <= AnyBalance.getLastStatusCode() && AnyBalance.getLastStatusCode() < 400)
+			return "Per-request override failed: got redirect status code! " + AnyBalance.getLastStatusCode();
 	});
 
-	AnyBalance.setResult(result);
+	test(result, "Should be able to cancel manual redirects", () => {
+		AnyBalance.setOptions({
+			MANUAL_REDIRECTS: null
+                });
+		const html = AnyBalance.requestGet("http://ya.ru");
+		if(300 <= AnyBalance.getLastStatusCode() && AnyBalance.getLastStatusCode() < 400)
+			return "Got redirect status code! " + AnyBalance.getLastStatusCode();
+	});
+
+	test(result, "Should not follow redirects per request", () => {
+		const html = AnyBalance.requestGet("http://ya.ru", null, {options: {MANUAL_REDIRECTS: true}});
+		if(AnyBalance.getLastStatusCode() < 300 || 400 <= AnyBalance.getLastStatusCode())
+			return "Got no redirect status code! " + AnyBalance.getLastStatusCode();
+	});
+
+	test(result, "Should be able do manual redirects on per domain basis", () => {
+		AnyBalance.setOptions({
+			PER_DOMAIN: {
+				'ya.ru': {
+					MANUAL_REDIRECTS: true
+				}
+			}
+                });
+		const html = AnyBalance.requestGet("http://ya.ru");
+		if(AnyBalance.getLastStatusCode() < 300 || 400 <= AnyBalance.getLastStatusCode())
+			return "Got no redirect status code! " + AnyBalance.getLastStatusCode();
+	});
 }

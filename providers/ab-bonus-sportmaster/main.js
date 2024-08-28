@@ -4,18 +4,18 @@
 
 var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+//	'Accept-Language': 'en-US,en;q=0.9',
 	'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
-	'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+        'Accept-Encoding': 'gzip, deflate, br',
+	'sec-ch-ua': '"Chromium";v="119", "Not?A_Brand";v="24"',
 	'sec-ch-ua-mobile': '?0',
 	'sec-ch-ua-platform': '"Windows"',
-	'Sec-Fetch-Site': 'none',
-	'Sec-Fetch-Mode': 'navigate',
-	'Sec-Fetch-User': '?1',
-	'Sec-Fetch-Dest': 'document',
+//	'Sec-Fetch-Site': 'none',
+//	'Sec-Fetch-Mode': 'navigate',
+//	'Sec-Fetch-Dest': 'document',
 	'Upgrade-Insecure-Requests': '1',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
 };
 
 var baseurl = 'https://www.sportmaster.ru';
@@ -251,28 +251,29 @@ function loadProtectedPage(url, headers){
     var html = AnyBalance.requestGet(url, headers);
     if(/__qrator/.test(html) || AnyBalance.getLastStatusCode() == 401) {
         AnyBalance.trace("Обнаружена защита от роботов. Пробуем обойти...");
-//      clearAllCookies();
+        clearAllCookies();
 
         const bro = new BrowserAPI({
             provider: 'sportmaster',
-            userAgent: headers["user-agent"] || headers["User-Agent"],
-	        headful: true,
+            //userAgent: headers["user-agent"] || headers["User-Agent"],
+	    noInterception: true,
+            //win: true,
+	    incognito: true,
+	    singlePage: true,	        
+            headful: true,
             rules: [{
                 url: /^data:/.toString(),
                 action: 'abort',
-            },{
-                resType: /^(image|stylesheet|font)$/.toString(),
+            },{       
+                accept: /^(image|css|font|script)$/.toString(),
                 action: 'abort',
             }, {
                 url: /_qrator\/qauth_utm_v2(?:_\w+)?\.js/.toString(),
                 action: 'cache',
                 valid: 3600*1000
             }, {
-                url: /_qrator/.toString(),
+                url: /_qrator|oferta/.toString(),
                 action: 'request',
-            }, {
-                resType: /^(image|stylesheet|font|script)$/i.toString(),
-                action: 'abort',
             }, {
                 url: /\.(png|jpg|ico|svg)/.toString(),
                 action: 'abort',
@@ -280,11 +281,8 @@ function loadProtectedPage(url, headers){
                 url: /cdn.sportmaster.ru/.toString(),
                 action: 'abort'
             }, {
-                url: /sportmaster\.ru/i.toString(),
-                action: 'request',
-            }, {
-		        url: /.*/.toString(),
-		        action: 'abort'
+		url: /.*/.toString(),
+		action: 'abort'
             }],
             debug: AnyBalance.getPreferences().debug
         });
@@ -298,8 +296,8 @@ function loadProtectedPage(url, headers){
         } finally {
             bro.close(r.page);
         }
-
-        if(/__qrator|HTTP 40[31]/.test(html)||AnyBalance.getLastStatusCode() >= 400)
+        console.log(html);
+        if(/__qrator|HTTP 40[31]|block-msg/.test(html)||AnyBalance.getLastStatusCode() >= 400)
             throw new AnyBalance.Error('Не удалось обойти защиту. Сайт изменен?');
 
         AnyBalance.trace("Защита от роботов успешно пройдена");

@@ -20,6 +20,7 @@ const BrowserAPI = (() => {
         singlePage?: boolean,
         incognito?: boolean, //По умолчанию true
         headful?: boolean,
+        noInterception?: boolean,
         rules?: RuleSource[]
         additionalRequestHeaders: {
             url?: RegExp,
@@ -53,6 +54,8 @@ const BrowserAPI = (() => {
                 userAgent: this.options.userAgent,
                 singlePage: this.options.singlePage,
                 headful: this.options.headful,
+		noInterception: this.options.noInterception,
+		incognito: this.options.incognito,
                 url: url,
                 rules: this.options.rules
             })

@@ -128,11 +128,15 @@ function getOrdinaryLoginForm(html){
 }
 
 function loadProtectedPage(fromUrl, headers){
-    const url = fromUrl.startsWith(g_baseurlLogin) ? fromUrl : g_baseurlLogin + '/amserver/UI/Login';
+	const url = fromUrl.startsWith(g_baseurlLogin) ? fromUrl : 'https://auth-lk.ssl.mts.ru/account/login?goto=https://lk.mts.ru/';
 
     var html = AnyBalance.requestGet(url, headers);
+    
     if(/__qrator/.test(html)) {
         AnyBalance.trace("Требуется обойти QRATOR");
+	if(!AnyBalance.getCapabilities().clientOkHttp)
+        	throw new AnyBalance.Error('Для работы провайдера требуется обновить приложение. Новая версия AnyBalance доступна на RuStore');
+
         clearAllCookies();
 
         const bro = new BrowserAPI({
@@ -146,7 +150,7 @@ function loadProtectedPage(fromUrl, headers){
             }, {
 		url: /_qrator\/qauth(?:_\w+)*\.js/.toString(),
                 action: 'cache',
-                valid: 3600*1000
+                valid: 360*1000
             }, {
                 url: /_qrator/.toString(),
                 action: 'request',
@@ -267,7 +271,13 @@ function enterMtsLK(options) {
     		options.url = AnyBalance.getLastUrl();
 		if(/\/amserver\/NUI\//i.test(AnyBalance.getLastUrl())){
 			AnyBalance.trace('МТС направил на новый вход NUI');
-			options.url = 'https://login.mts.ru/amserver/wsso/authenticate?authIndexType=service&authIndexValue=login-spa';
+			options.ref = AnyBalance.getLastUrl();
+			options.statetrace = getParam(AnyBalance.getLastUrl(), /statetrace=([\s\S]*?)(?:&|$)/i, replaceHtmlEntities);
+			if(options.statetrace){ // Получили statetrace, формируем url для логина
+				options.url = 'https://login.mts.ru/amserver/wsso/authenticate?realm=%2Fusers&client_id=LK&authIndexType=service&authIndexValue=login-spa&goto=https%3A%2F%2Flogin.mts.ru%2Famserver%2Foauth2%2Fauthorize%3Fscope%3Dprofile%2520account%2520phone%2520slaves%253Aall%2520slaves%253Aprofile%2520sub%2520email%2520user_address%2520identity_doc%2520lbsv%2520sso%2520openid%26response_type%3Dcode%26client_id%3DLK%26state%3D' + options.statetrace + '%26redirect_uri%3Dhttps%253A%252F%252Fauth-lk.ssl.mts.ru%252Faccount%252Fcallback%252Flogin&statetrace=' + options.statetrace;
+			}else{ // Используем стандартный url для логина
+				options.url = 'https://login.mts.ru/amserver/wsso/authenticate?authIndexType=service&authIndexValue=login-spa';
+			}
 			html = enterLKNUI(options);
 		}else{
 			AnyBalance.trace('МТС направил на старый вход UI');
@@ -672,7 +682,8 @@ function enterLKUI(html, options){
 
 function enterLKNUI(options){
 	var baseurl = options.baseurl || g_baseurl;
-    var loginUrl = options.url = options.url || g_baseurlLogin + "/amserver/wsso/authenticate?authIndexType=service&authIndexValue=login-spa";
+    var loginUrl = options.url || g_baseurlLogin + "/amserver/wsso/authenticate?authIndexType=service&authIndexValue=login-spa";
+	var loginRef = options.ref || g_baseurlLogin + "/amserver/wsso/authenticate?authIndexType=service&authIndexValue=login-spa";
     var allowRetry = options.allowRetry;
 	
 	var recipient = getParam(options.login, null, null, null, [/.*(\d{3})(\d{3})(\d{2})(\d{2})$/, '+7 ($1) $2-$3-$4']);
@@ -681,8 +692,8 @@ function enterLKNUI(options){
 		'Accept': '*/*',
         'Accept-API-Version': 'resource=4.0, protocol=1.0',
 		'Content-Type': 'application/json',
-		'Origin': 'http://login.mts.ru',
-		'Referer': loginUrl
+		'Origin': 'https://login.mts.ru',
+		'Referer': loginRef
 	});
 	
 	var html = AnyBalance.requestPost(loginUrl, null, addHeaders(headers));
@@ -855,7 +866,9 @@ function enterLKNUI(options){
 		AnyBalance.trace('Успешно вошли через NUI: ' + JSON.stringify(json));
 		var tokenId = json.tokenId;
 		var successUrl = json.successUrl;
-		html = AnyBalance.requestGet(successUrl, addHeaders({Referer: 'https://login.mts.ru/'}));
+		
+        // Дологиниваемся корректно с установкой куков сессии
+		html = AnyBalance.requestGet(successUrl, addHeaders({Referer: loginRef}));
 	} else {
 		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?', allowRetry);

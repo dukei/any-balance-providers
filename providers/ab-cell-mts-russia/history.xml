@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="4.1" version="238" date="2024-08-29">
+	- Небольшая оптимизация обхода защиты от роботов
+	</change>
+    <change major_version="4.1" version="237" date="2024-08-28">
+	- Обход защиты от роботов
+	- Поддержка изменений в процедуре входа
+	</change>
+    <change major_version="4.1" version="236" date="2024-08-27">
+	- Обход защиты от роботов
+	- Поддержка изменений в процедуре входа
+	</change>
 	<change major_version="4.1" version="235" date="2024-08-23">
 	- Обход защиты от роботов
 	</change>

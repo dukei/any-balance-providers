@@ -639,12 +639,15 @@ function loginWithPassword(){
 
     g_savedData.restoreCookies();
 	
-	var html = AnyBalance.requestGet('https://profile.mts.ru/account', addHeaders({referer: 'https://lk.mts.ru/'})); // Надо, чтобы новая кука TS0 установилась
+    var html = AnyBalance.requestGet('https://lk.mts.ru/', g_headers); // Надо, чтобы новая кука TS0 установилась
 	
-	html = AnyBalance.requestGet('https://login.mts.ru/amserver/oauth2/sso/validate', addHeaders({Referer: 'https://profile.mts.ru/'})); // Проверка валидности сессии
-	AnyBalance.trace(html);
-	
-	if(!/"isSessionCookieValid":\s*?true/i.test(html)){
+	if(!html || AnyBalance.getLastStatusCode() >= 500){
+        throw new AnyBalance.Error('Личный кабинет МТС временно недоступен. Попробуйте еще раз позже');
+	}
+
+    AnyBalance.trace('isLoggedIn(html) = ' + isLoggedIn(html));
+    
+	if(!isLoggedIn(html)){
         AnyBalance.trace('Сессия новая. Будем логиниться заново...');
         clearAllCookiesExceptProtection();
         var html = enterLK({login: prefs.login, password: prefs.password, baseurl: 'https://lk.mts.ru', url: 'https://auth-lk.ssl.mts.ru/account/login?goto=https://lk.mts.ru/'});

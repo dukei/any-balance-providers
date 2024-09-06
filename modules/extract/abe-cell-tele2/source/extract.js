@@ -334,12 +334,40 @@ function getDiscount(result, discount) {
 }
 
 function processPayments(result){
-    if (!AnyBalance.isAvailable('payments'))
+    if (!AnyBalance.isAvailable('month_refill', 'payments'))
         return;
 
-    AnyBalance.trace("Searching for payments");
+    AnyBalance.trace("Searching for current month payments");
 
     var subsid = getSubscriberId();
+	
+	var dt = new Date();
+	var fromDate = dt.getFullYear() + '-' + n2(dt.getMonth()+1) + '-' + '01';
+	var toDate = dt.getFullYear() + '-' + n2(dt.getMonth()+1) + '-' + n2(dt.getDate());
+	
+	try {
+		var html = AnyBalance.requestGet(baseurl + "api/subscribers/" + subsid + "/payments?fromDate=" 
+		    + fromDate + "T00%3A00%3A00%2B03%3A00&toDate="
+		    + toDate + "T23%3A59%3A59%2B03%3A00", g_headers);
+		
+		var json = getJson(html);
+	} catch (e) {}
+	
+	if(!json || !json.data) {
+		AnyBalance.trace(html);
+		AnyBalance.trace('Не удалось получить платежи за текущий месяц, может их просто нет?');
+		return;
+	}
+	
+	AnyBalance.trace('Current month payments json: ' + JSON.stringify(json));
+	
+	for (var i = 0; i < json.data.length; ++i) {
+        var ref = json.data[i];
+		
+		sumParam(ref.sum.amount, result, 'month_refill', null, null, parseBalanceSilent, aggregate_sum);
+    }
+	
+	AnyBalance.trace("Searching for last 3 months payments");
 	
 	try {
 		var html = AnyBalance.requestGet(baseurl + "api/subscribers/" + subsid + "/payments?fromDate=" 
@@ -351,11 +379,11 @@ function processPayments(result){
 	
 	if(!json || !json.data) {
 		AnyBalance.trace(html);
-		AnyBalance.trace('Не удалось получить последние платежи, может их просто нет?');
+		AnyBalance.trace('Не удалось получить платежи за последние 3 месяца, может их просто нет?');
 		return;
 	}
 	
-	AnyBalance.trace('History json: ' + JSON.stringify(json));
+	AnyBalance.trace('Last 3 months payments json: ' + JSON.stringify(json));
     result.payments = [];
 	
     for (var i = 0; i < json.data.length; ++i) {
@@ -367,6 +395,68 @@ function processPayments(result){
 		getParam(pmnt.type, p, 'payments.descr');
 
         result.payments.push(p);
+    }
+}
+
+function processExpenses(result){
+    if (!AnyBalance.isAvailable('expenses_curr_month', 'expenses_prev_month'))
+        return;
+
+    AnyBalance.trace("Searching for current month expenses");
+
+    var subsid = getSubscriberId();
+	
+	var dt = new Date();
+	var month = dt.getFullYear() + '-' + n2(dt.getMonth()+1);
+	
+	try {
+		var html = AnyBalance.requestGet(baseurl + "api/subscribers/" + subsid + "/charges?month=" + month, addHeaders({
+            'X-API-Version': '1',
+        }));
+		
+		var json = getJson(html);
+	} catch (e) {}
+	
+	if(!json || !json.data) {
+		AnyBalance.trace(html);
+		AnyBalance.trace('Не удалось получить расходы за текущий месяц, может их просто нет?');
+		return;
+	}
+	
+	AnyBalance.trace('Current month expenses json: ' + JSON.stringify(json));
+	
+	for (var i = 0; i < json.data.length; ++i) {
+        var exp = json.data[i];
+		
+		sumParam(exp.amount.amount, result, 'expenses_curr_month', null, null, parseBalanceSilent, aggregate_sum);
+    }
+	
+	AnyBalance.trace("Searching for previous month expenses");
+	
+    var dt = new Date();
+	var dtPrev = new Date(dt.getFullYear(), dt.getMonth()-1, dt.getDate());
+    var prevMonth = dtPrev.getFullYear() + '-' + n2(dtPrev.getMonth()+1);
+	
+	try {
+		var html = AnyBalance.requestGet(baseurl + "api/subscribers/" + subsid + "/charges?month=" + prevMonth, addHeaders({
+            'X-API-Version': '1',
+        }));
+		
+		var json = getJson(html);
+	} catch (e) {}
+	
+	if(!json || !json.data) {
+		AnyBalance.trace(html);
+		AnyBalance.trace('Не удалось получить расходы за прошлый месяц, может их просто нет?');
+		return;
+	}
+	
+	AnyBalance.trace('Previous month expenses json: ' + JSON.stringify(json));
+	
+	for (var i = 0; i < json.data.length; ++i) {
+        var exp = json.data[i];
+		
+		sumParam(exp.amount.amount, result, 'expenses_prev_month', null, null, parseBalanceSilent, aggregate_sum);
     }
 }
 

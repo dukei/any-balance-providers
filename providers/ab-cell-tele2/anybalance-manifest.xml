@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="58">ab-cell-tele2</id>
+	<id version="59">ab-cell-tele2</id>
 	<api flags="no_browser"/>
 	<name>Tele2</name>
 	<description html="true"><![CDATA[
@@ -46,10 +46,13 @@
 		<counter id="history_income" name="Сумма последних 10 пополнений" units=" ₽"/>
 		<counter id="history_out" name="Сумма последних 10 списаний" units=" ₽"/>
 		<counter id="history" name="Последние 10" type="text"/>
+		<counter id="month_refill" name="Пополнения за текущий месяц" units=" ₽"/>
 		<counter id="last_payment_sum" name="Сумма последнего платежа" units=" ₽"/>
 		<counter id="last_payment_date" name="Дата последнего платежа" type="time" format="dd.MM.yyyy"/>
 		<counter id="last_payment_descr" name="Место последнего платежа" type="text"/>
 		<counter id="statuslock" name="Статус блокировки" type="text"/>
+		<counter id="expenses_curr_month" name="Расходы за текущий месяц" units=" ₽"/>
+		<counter id="expenses_prev_month" name="Расходы за прошлый месяц" units=" ₽"/>
 		<counter id="services_total" name="Подключенные услуги" prefix="💼 " units=" шт"/>
 		<counter id="services_paid" name="Платные услуги" prefix="💵 " units=" шт"/>
 		<counter id="services_free" name="Бесплатные услуги" prefix="🎁 " units=" шт"/>

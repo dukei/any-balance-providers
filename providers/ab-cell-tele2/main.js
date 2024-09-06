@@ -33,13 +33,16 @@ function doNewCabinet() {
 			"traffic_total": "remainders.traffic_total",
 			"sms_total": "remainders.sms_total",
 			"statuslock": "remainders.statuslock",
+			"expenses_curr_month": "expenses_curr_month",
+			"expenses_prev_month": "expenses_prev_month",
 			"services_total": "services.services_total",
 		    "services_paid": "services.services_paid",
 		    "services_free": "services.services_free",
 			"services_abon": "services.services_abon",
-//			"last_payment_sum": "payments.sum",
-//			"last_payment_date": "payments.date",
-//			"last_payment_descr": "payments.descr",
+			"month_refill": "month_refill",
+			"last_payment_sum": "payments.sum",
+			"last_payment_date": "payments.date",
+			"last_payment_descr": "payments.descr",
 			"phone": "info.mphone",
 			"userName": "info.fio",
 		}
@@ -54,6 +57,7 @@ function doNewCabinet() {
     adapter.processInfo = adapter.envelope(processInfo);
     adapter.processRemainders = adapter.envelope(processRemainders);
     adapter.processPayments = adapter.envelope(processPayments);
+	adapter.processExpenses = adapter.envelope(processExpenses);
     adapter.processBalance = adapter.envelope(processBalance);
 	adapter.processServices = adapter.envelope(processServices);
 
@@ -62,6 +66,7 @@ function doNewCabinet() {
     adapter.processBalance(result);
     adapter.processRemainders(result);
     adapter.processPayments(result);
+	adapter.processExpenses(result);
 	adapter.processServices(result);
 
     var newresult = adapter.convert(result);

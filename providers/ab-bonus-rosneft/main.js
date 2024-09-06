@@ -7,13 +7,15 @@ var g_savedData;
 var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d)(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+$1 $2 $3-$4-$5'];
 
 var g_headers = {
-	'Accept': '*/*',
-	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.7,en;q=0.4',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+	'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
-	'X-Requested-With': 'XMLHttpRequest',
 	'Origin': baseurl.replace(/\/+$/, ''),
 	'Referer': baseurl,
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36'
+	'Upgrade-Insecure-Requests': '1',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+	'X-Requested-With': 'XMLHttpRequest'
 };
 
 function throwError(html, defError){
@@ -35,9 +37,7 @@ function main() {
 	
 	AnyBalance.trace ('Пробуем войти в личный кабинет...');
 	
-	var html = AnyBalance.requestGet(baseurl + 'account', addHeaders({
-		'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
-	}));
+	var html = AnyBalance.requestGet(baseurl + 'account', g_headers);
 	
 	if(/data-show-login-form=""|Выход/i.test(html)){
 		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
@@ -49,13 +49,42 @@ function main() {
 
     var result = {success: true};
 	
-	if(AnyBalance.isAvailable('balance', 'available', 'card', 'card2', 'card3', '__tariff')){
-	    html = AnyBalance.requestGet(baseurl + 'account', addHeaders({
-	    	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
-	    }));
+	if(AnyBalance.isAvailable('balance', 'available', 'accumulated_liters', 'to_next_level_liters', 'to_next_level_days', 'curr_level', 'next_level', 'card', 'card2', 'card3', '__tariff')){
+	    html = AnyBalance.requestGet(baseurl + 'account', g_headers);
 
 	    getParam(html, result, 'balance', /Баллов всего:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 	    getParam(html, result, 'available', /Баллов доступно:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		
+		getParam(html, result, 'accumulated_liters', /<div[^>]+class="progress-label">([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'to_next_level_liters', /осталось набрать:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		getParam(html, result, 'to_next_level_days', /Осталось до смены уровня:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+		
+		var status_block = getElement(html, /<div[^>]+class="block-cabinet__widget block-widget cabinet-status__progress"[^>]*>/i);
+	    var status_images = getElements(status_block, [/<div[^>]+style="width: auto"[^>]*>/ig, /"status-img"/i]);
+		
+	    if(status_images) {
+			var status_val = {silver: 'Серебро', gold: 'Золото', platinum: 'Платина', diamond: 'Бриллиант', undefined: ''};
+		    var bonus_size = {silver: 0.5, gold: 1, platinum: 1.25, diamond: 1.5, undefined: ''};
+	    	var status_img, curLevel, curBonusSize;
+			
+	        for(var i = 0; i<status_images.length; i++){
+				var img = status_images[i];
+				status_img = getParam(img, null, null, /<img[^>]+status-img[^>][\s\S]*?-\w*-([\s\S]*?)\.[\s\S]*?\/>/i, replaceTagsAndSpaces);
+				
+				if(/progress-active/i.test(img)){ // Текущий уровень
+					curLevel = getParam(status_val[status_img]||status_img, result, 'curr_level');
+		            curBonusSize = bonus_size[status_img]||status_img;
+				}else if(/progress-achieve/i.test(img)){ // Следующий уровень
+					getParam(status_val[status_img]||status_img, result, 'next_level');
+				}
+	        }
+            
+			result.__tariff = curLevel + (curBonusSize ? ' | ' + curBonusSize + ' Б/л' : '');
+			if(!result.next_level && AnyBalance.isAvailable('next_level'))
+				result.next_level = 'Достигнут';
+	    } else {
+ 	    	AnyBalance.trace('Не удалось получить данные по уровням');
+ 	    }
 	
 	    var block = getElement(html, /<div[^>]+class="block-cabinet__team block-stat"[^>]*>/i);
 	    var info = getElements(block, /<div[^>]+class="block-team__number"[^>]*>/ig);
@@ -64,9 +93,11 @@ function main() {
 	    	// Данные по картам
 	        for(var i = 0; i<info.length; i++){
 	        	var mcard = (i >= 1 ? 'card' + (i + 1) : 'card');
-	        	getParam(info[i], result, mcard, /<div[^>]+class="block-team__number"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	        	getParam(info[i], result, mcard, /<div[^>]+class="block-team__number"[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /(\d{4})(\d{2})(.*)(\d{4})$/i, '$1 $2** **** $4']);
 	        }
-	    	getParam(info[0], result, '__tariff', /<div[^>]+class="block-team__number"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+			
+			if(!result.__tariff)
+	    	    getParam(info[0], result, '__tariff', /<div[^>]+class="block-team__number"[^>]*>([\s\S]*?)<\/div>/i, [replaceTagsAndSpaces, /(\d{4})(\d{2})(.*)(\d{4})$/i, '$1 $2** **** $4']);
 	    } else {
  	    	AnyBalance.trace('Не удалось получить данные по картам');
  	    }
@@ -98,9 +129,7 @@ function main() {
 	}
 	
 	if(AnyBalance.isAvailable('fio', 'phone', 'vehicle', 'tire_size', 'fuel_type')){
-		html = AnyBalance.requestGet(baseurl + 'account/settings', addHeaders({
-			'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
-		}));
+		html = AnyBalance.requestGet(baseurl + 'account/settings', g_headers);
 
 		var fio = getParam(html, /"Name" value="([\s\S]*?)"/i, replaceTagsAndSpaces);
 		var lastName = getParam(html, /"LastName" value="([\s\S]*?)"/i, replaceTagsAndSpaces);
@@ -116,13 +145,21 @@ function main() {
 	AnyBalance.setResult(result);
 }
 
-
 function loginSite(prefs){
     var prefs = AnyBalance.getPreferences();
 
 	checkEmpty(prefs.login, 'Введите номер телефона!');
 	checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите номер телефона в формате 10 цифр без пробелов и разделителей!');
 	checkEmpty(prefs.password, 'Введите пароль!');
+	
+	var html = AnyBalance.requestGet(baseurl + 'login?ReturnUrl=%2Faccount', addHeaders({'Referer': baseurl + 'login?ReturnUrl=%2Faccount'}));
+	
+	var csrf = getParam(html, /name='csrf-token-value' content='([^']*)/i, replaceHtmlEntities);
+	
+	if(!csrf){
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось найти токен авторизации. Сайт изменен?');
+	}
 
 //	var html = AnyBalance.requestGet(baseurl + 'location/getcity', g_headers);
 //	var json = getJson(html);
@@ -130,18 +167,18 @@ function loginSite(prefs){
 //	AnyBalance.setCookie('komandacard.ru', 'regionId', json.regionId);
 
 	var dt = new Date();
-	var html = AnyBalance.requestGet(baseurl + 'account/login?_=' + dt.getTime(), g_headers);
+	var html = AnyBalance.requestGet(baseurl + 'account/login?_=' + dt.getTime(), addHeaders({'Referer': baseurl + 'login?ReturnUrl=%2Faccount'}));
 	var rvt = getParam(html, /<input[^>]+__RequestVerificationToken[^>]*value="([^"]*)/i, replaceHtmlEntities);
 	
 	if(!rvt){
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось найти токен верификации запроса. Сайт изменен?');
+		throw new AnyBalance.Error('Не удалось найти токен верификации. Сайт изменен?');
 	}
 
 	var captcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl + 'login', '6LejgioUAAAAAK6ZVEm_o8YhLHpnBil1J-hrPQnB', {USERAGENT: g_headers['User-Agent']});
 
 	html = AnyBalance.requestPost(baseurl + 'account/login', JSON.stringify({
-		"GoForward": true,
+        "GoForward": true,
         "Data": [
             {
                 "name": "Phone",
@@ -156,14 +193,19 @@ function loginSite(prefs){
                 "value": captcha
             },
             {
+                "name": "__RequestVerificationToken",
+                "value": rvt
+            },
+            {
                 "name": "Captcha",
                 "value": captcha
             }
         ]
-	}), addHeaders({
-		'RequestVerificationToken': rvt,
+    }), addHeaders({
 		'Content-Type': 'application/json',
-		'X-Requested-With': 'XMLHttpRequest'
+		'RequestVerificationToken': rvt,
+		'Referer': baseurl + 'login?ReturnUrl=%2Faccount',
+		'X-CsrfToken': csrf
 	}));
 
 	if(/SelectedChannelId/.test(html)){
@@ -189,12 +231,17 @@ function loginSite(prefs){
                 {
                     "name": "__RequestVerificationToken",
                     "value": rvt
+                },
+                {
+                    "name": "csrftoken",
+                    "value": csrf
                 }
             ]
-		}), addHeaders({
-			'RequestVerificationToken': rvt,
+        }), addHeaders({
 			'Content-Type': 'application/json',
-			'X-Requested-With': 'XMLHttpRequest'
+		    'RequestVerificationToken': rvt,
+		    'Referer': baseurl + 'login?ReturnUrl=%2Faccount',
+		    'X-CsrfToken': csrf
 		}));
 
 		if(!/<input[^>]+name="Otp"/i.test(html)){
@@ -214,12 +261,17 @@ function loginSite(prefs){
                 {
                     "name": "__RequestVerificationToken",
                     "value": rvt
+                },
+                {
+                    "name": "csrftoken",
+                    "value": csrf
                 }
             ]
-		}), addHeaders({
-			'RequestVerificationToken': rvt,
+        }), addHeaders({
 			'Content-Type': 'application/json',
-			'X-Requested-With': 'XMLHttpRequest'
+		    'RequestVerificationToken': rvt,
+		    'Referer': baseurl + 'login?ReturnUrl=%2Faccount',
+		    'X-CsrfToken': csrf
 		}));
 	
 		if(/<input[^>]+name="Otp"/i.test(html)){
@@ -238,7 +290,7 @@ function loginSite(prefs){
 	if(!json.isFinished){
 		var error = json.error;
 		if(error)
-			throw new AnyBalance.Error(error);//, null, /парол/i.test(error));
+			throw new AnyBalance.Error(error, null, /логин|парол/i.test(error));
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
 	}

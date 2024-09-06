@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="7" date="2024-09-03">
+	- Исправлено получение адреса подключения
+	</change>
+	<change version="6" date="2024-03-22">
+	- Поддержка нового личного кабинета
+	- Добавлены дополнительные счетчики
+	</change>
 	<change version="5" date="2021-01-13">
 	- Исправлена ошибка с подключением library.js
 	</change>

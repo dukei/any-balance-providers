@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-internet-planeta</id>
+	<id version="7">ab-internet-planeta</id>
 	<api flags="no_browser"/>
 	<name>Планета (Екатеринбург)</name>
 	<description html="true"><![CDATA[
-	<p>Получает баланс и информацию о тарифном плане для екатеринбургского интернет-провайдера Планета ( https://weburg.me/planeta ). </p>
-	<p>Информация берется из личного кабинета https://weburg.me/planeta. Будьте внимательны - в номере договора есть русские буквы! Если вы получаете ошибку "Введен неправильный № договора и/или пароль", проверьте, что вы набираете номер договора и пароль на нужном языке.</p>
+	<p>Предоставляет информацию о текущем балансе и другие данные для пользователей интернет-провайдера Планета (https://planeta.tc/).</p>
+	<p>Информация берется из из личного кабинета Планета на сайте https://planeta.tc/private.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Планета.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -18,11 +21,21 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="chatles" name="Чатлы" units=""/>
-		<counter id="trafficIn" name="Вх.трафик" units="Gb"/>
-		<counter id="trafficOut" name="Исх.трафик" units="Gb"/>
-		<counter id="licschet" name="Договор" type="text"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="chatles" name="Чатлы" units=" чтл"/>
+		<counter id="recommended_sum" name="Рекомендуемый платеж" units=" ₽"/>
+		<counter id="tariff_day_tax" name="Абонентская плата" units=" ₽/день"/>
+		<counter id="tariff_speed" name="Скорость интернета" units=" {@speedunit}"/>
+		<counter id="tariff_channels" name="ТВ каналы" units=" кнл"/>
+		<counter id="ip_address" name="IP-адрес" type="text"/>
+		<counter id="devices" name="Подключенные устройства" type="text"/>
+		<counter id="licschet" name="Номер договора" type="text"/>
+		<counter id="last_oper_desc" name="Последняя операция" type="text"/>
+		<counter id="last_oper_date" name="Дата посл. операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_oper_sum" name="Сумма посл. операции" units=" ₽"/>
+		<counter id="address" name="Адрес подключения" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords>интернет, planeta</keywords>
 	<type>internet</type>

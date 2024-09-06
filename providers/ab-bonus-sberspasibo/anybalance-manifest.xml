@@ -1,14 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-bonus-sberspasibo</id>
+	<id version="8">ab-bonus-sberspasibo</id>
 	<api flags="no_browser"/>
 	<name>СберСпасибо</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе, текущем уровне начислений и операциях с бонусами по программе лояльности <a href="https://spasibosberbank.ru/">СберСпасибо</a>.</p>
+	<p>Предоставляет информацию о балансе, категориях повышенных бонусов и операциях с бонусами по программе лояльности <a href="https://spasibosberbank.ru/">СберСпасибо</a>.</p>
 	<p>Информация берется из личного кабинета на сайте https://spasibosberbank.ru/</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Для работы провайдера требуется ввести номер телефона, на который зарегистрирована программа СберСпасибо, и однократно ввести код подтверждения из SMS, отправленного на этот номер.</p>
+	<p>Для работы провайдера требуется ввести номер телефона, на который зарегистрирована программа СберСпасибо, и однократно ввести код подтверждения из SMS, высланного на этот номер, 
+	и код из письма, отправленного на адрес электронной почты, привязанный к учетной записи Сбер ID.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -25,10 +26,10 @@
 		<counter id="miles" name="СберМили" units=" М"/>
 		<counter id="annul" name="Бонусы к аннулированию" units=" Б"/>
 		<counter id="annuldate" name="Дата аннулирования" type="time" format="dd.MM.yyyy"/>
-		<counter id="level" name="Текущий уровень" type="text"/>
-		<counter id="leveltill" name="Срок действия уровня" type="time" format="dd.MM.yyyy"/>
-		<counter id="levelnext" name="Следующий уровень" type="text"/>
-		<counter id="categories" name="Повышенные бонусы" type="html"/>
+		<counter id="level" name="Расчетный период" type="text"/>
+		<counter id="leveltill" name="Дата действия категорий" type="time" format="dd.MM.yyyy"/>
+		<counter id="leveldays" name="Срок действия категорий" units=" дн"/>
+		<counter id="categories" name="Повышенный кешбэк" type="html"/>
 		<counter id="lastoperdate" name="Дата посл. операции" type="time" format="dd.MM.yyyy"/>
 		<counter id="lastoperrubsum" name="Сумма посл. операции" units=" ₽"/>
 		<counter id="lastopersum" name="Бонусы посл. операции" units=" Б"/>

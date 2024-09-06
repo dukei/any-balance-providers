@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="21">ab-cell-mts-by</id>
+	<id version="22">ab-cell-mts-by</id>
 	<name>МТС (Беларусь)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, расходах, статусе блокировки, кредите, номере лицевого счета, ежемесячной плате.</p>   
-	<p>Информация берется из PDA версии интернет-помощника (<a href="http://ihelper.mts.by/SelfCarePda">http://ihelper.mts.by/SelfCarePda</a>).</p> 
+	<p>Информация берется из PDA версии интернет-помощника (<a href="https://ihelper.mts.by/SelfCarePda">https://ihelper.mts.by/SelfCarePda</a>).</p> 
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Если вы не знаете пароль к своему интернет-помощнику:</p>
@@ -31,7 +31,7 @@
 		<counter id="min_love" name="Любимые минуты" units=" мин"/>
 		<counter id="min_left" name="Бесплатные минуты" units=" мин"/>
 		<counter id="min_mts" name="Минуты на МТС" units=" мин"/>
-		<counter id="sms_left" name="Бесплатные СМС" units=" sms"/>
+		<counter id="sms_left" name="Бесплатные SMS" units=" sms"/>
 		<counter id="mms_left" name="Бесплатные ММС" units=" mms"/>
 		<counter id="traffic_left" name="Остаток трафика" units=" Mb"/>
 		<counter id="traffic_left_smart_box" name="Остаток трафика СМАРТ box" units=" Mb"/>

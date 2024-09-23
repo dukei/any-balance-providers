@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1.2" version="865" date="2024-09-06">
+	- Обработка промежуточной страницы (портал ДЭГ)
+	</change>
+    <change major_version="1.2" version="864" date="2024-07-20">
+	- Поддержка изменений в процедуре входа
+	- Улучшена обработка ошибок
+	</change>
     <change major_version="1.2" version="863" date="2024-03-17">
 	- Поддержка изменений в процедуре входа
 	- Улучшена обработка ошибок

@@ -8,7 +8,7 @@ var g_headers = {
     'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
 	'Upgrade-Insecure-Requests': '1',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36'
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
 };
 
 var g_baseurl = 'https://www.gosuslugi.ru/';
@@ -34,11 +34,7 @@ function main() {
         throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
     }
 	
-	var data = getJsonObject(html, /data:\s/);
-	
-	if (data && data.user && data.user.person) {
-		AnyBalance.trace('Похоже, мы уже залогинены на имя ' + data.user.person.person.firstName + ' ' + data.user.person.person.lastName + ' (' + prefs.login + ')');
-	} else {
+	if (!isLoggedIn()) {
 		AnyBalance.trace('Сессия новая. Будем логиниться заново...');
 		clearAllCookies();
 		
@@ -77,13 +73,10 @@ function main() {
 		html = AnyBalance.requestGet(g_baseurl + 'node-api/login/?redirectPage=/', g_headers); // Получаем куки сессии
 		
 		html = AnyBalance.requestPost('https://esia.gosuslugi.ru/aas/oauth2/api/login', JSON.stringify({
-//			'idType': loginType,
 			'login': formattedLogin,
 			'password': prefs.password
 		}), addHeaders({
-			'Accept': 'application/json, text/plain, */*',
             'Content-Type': 'application/json',
-			'Origin': 'https://esia.gosuslugi.ru',
 			'Referer': 'https://esia.gosuslugi.ru/login/',
 		}));
 		
@@ -99,9 +92,7 @@ function main() {
 			AnyBalance.trace('Госуслуги предложили подключить вход с подтверждением. Отказываемся...');
 			
 			html = AnyBalance.requestPost('https://esia.gosuslugi.ru/aas/oauth2/api/login/promo-mfa/fill-mfa?decision=false', null, addHeaders({
-		    	'Accept': 'application/json, text/plain, */*',
                 'Content-Type': 'application/json',
-		    	'Origin': 'https://esia.gosuslugi.ru',
 		    	'Referer': 'https://esia.gosuslugi.ru/login/',
 		    }));
 		
@@ -163,9 +154,7 @@ function main() {
 	            }
 			
 			    html = AnyBalance.requestPost('https://esia.gosuslugi.ru/captcha/api/public/v2/verify', JSON.stringify(params), addHeaders({
-		        	'Accept': '*/*',
                     'Content-Type': 'application/json;charset=UTF-8',
-		        	'Origin': 'https://esia.gosuslugi.ru',
 		        	'Referer': 'https://esia.gosuslugi.ru/login/',
 					'X-Requested-With': 'XMLHttpRequest'
 		        }));
@@ -181,9 +170,7 @@ function main() {
                     'verify_token': verify_token,
                     'guid': guid
                 }), addHeaders({
-		        	'Accept': '*/*',
                     'Content-Type': 'application/json;charset=UTF-8',
-		        	'Origin': 'https://esia.gosuslugi.ru',
 		        	'Referer': 'https://esia.gosuslugi.ru/login/',
 					'X-Requested-With': 'XMLHttpRequest'
 		        }));
@@ -207,9 +194,7 @@ function main() {
 			    var params = {'answer': captcha, 'guid': guid};
 			
 			    html = AnyBalance.requestPost('https://esia.gosuslugi.ru/anomaly-resolver/api/reaction/question/answer', JSON.stringify(params), addHeaders({
-		        	'Accept': '*/*',
                     'Content-Type': 'application/json;charset=UTF-8',
-		        	'Origin': 'https://esia.gosuslugi.ru',
 		        	'Referer': 'https://esia.gosuslugi.ru/login/',
 					'X-Requested-With': 'XMLHttpRequest'
 		        }));
@@ -229,13 +214,10 @@ function main() {
     	        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменён?');
             }else{
 				html = AnyBalance.requestPost('https://esia.gosuslugi.ru/aas/oauth2/api/login', JSON.stringify({
-//			        'idType': loginType,
 					'login': formattedLogin,
 			        'password': prefs.password
 		        }), addHeaders({
-		        	'Accept': 'application/json, text/plain, */*',
                     'Content-Type': 'application/json',
-		        	'Origin': 'https://esia.gosuslugi.ru',
 		        	'Referer': 'https://esia.gosuslugi.ru/login/',
 		        }));
                 
@@ -254,9 +236,7 @@ function main() {
 			    var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, высланный на номер ' + details.phone + '.\n\nОсталось попыток для ввода кода: ' + details.verify_attempts_left, null, {inputType: 'number', minLength: details.code_length, maxLength: details.code_length, time: 180000});
 			
 			    html = AnyBalance.requestPost('https://esia.gosuslugi.ru/aas/oauth2/api/login/otp/verify?code=' + code, null, addHeaders({
-		        	'Accept': 'application/json, text/plain, */*',
                     'Content-Type': 'application/json',
-		        	'Origin': 'https://esia.gosuslugi.ru',
 		        	'Referer': 'https://esia.gosuslugi.ru/login/',
 		        }));
 		
@@ -270,9 +250,7 @@ function main() {
 			    var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, предоставленный системой Яндекс Ключ', null, {inputType: 'number', minLength: details.code_length, maxLength: details.code_length, time: 180000});
 			    
 			    html = AnyBalance.requestPost('https://esia.gosuslugi.ru/aas/oauth2/api/login/totp/verify?code=' + code, null, addHeaders({
-		        	'Accept': 'application/json, text/plain, */*',
                     'Content-Type': 'application/json',
-		        	'Origin': 'https://esia.gosuslugi.ru',
 		        	'Referer': 'https://esia.gosuslugi.ru/login/',
 		        }));
 		
@@ -314,22 +292,21 @@ function main() {
 			    url = joinUrl('https://esia.gosuslugi.ru', redirectUrl);
 			}
 		
-            html = AnyBalance.requestGet(url, addHeaders({Referer: AnyBalance.getLastUrl()}), g_headers);
-	    }
-		
-		var data = getJsonObject(html, /data:\s/);
-		
-		if (!data){
-			AnyBalance.trace('Требуется дологиниться...'); // Принудительный переход на главную страницу ЛК
-			
-			AnyBalance.setCookie('.gosuslugi.ru', 'w-r-ii', true);
-			html = AnyBalance.requestGet(url, addHeaders({Referer: AnyBalance.getLastUrl()}), g_headers);
-			
-			data = getJsonObject(html, /data:\s/);
+            html = AnyBalance.requestGet(url, addHeaders({Referer: 'https://esia.gosuslugi.ru/'}), g_headers);
+	    } else {
+		    html = AnyBalance.requestGet('https://lk.gosuslugi.ru/settings/account?_=' + new Date().getTime(), addHeaders({Referer: 'https://esia.gosuslugi.ru/'}), g_headers);
 		}
 		
-		if (data && data.user && data.user.person) {
-		    AnyBalance.trace('Успешно залогинены на имя ' + data.user.person.person.firstName + ' ' + data.user.person.person.lastName + ' (' + prefs.login + ')');
+		if (/setCookieAndReloadPage/i.test(html)) {
+			AnyBalance.trace('Похоже, мы на промежуточной странице. Пробуем перейти на главную...');
+			
+			AnyBalance.setCookie('.gosuslugi.ru', 'w-r-ii', 'true', {path: '/'});
+			
+			html = AnyBalance.requestGet(AnyBalance.getLastUrl(), addHeaders({Referer: 'https://esia.gosuslugi.ru/'}), g_headers);
+	    }
+	    
+	    if (isLoggedIn()) {
+			AnyBalance.trace('Успешно вошли в личный кабинет');
 	    } else {
 			AnyBalance.trace(html);
     	    throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменён?');
@@ -340,6 +317,8 @@ function main() {
 		g_savedData.set('acc_t', acc_t); // access token на всякий случай
 		g_savedData.setCookies();
 	    g_savedData.save();
+	} else {
+		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
 	}
 	
 	var result = {success: true};
@@ -369,7 +348,7 @@ function main() {
 	    if(json.person.docs && json.person.docs.length > 0){
 			for(var i=0; i<json.person.docs.length; ++i){
                 var doc = json.person.docs[i];
-				var doc_res = doc.series !== null ? doc.series + ' ' + doc.number : doc.number;
+				var doc_res = (doc.series && doc.series !== null) ? doc.series + ' ' + doc.number : doc.number;
 				if(doc.type == 'RF_PASSPORT' || /RF_PASSPORT/i.test(doc.type)){ // Паспорт РФ
         		    getParam(doc_res, result, 'passport_rf');
 				}else if(doc.type == 'RF_DRIVING_LICENSE' || /RF_DRIVING_LICENSE/i.test(doc.type)){ // Вод. удостоверение РФ
@@ -491,4 +470,12 @@ function callAPI(verb, params){
 		throw new AnyBalance.Error(json.error.message);
 	}
 	return json;
+}
+
+function isLoggedIn(){
+    var prefs = AnyBalance.getPreferences();
+	var html = AnyBalance.requestPost('https://www.gosuslugi.ru/auth-provider/check-session', null, addHeaders({'Referer': 'https://esia.gosuslugi.ru/',}));	
+	var json = getJson(html);
+	AnyBalance.trace(JSON.stringify(json));
+    return json.auth;
 }

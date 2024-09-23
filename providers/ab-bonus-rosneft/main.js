@@ -59,29 +59,25 @@ function main() {
 		getParam(html, result, 'to_next_level_liters', /осталось набрать:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 		getParam(html, result, 'to_next_level_days', /Осталось до смены уровня:[\s\S]*?<div[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
 		
+		var status_val = {silver: 'Серебро', gold: 'Золото', platinum: 'Платина', diamond: 'Бриллиант', undefined: ''};
+		var bonus_size = {silver: 0.5, gold: 1, platinum: 1.25, diamond: 1.5, undefined: ''};
+		var curr_status_img = getParam(html, null, null, /<div[^>]+cabinet-status__img[^>][\s\S]*?status\/\w*card-([\s\S]*?)\.[\s\S]*?\/>/i, replaceTagsAndSpaces);
+		var curLevel = getParam(status_val[curr_status_img]||curr_status_img, result, 'curr_level');
+		var curBonusSize = bonus_size[curr_status_img]||curr_status_img;
+		
+		result.__tariff = curLevel + (curBonusSize ? ' | ' + curBonusSize + ' Б/л' : '');
+		
 		var status_block = getElement(html, /<div[^>]+class="block-cabinet__widget block-widget cabinet-status__progress"[^>]*>/i);
 	    var status_images = getElements(status_block, [/<div[^>]+style="width: auto"[^>]*>/ig, /"status-img"/i]);
 		
 	    if(status_images) {
-			var status_val = {silver: 'Серебро', gold: 'Золото', platinum: 'Платина', diamond: 'Бриллиант', undefined: ''};
-		    var bonus_size = {silver: 0.5, gold: 1, platinum: 1.25, diamond: 1.5, undefined: ''};
-	    	var status_img, curLevel, curBonusSize;
-			
 	        for(var i = 0; i<status_images.length; i++){
 				var img = status_images[i];
-				status_img = getParam(img, null, null, /<img[^>]+status-img[^>][\s\S]*?-\w*-([\s\S]*?)\.[\s\S]*?\/>/i, replaceTagsAndSpaces);
+				var status_img = getParam(img, null, null, /<img[^>]+status-img[^>][\s\S]*?-\w*-([\s\S]*?)\.[\s\S]*?\/>/i, replaceTagsAndSpaces);
 				
-				if(/progress-active/i.test(img)){ // Текущий уровень
-					curLevel = getParam(status_val[status_img]||status_img, result, 'curr_level');
-		            curBonusSize = bonus_size[status_img]||status_img;
-				}else if(/progress-achieve/i.test(img)){ // Следующий уровень
+				if(/progress-achieve/i.test(img)) // Следующий уровень
 					getParam(status_val[status_img]||status_img, result, 'next_level');
-				}
 	        }
-            
-			result.__tariff = curLevel + (curBonusSize ? ' | ' + curBonusSize + ' Б/л' : '');
-			if(!result.next_level && AnyBalance.isAvailable('next_level'))
-				result.next_level = 'Достигнут';
 	    } else {
  	    	AnyBalance.trace('Не удалось получить данные по уровням');
  	    }

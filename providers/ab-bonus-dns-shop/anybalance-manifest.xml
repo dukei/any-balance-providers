@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-bonus-dns-shop</id>
+	<id version="3">ab-bonus-dns-shop</id>
 	<api flags="no_browser"/>
 	<name>DNS Shop</name>
 	<description html="true"><![CDATA[
@@ -34,6 +34,12 @@
 		<counter id="lastorderitems" name="Товары по посл. заказу" units=" шт"/>
 		<counter id="lastorderdesc" name="Описание посл. заказа" type="text"/>
 		<counter id="lastorderstatus" name="Статус посл. заказа" type="text"/>
+		<counter id="lastwarrantynum" name="Номер посл. ЗН в СЦ" type="text"/>
+		<counter id="lastwarrantydate" name="Дата посл. ЗН в СЦ" type="time" format="dd.MM.yyyy"/>
+		<counter id="lastwarrantytype" name="Тип посл. ЗН в СЦ" type="text"/>
+		<counter id="lastwarrantybranch" name="Филиал посл. ЗН в СЦ" type="text"/>
+		<counter id="lastwarrantydesc" name="Описание посл. ЗН в СЦ" type="text"/>
+		<counter id="lastwarrantystatus" name="Статус посл. ЗН в СЦ" type="text"/>
 		<counter id="favorites" name="Избранное" units=" шт"/>
 		<counter id="regdate" name="Дата регистрации" type="time" format="dd.MM.yyyy"/>
 		<counter id="username" name="Никнейм" type="text"/>

@@ -33,6 +33,8 @@ function main() {
 	
 	AnyBalance.trace('Пробуем войти в личный кабинет...');
 	
+	loadProtectedPage("https://www.dns-shop.ru/profile/", g_headers);
+	
 	var html = AnyBalance.requestGet(baseurl + 'profile/menu/', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 403){
@@ -40,11 +42,11 @@ function main() {
 		throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
 	}
 	
-    if(AnyBalance.getLastStatusCode() == 401 || !/href="\/logout\/"/i.test(html)){
+    if(!/href="\/logout\/"/i.test(html) || AnyBalance.getLastStatusCode() == 401){
 	    AnyBalance.trace('Сессия новая. Будем логиниться заново...');
 		clearAllCookiesExceptProtection();
 	    
-		var html = loadProtectedPage((baseurl + 'profile/menu/', g_headers));
+		var html = loadProtectedPage(baseurl + 'profile/menu/', g_headers);
 	    
 	    var csrf = getParam(html, /name="csrf-token" content="([^"]*)/i);
 		
@@ -202,6 +204,63 @@ function main() {
  	    	AnyBalance.trace('Не удалось получить данные по последнему заказу');
  	    }
 	}
+	
+	if(AnyBalance.isAvailable(['lastwarrantynum', 'lastwarrantydate', 'lastwarrantytype', 'lastwarrantydesc', 'lastwarrantystatus'])){
+		var html = AnyBalance.requestGet(baseurl + 'profile/service-requests/', g_headers);
+		
+		var _csrf = getParam(html, null, null, /<meta[^>]+name="csrf-token" content="([^"]*)/i, replaceHtmlEntities);
+		
+		var html = requestPostMultipart(baseurl + 'profile/service-requests/', {
+			'_csrf': _csrf,
+            'page': '',
+            'status': '',
+            'dateFrom': '',
+            'dateTo': ''
+		}, addHeaders({
+			'Referer': AnyBalance.getLastUrl(),
+			'X-Csrf-Token': _csrf,
+            'X-Requested-With': 'XMLHttpRequest'
+		}));
+        
+		var json = getJson(html);
+		
+		AnyBalance.trace('Обращения: ' + JSON.stringify(json));
+		
+		var warrantys = getElements(json.html, /<div[^>]+class="service-order"[^>]*>/ig);
+	    
+	    if(warrantys && warrantys.length > 0){
+	    	AnyBalance.trace('Найдено обращений: ' + warrantys.length);
+			
+			getParam(warrantys[0], result, 'lastwarrantynum', /<span[^>]+class="service-order__order-number"[^>]*>([\s\S]*?)<\/span>/i, [replaceTagsAndSpaces, /Заказ\s/i, '']);
+	    	getParam(warrantys[0], result, 'lastwarrantydate', /<span[^>]+class="service-order__order-date"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseDate);
+	    	getParam(warrantys[0], result, 'lastwarrantytype', /Тип ремонта:\s*<span[^>]+class="service-order__order-info_value"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+			getParam(warrantys[0], result, 'lastwarrantybranch', /Филиал:\s*<span[^>]+class="service-order__order-info_value"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces);
+			getParam(warrantys[0], result, 'lastwarrantydesc', /<a[^>]+service-order__product-title[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
+	    	
+			var phone = getParam(warrantys[0], null, null, /<a[^>]+service-order__check-status[\s\S]*?data-phone="([^"]*)/i, replaceHtmlEntities);
+			var docNumber = getParam(warrantys[0], null, null, /<a[^>]+service-order__check-status[\s\S]*?data-order-number="([^"]*)/i, replaceHtmlEntities);
+			
+			if(AnyBalance.isAvailable('lastwarrantystatus') && phone && docNumber){
+			    var html = AnyBalance.requestGet(baseurl + 'service-center/find-status/?phone=' + phone + '&docNumber=' + encodeURIComponent(docNumber), addHeaders({
+			        'Referer': AnyBalance.getLastUrl(),
+			        'X-Csrf-Token': _csrf,
+                    'X-Requested-With': 'XMLHttpRequest'
+		        }));
+                
+		        var json = getJson(html);
+		        
+		        var statuses = getElements(json.html, /<div[^>]+class="service-status__history-label"[^>]*>/ig);
+	            
+	            if(statuses && statuses.length > 0){ // Интересует только последний
+			        getParam(statuses[statuses.length-1], result, 'lastwarrantystatus', /<div[^>]+class="service-status__history-label"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+				}else{
+ 	    	        AnyBalance.trace('Не удалось получить статус последнего обращения');
+ 	            }	
+            }
+	    }else{
+ 	    	AnyBalance.trace('Не удалось получить данные по последнему обращению');
+ 	    }
+	}
 		
 	if(AnyBalance.isAvailable('favorites')){
 	    var html = AnyBalance.requestGet(baseurlApi + 'v1/get-wishlist-count', addHeaders({
@@ -220,22 +279,24 @@ function main() {
 	AnyBalance.setResult(result);
 }
 
-function loadProtectedPage(headers){
+function loadProtectedPage(url, headers){
 	var prefs = AnyBalance.getPreferences();
-	const url = 'https://www.dns-shop.ru/';
+	
+	if(!headers)
+		headers = g_headers;
 
     var html = AnyBalance.requestGet(url, headers);
     if(/__qrator/.test(html) || AnyBalance.getLastStatusCode() == 401) {
         AnyBalance.trace("Обнаружена защита от роботов. Пробуем обойти...");
-        clearAllCookies();
+//        clearAllCookies(); // Закрываем, иначе придётся логиниться заново
 
         const bro = new BrowserAPI({
             provider: 'dns-shop',
             //userAgent: g_headers["User-Agent"],
-	    incognito: true,
-	    singlePage: true,
+	        incognito: true,
+	        singlePage: true,
             headful: true,
-	    noInterception: true,
+	        noInterception: true,
             rules: [{
                 url: /^data:/.toString(),
                 action: 'abort',

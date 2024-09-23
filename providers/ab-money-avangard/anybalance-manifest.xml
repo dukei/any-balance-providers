@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="26">ab-money-avangard</id>
+	<id version="28">ab-money-avangard</id>
 	<api flags="no_browser"/>
 	<name>Банк Авангард</name>
 	<description html="true"><![CDATA[
@@ -28,6 +28,8 @@
 	<counters>
 		<counter id="balance" name="Остаток" units=" {@currency}"/>
 		<counter id="balance_month" name="Получено за месяц" units=" {@currency}"/>
+		<counter id="debit" name="Приход по счету" units=" {@currency}"/>
+		<counter id="credit" name="Расход по счету" units=" {@currency}"/>
     	<counter id="minpay" name="Мин. платеж" units=" {@currency}"/>
 		<counter id="minpaydate" name="Дата мин. платежа" type="time" format="dd.MM.yyyy"/>
 		<counter id="freepay" name="Платеж льготного периода" units=" {@currency}"/>
@@ -53,7 +55,7 @@
 		<counter id="currency_full" name="Валюта" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords></keywords>
-	<type>money, bank, avangard</type>
+	<keywords>avangard, банк, интернет-банк, кредит, финансы</keywords>
+	<type>money, bank</type>
 	<country>ru</country>
 </provider>

@@ -19,19 +19,19 @@ var g_phrases = {
 }
 
 var g_headers = {
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
     'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Encoding': 'gzip, deflate, br',
-    'Accept-Language': 'ru,en;q=0.8',
+    'Accept-Language': 'ru-RU,ru;q=0.9',
     'Cache-Control': 'max-age=0',
     'Connection': 'keep-alive',
-    'Origin': 'https://ib.avangard.ru',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36'
+    'Origin': 'https://www.avangard.ru/',
+	'Upgrade-Insecure-Requests': '1',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
 };
 
-var baseurl = 'https://www.avangard.ru/';
-var baseurlNew = 'https://ib.avangard.ru/';
-var g_lastToken;
+var g_baseurl = 'https://ib.avangard.ru/'; // 'https://www.avangard.ru/';
+var g_lastStateToken;
+var g_lastViewStateToken;
 
 function main() {
     var prefs = AnyBalance.getPreferences();
@@ -45,7 +45,12 @@ function main() {
     if (prefs.num && !/\d{4}/.test(prefs.num))
         throw new AnyBalance.Error("Введите 4 последних цифры номера " + g_phrases.karty[what] + " или не вводите ничего, чтобы показать информацию по " + g_phrases.karte1[what]);
 	
-	var html = AnyBalance.requestGet(baseurlNew + 'login/www/ibank_enter.php', g_headers);
+	var html = AnyBalance.requestGet(g_baseurl + 'login/www/ibank_enter.php', g_headers);
+	
+    if(!html || AnyBalance.getLastStatusCode() > 400) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
+	}
 	
 	var params = createFormParams(html, function(params, str, name, value) {
 		if (name == 'login') 
@@ -56,8 +61,8 @@ function main() {
 		return value;
 	});
 	
-    html = AnyBalance.requestPost(baseurlNew + "client4/afterlogin", params, addHeaders({
-		Referer: baseurlNew + 'login/www/ibank_enter.php',
+    html = AnyBalance.requestPost(g_baseurl + "client4/afterlogin", params, addHeaders({
+		Referer: g_baseurl + 'login/www/ibank_enter.php',
 		'Content-Type':'application/x-www-form-urlencoded'
 	}));
 	
@@ -81,22 +86,22 @@ function main() {
     //Зачем-то банк требует удалить эту куку
     //AnyBalance.setCookie('www.avangard.ru', 'JSESSIONID', null, {path: '/' + bankType});
 	
-    baseurl += bankType;
-	baseurlNew += bankType;
-    html = AnyBalance.requestGet(baseurlNew + "/" + firstpage, g_headers);
+	g_baseurl += bankType;
+	
+    html = AnyBalance.requestGet(g_baseurl + "/" + firstpage, g_headers);
 
     if(/blocking_warning/i.test(html)){
     	AnyBalance.trace('Банк выдаёт какое-то сообщение. Пропускаем его');
     	var a = getParam(html, null, null, /<a[^>]+>\s*<img[^>]+&#1055;&#1088;&#1086;&#1076;&#1086;&#1083;&#1078;&#1080;&#1090;&#1100;/i); //Продолжить
     	var source = getParam(a, null, null, /id:"([^"]*)/i, replaceHtmlEntities);
-        html = submitForm(html, baseurlNew, source);
+        html = submitForm(html, g_baseurl, source);
     }
 	
 	if(/&#1059;&#1089;&#1090;&#1072;&#1085;&#1086;&#1074;&#1080;&#1090;&#1100; &#1055;&#1048;&#1053;-&#1082;&#1086;&#1076;/i.test(html)){
     	AnyBalance.trace('Банк выдаёт сообщение о необходимости установки ПИН-кода. Пропускаем его');
 		var button = getElements(html, [/<div[^>]+class="action-buttons-holder"[^>]*><button[\s\S]*?<\/div>/ig, /&#1054;&#1090;&#1084;&#1077;&#1085;&#1072;/i])[0]; //Кнопка Отмена
 	    var source = getParam(button, null, null, /button id="([^"]*)/i); //Id кнопки
-		html = AnyBalance.requestPost(baseurlNew + '/faces/pages/petitions/change_pin/change_pin_first_page.xhtml', [
+		html = AnyBalance.requestPost(g_baseurl + '/faces/pages/petitions/change_pin/change_pin_first_page.xhtml', [
 		    ['javax.faces.partial.ajax','true'],
             ['javax.faces.source',source],
             ['javax.faces.partial.execute','@all'],
@@ -105,23 +110,22 @@ function main() {
             ['f:j_idt30:userComment',''],
             ['f:mailBackText',''],
             ['f:feedBackText',''],
-            ['javax.faces.ViewState',getStateToken(html)],
-        ], addHeaders({Referer: baseurlNew + '/faces/pages/petitions/change_pin/change_pin_first_page.xhtml'})); //Даёт редирект на Список счетов
+            ['javax.faces.ViewState',getViewStateToken(html)],
+        ], addHeaders({Referer: g_baseurl + '/faces/pages/petitions/change_pin/change_pin_first_page.xhtml'})); //Даёт редирект на Список счетов
         if (/redirect url/i.test(html))
 			var url = getParam(html, null, null, /redirect url="\/\w+Avn([^"]*)/i, replaceHtmlEntities);
 		    AnyBalance.trace('Редирект на страницу ' + url);
-		    html = AnyBalance.requestGet(baseurlNew + url, g_headers);
+		    html = AnyBalance.requestGet(g_baseurl + url, g_headers);
     }
 	
     if (bankType == 'clbAvn') {
-		throw new AnyBalance.Error('Интернет-банк для юридических лиц пока не поддерживается. Выберите другой счет или обратитесь к автору провайдера.');
-        fetchBankYur(html, baseurl);
+        fetchBankYur(html, g_baseurl);
     } else {
-        fetchBankPhysic(html, baseurlNew);
+        fetchBankPhysic(html, g_baseurl);
     }
 }
 
-function fetchBankYur(html, baseurl) {
+function fetchBankYur(html, g_baseurl) {
     var prefs = AnyBalance.getPreferences();
     var what = prefs.what || 'card';
 
@@ -134,11 +138,25 @@ function fetchBankYur(html, baseurl) {
             throw new AnyBalance.Error(error);
         }
     }
-
+	
+	var selectedCurrency = getParam(html, null, null, /&#1042;&#1072;&#1083;&#1102;&#1090;&#1072;[\s\S]*?<option[^>]+value="\d+"[\s\S]*?selected[^>]*>([\s\S]*?)<\/option>/i, replaceTagsAndSpaces);
+	
+	var curencyMy = '';
+	
+	if(selectedCurrency){
+	    if(/Рубль|Руб|RUB|RUR/i.test(selectedCurrency)){
+		    curencyMy += 'RUB';
+	    }else if(/Евро|EUR/i.test(selectedCurrency)){
+		    curencyMy += 'EUR';
+	    }else if(/Доллар|USD/i.test(selectedCurrency)){
+		    curencyMy += 'USD';
+	    }
+	}
+	
     //Без этого почему-то не даёт получить инфу по картам.
-    //html = AnyBalance.requestGet(baseurl + '/faces/facelet-pages/iday_balance.jspx', g_headers);
+    //html = AnyBalance.requestGet(g_baseurl + '/faces/facelet-pages/iday_balance.jspx', g_headers);
 
-    html = AnyBalance.requestPost(baseurl + '/faces/facelet-pages/iday_balance.jspx', {
+    html = AnyBalance.requestPost(g_baseurl + '/faces/facelet-pages/iday_balance.jspx', {
         docslist___jeniaPopupFrame: '',
         'docslist:main:selVal': 0,
         'docslist:main:clTbl:_s': 0,
@@ -153,11 +171,13 @@ function fetchBankYur(html, baseurl) {
         'docslist:main:accTbl:_sm': '',
         'event': '',
         'source': getParam(html, null, null, /source:\\'(docslist:main:[^\\']*)/i, replaceHtmlEntities)
-    }, addHeaders({Referer: baseurl + '/faces/facelet-pages/iday_balance.jspx'}));
+    }, addHeaders({Referer: g_baseurl + '/faces/facelet-pages/iday_balance.jspx'}));
 
     var table = getParam(html, null, null, /<table[^>]+class="x2f"[^>]*>([\s\S]*?)<\/table>/i);
-    if (!table)
+    if (!table) {
+		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не найдена таблица счетов. Сайт изменен?');
+	}
 
     var re = new RegExp('<tr[^>]*>(?:[\\s\\S](?!</tr>))*?(?:\\d\\s*){16}' + (prefs.num ? prefs.num : '(?:\\d\\s*){4}') + '[\\s\\S]*?</tr>', 'i');
     var tr = getParam(table, null, null, re);
@@ -165,10 +185,19 @@ function fetchBankYur(html, baseurl) {
         throw new AnyBalance.Error(prefs.num ? 'Не найден счет с последними цифрами ' + prefs.num : 'Не найдено ни одного счета');
 
     var result = {success: true};
+	
+	if(curencyMy){
+		result.currency_full = curencyMy;
+		result.currency = g_currency[curencyMy];
+	}
+	
     getParam(tr, result, 'balance', /(?:[\s\S]*?<td[^>]*>){3}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
-    getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
+    getParam(tr, result, 'debit', /(?:[\s\S]*?<td[^>]*>){4}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(tr, result, 'credit', /(?:[\s\S]*?<td[^>]*>){5}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(tr, result, '__tariff', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/i, replaceTagsAndSpaces);
     getParam(tr, result, 'accnum', /((?:\d\s*){20})/i, replaceTagsAndSpaces);
     getParam(tr, result, 'accname', /(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)(?:<\/td>|<\/div>)/i, replaceTagsAndSpaces);
+	getParam(html, result, 'fio', /<td[^>]+headerImage[\s\S]*?<label[^>]*>([\s\S]*?)<\/label>/i, replaceTagsAndSpaces);
 
     AnyBalance.setResult(result);
 }
@@ -176,13 +205,22 @@ function fetchBankYur(html, baseurl) {
 function getStateToken(html) {
     //Всегда запоминаем предыдущий токен, на случай, если он понадобится в дальнейшем
     //Потому что иногда получаемые страницы токена не содержат
-    var token = getParam(html, null, null, /id="javax.faces.ViewState"[^>]*value="([^"]*)/i);
+    var token = getParam(html, null, null, /<input[^>]*name="oracle\.adf\.faces\.STATE_TOKEN"[^>]*value="([^"]*)/i);
     if (token)
-        g_lastToken = token;
-    return g_lastToken;
+        g_lastStateToken = token;
+    return g_lastStateToken;
 }
 
-function fetchAccountPhysic(html, baseurlNew) {
+function getViewStateToken(html) {
+    //Всегда запоминаем предыдущий токен, на случай, если он понадобится в дальнейшем
+    //Потому что иногда получаемые страницы токена не содержат
+    var token = getParam(html, null, null, /id="javax.faces.ViewState"[^>]*value="([^"]*)/i);
+    if (token)
+        g_lastViewStateToken = token;
+    return g_lastViewStateToken;
+}
+
+function fetchAccountPhysic(html, g_baseurl) {
     var prefs = AnyBalance.getPreferences();
     var cardNum = prefs.num || '';
 
@@ -201,7 +239,7 @@ function formatDate(date) {
     return day + '.' + month + '.' + date.getFullYear();
 }
 
-function submitForm(html, baseurlNew, source) {
+function submitForm(html, g_baseurl, source) {
     var form = getParam(html, null, null, /<form[^>]+name="f"[^>]*>[\s\S]*?<\/form>/i);
     if (!form) {
         AnyBalance.trace(html);
@@ -221,15 +259,16 @@ function submitForm(html, baseurlNew, source) {
         throw new AnyBalance.Error('Не удалось найти адрес передачи формы. Сайт изменен?');
     }
 
-    return AnyBalance.requestPost(baseurlNew + action, params, g_headers);
+    return AnyBalance.requestPost(g_baseurl + action, params, g_headers);
 }
 
-function fetchBankPhysic(html, baseurlNew) {
+function fetchBankPhysic(html, g_baseurl) {
     var prefs = AnyBalance.getPreferences();
 	
     //Надо сохранить для поиска ссылки на Бонусные мили
 	var milesSource = getElements(html, [/<li[^>]+class="navigation-menu__item"[^>]*><a href[\s\S]*?<\/li>/ig, /&#1040;&#1074;&#1080;&#1072;&#1073;&#1080;&#1083;&#1077;&#1090;&#1099;/i])[0]; //Кнопка Авиабилеты
 	var bonusSource = getParam(milesSource, null, null, /onclick=[\s\S]*?\{\\'([^\\']*)/i); //Id кнопки
+	
 	//Надо сохранить для поиска ссылки на Текущую задолженность
 	var currSource = getElements(html, [/<li[^>]*><a[\s\S]*?href[\s\S]*?<\/li>/ig, /&#1058;&#1077;&#1082;&#1091;&#1097;&#1072;&#1103; &#1079;&#1072;&#1076;&#1086;&#1083;&#1078;&#1077;&#1085;&#1085;&#1086;&#1089;&#1090;&#1100;/i])[0]; //Кнопка Текущая задолженность
 	var debtSource = getParam(currSource, null, null, /onclick=[\s\S]*?\{\'([^\']*)/i); //Id кнопки
@@ -255,10 +294,10 @@ function fetchBankPhysic(html, baseurlNew) {
 	//Id кнопки перехода в детальную информацию о счете
 	var source = getParam(tr, null, null, /&#1044;&#1077;&#1090;&#1072;&#1083;&#1100;&#1085;&#1072;&#1103; &#1080;&#1085;&#1092;&#1086;&#1088;&#1084;&#1072;&#1094;&#1080;&#1103; &#1087;&#1086; &#1089;&#1095;&#1077;&#1090;&#1091;\"\s*onclick=[\s\S]*?\{'([^']*)/i);
 	
-	var token = getStateToken(html);
+	var token = getViewStateToken(html);
     if (source && token) {
 	
-	    html = AnyBalance.requestPost(baseurlNew + '/faces/pages/accounts/all_acc.xhtml', [
+	    html = AnyBalance.requestPost(g_baseurl + '/faces/pages/accounts/all_acc.xhtml', [
             ['f','f'],
             ['f:j_idt29:userComment',''],
             ['f:mailBackText',''],
@@ -266,7 +305,7 @@ function fetchBankPhysic(html, baseurlNew) {
             ['f:j_idt531_input',''],
             ['javax.faces.ViewState',token],
             [source,source],
-        ], addHeaders({Referer: baseurlNew + '/faces/pages/accounts/all_acc.xhtml'}));
+        ], addHeaders({Referer: g_baseurl + '/faces/pages/accounts/all_acc.xhtml'}));
 		
 		getParam(html, result, ['__tariff', 'accname'], /\d{20}/i, replaceTagsAndSpaces);
         getParam(html, result, 'accnum', /\d{20}/i, replaceTagsAndSpaces);
@@ -288,12 +327,12 @@ function fetchBankPhysic(html, baseurlNew) {
         var source = getParam(tr, null, null, /onclick=[\s\S]*?\{'([^']*)/i);
 
         //<input type="hidden" name="oracle.adf.faces.STATE_TOKEN" value="-118qdrmfn5">
-        //var token = getStateToken(html); //Мешает получению бонусных миль
+        //var token = getViewStateToken(html); //Мешает получению бонусных миль
         if (source && token) {
             // AnyBalance.setCookie('avangard.ru', 'oracle.uix', '0^^GMT+4:00');
             // AnyBalance.setCookie('avangard.ru', 'xscroll-faces/pages/accounts/all_acc.jspx', '0:1354528466127');
             // AnyBalance.setCookie('avangard.ru', 'yscroll-faces/pages/accounts/all_acc.jspx', '0:1354528466130');
-            html = AnyBalance.requestPost(baseurlNew + '/faces/pages/accounts/all_acc.xhtml', [
+            html = AnyBalance.requestPost(g_baseurl + '/faces/pages/accounts/all_acc.xhtml', [
                 ['f','f'],
                 ['f:j_idt29:userComment',''],
                 ['f:mailBackText',''],
@@ -301,7 +340,7 @@ function fetchBankPhysic(html, baseurlNew) {
                 ['f:j_idt531_input',''],
                 ['javax.faces.ViewState',token],
                 [source,source],
-            ], addHeaders({Referer: baseurlNew + '/faces/pages/accounts/all_acc.xhtml'}));
+            ], addHeaders({Referer: g_baseurl + '/faces/pages/accounts/all_acc.xhtml'}));
 			
             if (what == 'card') {
 				getParam(html, result, ['__tariff', 'accname'], /\d+\*{6}\d{4}/i, replaceTagsAndSpaces);
@@ -332,12 +371,12 @@ function fetchBankPhysic(html, baseurlNew) {
             if (AnyBalance.isAvailable('minpaydate', 'minpay', 'limit', 'freepaydate', 'freepay', 'debt')) {
             //  var dt = new Date();
             //  var mdt = new Date(dt.getFullYear(), dt.getMonth(), 1);
-                		//Бонусные мили
+                // Бонусные мили
 		        if (!debtSource) {
                     AnyBalance.trace(html);
                     AnyBalance.trace('Не удалось найти ссылку на Текущую задолженность.');
                 } else {	
-		    		html = AnyBalance.requestPost(baseurlNew + '/faces/pages/accounts/all_acc.xhtml', [
+		    		html = AnyBalance.requestPost(g_baseurl + '/faces/pages/accounts/all_acc.xhtml', [
                         ['f','f'],
                         ['f:j_idt29:userComment',''],
                         ['f:mailBackText',''],
@@ -345,12 +384,12 @@ function fetchBankPhysic(html, baseurlNew) {
                         ['f:j_idt531_input',''],
                         ['javax.faces.ViewState',token],
                         [debtSource,debtSource],
-                    ], addHeaders({Referer: baseurlNew + '/faces/pages/accounts/all_acc.xhtml'}));
+                    ], addHeaders({Referer: g_baseurl + '/faces/pages/accounts/all_acc.xhtml'}));
                     //Вам необходимо внести на счет сумму не менее 2,936.32 RUR в срок по 31.12.2013г. включительно. 
                     // Либо если деньги уже внесены - будет по другому
                     // Сумма минимального платежа: 2 936.32 RUR 
                     // и Льготный период оплаты: по 20.12.2013 г. 
-                    getParam(html, result, 'minpaydate', /&#1042;&#1072;&#1084; &#1085;&#1077;&#1086;&#1073;&#1093;&#1086;&#1076;&#1080;&#1084;&#1086; &#1074;&#1085;&#1077;&#1089;&#1090;&#1080; &#1085;&#1072; &#1089;&#1095;&#1077;&#1090; &#1089;&#1091;&#1084;&#1084;&#1091; &#1085;&#1077; &#1084;&#1077;&#1085;&#1077;&#1077;[^<]*&#1074; &#1089;&#1088;&#1086;&#1082; &#1087;&#1086;([^<]*)/i, null, parseDate);
+                    getParam(html, result, 'minpaydate', /&#1042;&#1072;&#1084; &#1085;&#1077;&#1086;&#1073;&#1093;&#1086;&#1076;&#1080;&#1084;&#1086; &#1074;&#1085;&#1077;&#1089;&#1090;&#1080; &#1085;&#1072; &#1089;&#1095;&#1077;&#1090; &#1089;&#1091;&#1084;&#1084;&#1091; &#1085;&#1077; &#1084;&#1077;&#1085;&#1077;&#1077;[^<]*&#1074; &#1089;&#1088;&#1086;&#1082; &#1087;&#1086;([^<]*)/i, replaceTagsAndSpaces, parseDate);
                     getParam(html, result, 'minpay', [/&#1057;&#1091;&#1084;&#1084;&#1072; &#1084;&#1080;&#1085;&#1080;&#1084;&#1072;&#1083;&#1100;&#1085;&#1086;&#1075;&#1086; &#1087;&#1083;&#1072;&#1090;&#1077;&#1078;&#1072;:([^<]*)/i, /&#1042;&#1072;&#1084; &#1085;&#1077;&#1086;&#1073;&#1093;&#1086;&#1076;&#1080;&#1084;&#1086; &#1074;&#1085;&#1077;&#1089;&#1090;&#1080; &#1085;&#1072; &#1089;&#1095;&#1077;&#1090; &#1089;&#1091;&#1084;&#1084;&#1091; &#1085;&#1077; &#1084;&#1077;&#1085;&#1077;&#1077;([^<]*)&#1074; &#1089;&#1088;&#1086;&#1082; &#1087;&#1086;/i], replaceTagsAndSpaces, parseBalance2);
 		    		getParam(html, result, 'reporteddebt', /&#1054;&#1090;&#1095;&#1077;&#1090;&#1085;&#1072;&#1103; &#1089;&#1091;&#1084;&#1084;&#1072; &#1079;&#1072;&#1076;&#1086;&#1083;&#1078;&#1077;&#1085;&#1085;&#1086;&#1089;&#1090;&#1080;(?:[^:]*:){1}([^<]*)/i, replaceTagsAndSpaces, parseBalance);
                     //Кредитный лимит
@@ -364,7 +403,7 @@ function fetchBankPhysic(html, baseurlNew) {
 
                     //Для выполнения условия льготного периода Вы можете внести сумму в размере 14,656.58 RUR по 20.08.2012 включительно
                     //&#1044;&#1083;&#1103; &#1074;&#1099;&#1087;&#1086;&#1083;&#1085;&#1077;&#1085;&#1080;&#1103; &#1091;&#1089;&#1083;&#1086;&#1074;&#1080;&#1103; &#1083;&#1100;&#1075;&#1086;&#1090;&#1085;&#1086;&#1075;&#1086; &#1087;&#1077;&#1088;&#1080;&#1086;&#1076;&#1072; &#1042;&#1099; &#1084;&#1086;&#1078;&#1077;&#1090;&#1077; &#1074;&#1085;&#1077;&#1089;&#1090;&#1080; &#1089;&#1091;&#1084;&#1084;&#1091; &#1074; &#1088;&#1072;&#1079;&#1084;&#1077;&#1088;&#1077; 14,656.58 RUR &#1087;&#1086; 20.08.2012
-                    getParam(html, result, 'freepaydate', [/&#1051;&#1100;&#1075;&#1086;&#1090;&#1085;&#1099;&#1081; &#1087;&#1077;&#1088;&#1080;&#1086;&#1076; &#1086;&#1087;&#1083;&#1072;&#1090;&#1099;: &#1087;&#1086;([^<]*)/i, /&#1044;&#1083;&#1103; &#1074;&#1099;&#1087;&#1086;&#1083;&#1085;&#1077;&#1085;&#1080;&#1103; &#1091;&#1089;&#1083;&#1086;&#1074;&#1080;&#1103; &#1083;&#1100;&#1075;&#1086;&#1090;&#1085;&#1086;&#1075;&#1086; &#1087;&#1077;&#1088;&#1080;&#1086;&#1076;&#1072; &#1042;&#1099; &#1084;&#1086;&#1078;&#1077;&#1090;&#1077; &#1074;&#1085;&#1077;&#1089;&#1090;&#1080; &#1089;&#1091;&#1084;&#1084;&#1091; &#1074; &#1088;&#1072;&#1079;&#1084;&#1077;&#1088;&#1077;[^<]*?&#1087;&#1086;\s*([\d\.]+)/i], null, parseDate);
+                    getParam(html, result, 'freepaydate', [/&#1051;&#1100;&#1075;&#1086;&#1090;&#1085;&#1099;&#1081; &#1087;&#1077;&#1088;&#1080;&#1086;&#1076; &#1086;&#1087;&#1083;&#1072;&#1090;&#1099;: &#1087;&#1086;([^<]*)/i, /&#1044;&#1083;&#1103; &#1074;&#1099;&#1087;&#1086;&#1083;&#1085;&#1077;&#1085;&#1080;&#1103; &#1091;&#1089;&#1083;&#1086;&#1074;&#1080;&#1103; &#1083;&#1100;&#1075;&#1086;&#1090;&#1085;&#1086;&#1075;&#1086; &#1087;&#1077;&#1088;&#1080;&#1086;&#1076;&#1072; &#1042;&#1099; &#1084;&#1086;&#1078;&#1077;&#1090;&#1077; &#1074;&#1085;&#1077;&#1089;&#1090;&#1080; &#1089;&#1091;&#1084;&#1084;&#1091; &#1074; &#1088;&#1072;&#1079;&#1084;&#1077;&#1088;&#1077;[^<]*?&#1087;&#1086;\s*([\d\.]+)/i], replaceTagsAndSpaces, parseDate);
 		    		//&#1054;&#1090;&#1095;&#1077;&#1090;&#1085;&#1072;&#1103; &#1089;&#1091;&#1084;&#1084;&#1072; &#1079;&#1072;&#1076;&#1086;&#1083;&#1078;&#1077;&#1085;&#1085;&#1086;&#1089;&#1090;&#1080;:([^<]*)/i
                     getParam(html, result, 'freepay', [/&#1044;&#1083;&#1103; &#1074;&#1099;&#1087;&#1086;&#1083;&#1085;&#1077;&#1085;&#1080;&#1103; &#1091;&#1089;&#1083;&#1086;&#1074;&#1080;&#1103; &#1083;&#1100;&#1075;&#1086;&#1090;&#1085;&#1086;&#1075;&#1086; &#1087;&#1077;&#1088;&#1080;&#1086;&#1076;&#1072; &#1042;&#1099; &#1084;&#1086;&#1078;&#1077;&#1090;&#1077; &#1074;&#1085;&#1077;&#1089;&#1090;&#1080; &#1089;&#1091;&#1084;&#1084;&#1091; &#1074; &#1088;&#1072;&#1079;&#1084;&#1077;&#1088;&#1077;([^<]*?)&#1087;&#1086;/i], replaceTagsAndSpaces, parseBalance2);
                     if (AnyBalance.isAvailable('debt') && limit) {
@@ -373,15 +412,15 @@ function fetchBankPhysic(html, baseurlNew) {
 				}
             }
             if (AnyBalance.isAvailable('lgotsum', 'lgottill')) {
-                html = AnyBalance.requestPost(baseurl + '/faces/pages/accounts/card_acc_detailed.jspx', {
+                html = AnyBalance.requestPost(g_baseurl + '/faces/pages/accounts/card_acc_detailed.jspx', {
                     'f:_id216:rangeStart': 0,
                     'oracle.adf.faces.FORM': 'f',
                     'oracle.adf.faces.STATE_TOKEN': getStateToken(html),
                     source: getParam(html, null, null, /info_card_preference_enabled.gif[\s\S]*?\{source:'([^']*)/i)
                 }, g_headers);
 
-                var _html = AnyBalance.requestPost(baseurl + '/faces/pages/accounts/preference_info_inner.jspx', {time: new Date().getTime()}, addHeaders({
-                    'Referer': baseurl + '/faces/pages/accounts/preference_info.jspx',
+                var _html = AnyBalance.requestPost(g_baseurl + '/faces/pages/accounts/preference_info_inner.jspx', {time: new Date().getTime()}, addHeaders({
+                    'Referer': g_baseurl + '/faces/pages/accounts/preference_info.jspx',
                     'X-Requested-With': 'XMLHttpRequest'
                 }));
                 getParam(_html, result, 'lgotsum', /Для получения льготы необходимо сделать покупок на сумму\s*<span[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
@@ -391,13 +430,13 @@ function fetchBankPhysic(html, baseurlNew) {
     }
 
     if (AnyBalance.isAvailable('miles', 'miles_avail', 'miles_due')) {
-        //Бонусные мили
+        // Бонусные мили
 		if (!bonusSource) {
             AnyBalance.trace(html);
             AnyBalance.trace('Не удалось найти ссылку на Бонусные мили.');
         } else {
-            //var token = getStateToken(html); //var token = getStateToken(html); //Мешает получению бонусных миль
-            html = AnyBalance.requestPost(baseurlNew + '/faces/pages/accounts/all_acc.xhtml', [
+            //var token = getViewStateToken(html); //Мешает получению бонусных миль
+            html = AnyBalance.requestPost(g_baseurl + '/faces/pages/accounts/all_acc.xhtml', [
 			    ['f','f'],
                 ['f:j_idt29:userComment',''],
                 ['f:mailBackText',''],
@@ -405,31 +444,34 @@ function fetchBankPhysic(html, baseurlNew) {
                 ['f:j_idt531_input',''],
                 ['javax.faces.ViewState',token],
                 [bonusSource,bonusSource],
-            ], addHeaders({Referer: baseurlNew + '/faces/pages/accounts/all_acc.xhtml'}));
+            ], addHeaders({Referer: g_baseurl + '/faces/pages/accounts/all_acc.xhtml'}));
 			
 			var milesSource1 = getElements(html, [/<li[^>]+class="navigation-menu__item"[^>]*><a href[\s\S]*?<\/li>/ig, /&#1041;&#1086;&#1085;&#1091;&#1089;&#1085;&#1099;&#1077; &#1084;&#1080;&#1083;&#1080;/i])[0]; //Кнопка Бонусные мили
 	        var bonusSource1 = getParam(milesSource1, null, null, /onclick=[\s\S]*?\{\\'([^\\']*)/i); //Id кнопки 
-            //var token = getStateToken(html); //var token = getStateToken(html); //Мешает получению бонусных миль
+//          AnyBalance.trace('Бонусные мили (кнопка: milesSource1): ' + milesSource1);
+//	        AnyBalance.trace('Бонусные мили (Id кнопки: bonusSource1): ' + bonusSource1);
+			
+			var token = getViewStateToken(html); //А здесь требуется refresh токена
 			var dt = new Date();
-            html = AnyBalance.requestPost(baseurlNew + '/faces/pages/air/search_flights.xhtml', [
+            html = AnyBalance.requestPost(g_baseurl + '/faces/pages/air/search_flights.xhtml', [	
 			    ['f','f'],
-                ['f:j_idt100:j_idt102:0:fromLocation1:cityFromSearch_input',''],
-                ['f:j_idt100:j_idt102:0:fromLocation1:cityFromSearch_hinput',''],
-                ['f:j_idt100:j_idt102:0:toLocation1:cityFromSearch_input',''],
-                ['f:j_idt100:j_idt102:0:toLocation1:cityFromSearch_hinput',''],
-                ['f:j_idt100:j_idt102:0:j_idt121:j_idt129_input',formatDate(dt)],
-                ['f:j_idt192_input',1],
-                ['f:j_idt194_input',0],
-                ['f:j_idt196_input',0],
-                ['f:j_idt198_focus',''],
-                ['f:j_idt198_input','CHANGED'],
-                ['f:j_idt202_focus',''],
-                ['f:j_idt202_input','ECONOMY'],
-                ['f:j_idt207_focus',''],
-                ['f:j_idt207_input','all'],
+                ['f:j_idt99:j_idt101:0:fromLocation1:cityFromSearch_input',''],
+                ['f:j_idt99:j_idt101:0:fromLocation1:cityFromSearch_hinput',''],
+                ['f:j_idt99:j_idt101:0:toLocation1:cityFromSearch_input',''],
+                ['f:j_idt99:j_idt101:0:toLocation1:cityFromSearch_hinput',''],
+                ['f:j_idt99:j_idt101:0:j_idt120:j_idt128_input',formatDate(dt)],
+                ['f:j_idt191_input',1],
+                ['f:j_idt193_input',0],
+                ['f:j_idt195_input',0],
+                ['f:j_idt197_focus',''],
+                ['f:j_idt197_input','CHANGED'],
+                ['f:j_idt201_focus',''],
+                ['f:j_idt201_input','ECONOMY'],
+                ['f:j_idt206_focus',''],
+                ['f:j_idt206_input','all'],
                 ['javax.faces.ViewState',token],
                 [bonusSource1,bonusSource1],
-            ], addHeaders({Referer: baseurlNew + '/faces/pages/air/search_flights.xhtml'}));
+            ], addHeaders({Referer: g_baseurl + '/faces/pages/air/search_flights.xhtml'}));
 			
             //Всего бонусных миль на
             getParam(html, result, 'miles', /&#1042;&#1089;&#1077;&#1075;&#1086; &#1073;&#1086;&#1085;&#1091;&#1089;&#1085;&#1099;&#1093; &#1084;&#1080;&#1083;&#1100; &#1085;&#1072;[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i, replaceTagsAndSpaces, parseBalance);

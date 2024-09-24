@@ -4,20 +4,24 @@
 */
 
 var g_headers = {
-	'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-	'accept-language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
-	'connection': 'keep-alive',
-	'x-requested-with': 'ru.hoff.app',
-	'upgrade-insecure-requests': '1',
-	'user-agent': 'Mozilla/5.0 (Linux; Android 8.0.0; AUM-L29 Build/HONORAUM-L29; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/103.0.5060.129 Mobile Safari/537.36',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+	'Connection': 'keep-alive',
+	'X-Requested-With': 'XMLHttpRequest',
+	'Upgrade-Insecure-Requests': '1',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
 };
 
-var baseurl = 'https://hoff.ru';
+var g_baseurl = 'https://hoff.ru';
 var g_savedData;
 var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4'];
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
+	
+	AnyBalance.setOptions({
+		CLIENT: "okhttp"
+	});
 	
 	AnyBalance.setDefaultCharset('utf-8');
 	
@@ -29,13 +33,13 @@ function main() {
 	if(!g_savedData)
 		g_savedData = new SavedData('hoff', prefs.login);
 	
-	var token = g_savedData.get('token');
+	var sessId = g_savedData.get('sessId');
 
 	g_savedData.restoreCookies();
 	
 	AnyBalance.trace('Пробуем войти в личный кабинет...');
 	
-	var html = loadProtectedPage((baseurl + '/', g_headers));
+	var html = loadProtectedPage((g_baseurl + '/', g_headers));
 	
 	if(!html || AnyBalance.getLastStatusCode() > 403){
 		AnyBalance.trace(html);
@@ -45,7 +49,7 @@ function main() {
 	if(/iwaf/.test(html))
        	loadProtectedPageIwaf(html);
 
-	html = AnyBalance.requestGet(baseurl + '/vue/me/', g_headers);
+	html = AnyBalance.requestGet(g_baseurl + '/vue/me/', addHeaders({'Referer': g_baseurl + '/personal/'}));
 	
 	var json = getJson(html);
 	AnyBalance.trace(JSON.stringify(json));
@@ -62,15 +66,36 @@ function main() {
 	
 	var result = {success: true};
 	
-	var userData = getJson(html).data;
-	if(userData.card && userData.card.length > 0){
-		var state = {0: 'Не активна', 1: 'Активна', 2: 'Заблокирована'};
-		var firstCard = getParam(userData.card[0]);
-	    var cardData = getJson(html).data.card_data[firstCard];
+	var user = json.data;
+	
+	var fio = {};
+	sumParam(user.name, fio, '__n', null, null, null, create_aggregate_join(', '));
+	sumParam(user.second_name, fio, '__n', null, null, null, create_aggregate_join(', '));
+	sumParam(user.last_name, fio, '__n', null, null, null, create_aggregate_join(', '));
+	getParam(fio.__n, result, 'fio');
+		
+	getParam(user.id, result, 'user_id');
+	getParam(user.email, result, 'email');
+	getParam(user.phone, result, 'phone', null, replaceNumber);
+	
+	html = AnyBalance.requestGet(g_baseurl + '/vue/me/cardlist/', addHeaders({'Referer': g_baseurl + '/personal/'}));
+	
+	json = getJson(html);
+	AnyBalance.trace(JSON.stringify(json));
+	
+	var cardNum;
+	
+	if(json.data && json.data.additional_data && json.data.additional_data.cards && json.data.additional_data.cards.length > 0){
+	    var cards = json.data.additional_data.cards;
+		var state = {'UNEXIST': 'Не активна', 'EXIST': 'Активна', 'BLOCKED': 'Заблокирована'};
+		var type = {0: 'Виртуальная', 1: 'Пластиковая', 2: 'Цифровая'};
+	    var cardData = cards[0];
+		cardNum = cardData.number;
 	    getParam(cardData.balance, result, 'balance', null, null, parseBalance);
 	    getParam(cardData.balance_active, result, 'balance_active', null, null, parseBalance);
-	    getParam(userData.card[0], result, 'card');
-		getParam(state[cardData.is_registred]||cardData.is_registred, result, 'card_status');
+	    getParam(cardData.number, result, 'card');
+		getParam(state[cardData.STATUS]||cardData.STATUS, result, 'card_status');
+		getParam(type[cardData.VIRTUAL]||cardData.VIRTUAL, result, 'card_type');
 	    getParam(cardData.number, result, '__tariff');
 	    if(cardData && cardData.withdrawal_count)
 		    getParam(cardData.withdrawal_count, result, 'burn_count', null, null, parseBalance);
@@ -80,11 +105,29 @@ function main() {
 		    getParam(cardData.soon_available[0].amount, result, 'soon_available', null, null, parseBalance);
 		    getParam(cardData.soon_available[0].date, result, 'soon', null, null, parseDate);
 		}
+	}else{
+		AnyBalance.trace('Не удалось получить информацию по картам');
 	}
-		
-	getParam(userData.id, result, 'user_id');
-	getParam(userData.name + ' ' + userData.last_name, result, 'fio');
-	getParam(userData.phone, result, 'phone', null, replaceNumber);
+	
+	if(AnyBalance.isAvailable(['last_oper_date', 'last_oper_sum', 'last_oper_type']) && cardNum){
+		html = AnyBalance.requestGet(g_baseurl + '/vue/me/cardhistory/?type=all&card=' + cardNum + '&page=1', addHeaders({'Referer': g_baseurl + '/personal/cards'}));
+	
+	    json = getJson(html);
+	    AnyBalance.trace(JSON.stringify(json));
+	    
+	    var h = json.data && json.data.cardHistory;
+	    if(h && h.length > 0){
+	    	AnyBalance.trace('Найдено операций с баллами: ' + h.length);
+			
+			var operType = {'accrual': 'Начисление', 'combustion': 'Сгорание'};
+			
+	    	getParam(h[0].date, result, 'last_oper_date', null, null, parseDate);
+			getParam((h[0].type == 'accrual' ? h[0].accrual : -h[0].writeOff), result, 'last_oper_sum', null, null, parseBalance);
+	    	getParam(operType[h[0].type]||h[0].type, result, 'last_oper_type');
+	    }else{
+ 	    	AnyBalance.trace('Не удалось получить информацию по операциям');
+ 	    }
+	}
 
 	AnyBalance.setResult(result);
 }
@@ -94,39 +137,58 @@ function login(){
 	
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	var formattedLogin = prefs.login.replace(/.*(\d{3})(\d{3})(\d{2})(\d{2})$/i, '7$1$2$3$4');
+	var formattedLogin = prefs.login.replace(/.*(\d{3})(\d{3})(\d{2})(\d{2})$/i, '+7 $1 $2 $3 $4');
 	var formattedLoginHint = prefs.login.replace(/.*(\d{3})(\d{3})(\d{2})(\d{2})$/i, '+7 $1 $2-$3-$4');
 	
-	var html = loadProtectedPage((baseurl + '/', g_headers));
+	var html = loadProtectedPage((g_baseurl + '/', g_headers));
 	
 	if(/iwaf/.test(html))
        	loadProtectedPageIwaf(html);
 	
-	html = AnyBalance.requestPost(baseurl + '/api/v2/auth?device_id=b8134bab89a1ad87&isAndroid=true&isGooglePayEnabled=1&isSamsungPayEnabled=0&isAvailableSberPay=0&app_version=8.62.0&location=771&xhoff=eba30b9746c26d8b72d8db53fe43edcf635372f8%3A7477', {
-        'type': 'check_contact',
-        'phone': formattedLogin
-    }, addHeaders({
-        'content-type': 'application/x-www-form-urlencoded'
+	html = AnyBalance.requestPost(g_baseurl + '/vue/main/', JSON.stringify({
+        "entities": [
+            "user-data",
+            "main_menu",
+            "breadcrumbs",
+            "meta"
+        ]
+    }), addHeaders({
+        'Content-Type': 'application/json',
+		'Origin': g_baseurl,
+		'Referer': g_baseurl + '/'
 	}));
 	
 	var json = getJson(html);
 	AnyBalance.trace(JSON.stringify(json));
 	
-	if(json.exists !== true)
-       	throw new AnyBalance.Error('Личный кабинет с указанным номером телефона не существует!');	
-	
-	html = AnyBalance.requestPost(baseurl + '/api/v2/auth?device_id=b8134bab89a1ad87&isAndroid=true&isGooglePayEnabled=1&isSamsungPayEnabled=0&isAvailableSberPay=0&app_version=8.62.0&location=771&xhoff=4dcb0afd1b7642c95c1f05ed48652063845ee826%3A6139', {
-        'type': 'confirm_phone',
-		'phone': formattedLogin
-    }, addHeaders({
-        'content-type': 'application/x-www-form-urlencoded'
+	html = AnyBalance.requestPost(g_baseurl + '/vue/auth/check_contact/', JSON.stringify({
+        "phone": formattedLogin
+    }), addHeaders({
+        'Content-Type': 'application/json',
+		'Origin': g_baseurl,
+		'Referer': g_baseurl + '/'
 	}));
 	
 	var json = getJson(html);
 	AnyBalance.trace(JSON.stringify(json));
 	
-	if(json.code !== 185){
-		var error = json.message;
+	if(json.data.exists !== true)
+       	throw new AnyBalance.Error('Личный кабинет с указанным номером телефона не существует!');
+	
+	html = AnyBalance.requestPost(g_baseurl + '/vue/auth/', JSON.stringify({
+        "phone": formattedLogin,
+        "auth_type": "standard"
+    }), addHeaders({
+        'Content-Type': 'application/json',
+		'Origin': g_baseurl,
+		'Referer': g_baseurl + '/'
+	}));
+	
+	var json = getJson(html);
+	AnyBalance.trace(JSON.stringify(json));
+	
+	if(json.data.code !== "ok"){
+		var error = json.data.message;
       	if(error){
 			AnyBalance.trace(html);
        		throw new AnyBalance.Error(error);	
@@ -138,31 +200,35 @@ function login(){
 	
 	var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, высланный на номер ' + formattedLoginHint, null, {inputType: 'number', time: 180000});
 	
-	html = AnyBalance.requestPost(baseurl + '/api/v2/auth?device_id=b8134bab89a1ad87&isAndroid=true&isGooglePayEnabled=1&isSamsungPayEnabled=0&isAvailableSberPay=0&app_version=8.62.0&location=771&xhoff=22e06171291aa736e924c40333291d8bf33e9e4a%3A8250', {
-        'phone': formattedLogin,
-		'smscode': code
-    }, addHeaders({
-        'content-type': 'application/x-www-form-urlencoded'
+	html = AnyBalance.requestPost(g_baseurl + '/vue/auth/', JSON.stringify({
+        "phone": formattedLogin,
+        "sms_code": code,
+        "auth_type": "standard"
+    }), addHeaders({
+        'Content-Type': 'application/json',
+		'Origin': g_baseurl,
+		'Referer': g_baseurl + '/'
 	}));
 	
 	var json = getJson(html);
 	AnyBalance.trace(JSON.stringify(json));
 	
-	if(json.code){
-		var error = json.message;
+	if(json.data.code !== "ok"){
+		var error = json.data.message;
       	if(error){
 			AnyBalance.trace(html);
-       		throw new AnyBalance.Error(error);	
+       		throw new AnyBalance.Error(error, false, true);
       	}
 
        	AnyBalance.trace(html);
        	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
     }
 	
-	html = AnyBalance.requestGet(baseurl + '/vue/me/', g_headers);
+	html = AnyBalance.requestGet(g_baseurl + '/vue/me/', g_headers);
 	
-	var token = json.token;
-	g_savedData.set('token', token);
+	var sessId = json.data.sessid;
+	
+	g_savedData.set('sessId', sessId);
 	
 	g_savedData.setCookies();
 	g_savedData.save();
@@ -177,20 +243,19 @@ function loadProtectedPage(headers){
     var html = AnyBalance.requestGet(url, headers);
     if(/__qrator/.test(html) || AnyBalance.getLastStatusCode() == 401) {
         AnyBalance.trace("Обнаружена защита от роботов. Пробуем обойти...");
-//      clearAllCookies();
+//      clearAllCookies(); // Закрываем, иначе придётся логиниться заново
 
         const bro = new BrowserAPI({
-            provider: 'hoff',
-            userAgent: g_headers["user-agent"],
+            provider: 'hoff-q2',
+            userAgent: headers["User-Agent"],
+            headful: true,
+            singlePage: true,
             rules: [{
-                url: /^data:/.toString(),
-                action: 'abort',
-            },{
                 resType: /^(image|stylesheet|font)$/.toString(),
                 action: 'abort',
             }, {
-                url: /_qrator\/qauth_utm_v2(?:_\w+)?\.js/.toString(),
-                action: 'cache',
+		        url: /_qrator\/qauth(?:_\w+)*\.js/.toString(),
+                action: 'request',
                 valid: 3600*1000
             }, {
                 url: /_qrator/.toString(),
@@ -202,11 +267,8 @@ function loadProtectedPage(headers){
                 url: /\.(png|jpg|ico|svg)/.toString(),
                 action: 'abort',
             }, {
-                url: /hoff\.ru/i.toString(),
+                url: /.*/.toString(),
                 action: 'request',
-            }, {
-		        url: /.*/.toString(),
-		        action: 'abort'
             }],
             debug: AnyBalance.getPreferences().debug
         });
@@ -225,8 +287,8 @@ function loadProtectedPage(headers){
             throw new AnyBalance.Error('Не удалось обойти защиту. Сайт изменен?');
 
         AnyBalance.trace("Защита от роботов успешно пройдена");
-        AnyBalance.saveCookies();
-    	AnyBalance.saveData();
+        g_savedData.setCookies();
+	    g_savedData.save();
 
     }
 
@@ -244,7 +306,7 @@ function loadProtectedPageIwaf(html){
 	var iwafJsCookieValue = getParam(html, null, null, /iwaf_js_cookie_[\s\S]*?=([\s\S]*?);/i, replaceTagsAndSpaces);
 	AnyBalance.setCookie('hoff.ru', 'iwaf_js_cookie_' + iwafCookieName, '' + iwafJsCookieValue);
 	
-	var html = AnyBalance.requestGet(baseurl + '/', addHeaders({'referer': baseurl + '/iwaf-challenge'}));
+	var html = AnyBalance.requestGet(g_baseurl + '/', addHeaders({'Referer': g_baseurl + '/iwaf-challenge'}));
 	
 	if(/iwaf/.test(html)||AnyBalance.getLastStatusCode()==403){
         throw new AnyBalance.Error('Не удалось установить куку iwaf. Сайт изменен?');

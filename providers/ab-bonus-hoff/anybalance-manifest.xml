@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="9">ab-bonus-hoff</id>
+	<id version="10">ab-bonus-hoff</id>
 	<api flags="no_browser"/>
 	<name>Hoff (бонусы)</name>
 	<description html="true"><![CDATA[
@@ -8,7 +8,7 @@
 	<p>Информация берется из личного кабинета Hoff на сайте https://hoff.ru/personal/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Если у вас нет доступа в личный кабинет, получите его на странице https://hoff.ru/</p>
+	<p>Если у вас нет доступа в личный кабинет, получите его на странице https://hoff.ru/.</p>
 	<p>Для работы провайдера требуется ввести номер телефона, привязанного к личному кабинету Hoff, и код подтверждения из SMS, высланного на этот номер.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
@@ -31,8 +31,13 @@
 		<counter id="burn_count" name="Сгораемые бонусы" units=" Б"/>
 		<counter id="burn" name="Ближайшая дата сгорания" type="time" format="dd.MM.yyyy"/>
 		<counter id="card" name="Номер карты" type="text"/>
+		<counter id="card_type" name="Тип карты" type="text"/>
 		<counter id="card_status" name="Статус карты" type="text"/>
 		<counter id="user_id" name="ID пользователя" type="text"/>
+		<counter id="last_oper_date" name="Дата посл. операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_oper_sum" name="Сумма посл. операции" units=" Б"/>
+		<counter id="last_oper_type" name="Тип посл. операции" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>

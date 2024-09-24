@@ -58,6 +58,7 @@ function initialize(baseurl){
 var g_countersTable = {
 	common: {
 		"balance": "balance",
+		"unified_balance": "unified_balance",
 		"addon_balance": "addon_balance",
 		"prebal": "prebal",
 		"overpay": "overpay",
@@ -79,18 +80,25 @@ var g_countersTable = {
 		"fio": "info.fio",
 		"phone": "info.phone",
 		"agreement": "agreement",
+		"type": "type",
 		"total_balance": "total_balance",
 		"traffic_used": "remainders.traffic_used",
+		"traffic_used_4g": "traffic_used_4g",
+		"traffic_used_total": "traffic_used_total",
 		"traffic_total": "remainders.traffic_total",
 		"min_local_till": "remainders.min_local_till",
 		"services_abon": "services_abon",
+		"services_abon_day": "services_abon_day",
 		"services_count": "services_count",
 		"services_paid": "services_paid",
 		"services_free": "services_free",
+		"month_refill": "month_refill",
 		"last_pay_date": "payments.date",
 		"last_pay_sum": "payments.sum",
 		"last_pay_place": "payments.place",
 		"statuslock": "statuslock",
+		"debet": "debet",
+		"abon_tariff": "abon_tariff",
 		"__tariff": "tariff"
 	}
 };

@@ -23,7 +23,7 @@ var g_apiHeaders = {
 };
 
 function callAPIProc(url, getParams, postParams, method) {
-	if(/mw\/auth|profile\/sasBalance/i.test(url)){
+	if(/mw\/auth|billing\/details|ub\/balance|profile\/sasBalance/i.test(url)){
 		url = g_baseurlApiNew + url;
 	}else{
 	    url = g_baseurlApi + url;
@@ -221,12 +221,17 @@ function processApi(result){
 		processApi.payType[prefs.phone] = json.payType;
 	}
 	
-	getParam(processApi.payType[prefs.phone], result, 'type');
+	var type = {
+		PREPAID: 'Предоплатный',
+		POSTPAID: 'Постоплатный'
+	};
+	getParam(type[processApi.payType[prefs.phone]]||processApi.payType[prefs.phone], result, 'type');
 	
 	processApiInfo(result);
 	
 	if(typeof(processApiPayments) == 'function')
 		processApiPayments(result);
+	
 	processApiServices(result);
 
 	processApiTariff(result);
@@ -247,7 +252,10 @@ function processApiTariff(result){
 	var prefs = AnyBalance.getPreferences();
 	var json = callAPIProc('1.0/info/pricePlan', {ctn: prefs.phone});
 
-	getParam(json.pricePlanInfo.entityName, result, 'tariff'); 
+	getParam(json.pricePlanInfo.entityName, result, 'tariff');
+	
+	if(json.pricePlanInfo.rcRate)
+	    getParam(json.pricePlanInfo.rcRate, result, 'abon_tariff', null, null, apiParseBalanceRound);
 }
 
 function processApiStatus(result){
@@ -262,6 +270,26 @@ function processApiStatus(result){
 	}else{
 		result.statuslock = 'Номер не блокирован';
 	}
+}
+
+function processApiUnifiedBalance(result){
+	if(!AnyBalance.isAvailable('unified_balance'))
+		return;
+	
+	var json = callAPIProc('mobile/api/v1/ub/balance/unified');
+	
+	if(json.data && json.data.data)
+		getParam(json.data.data.balance, result, 'unified_balance', null, null, apiParseBalanceRound);
+}
+
+function processApiAddonBalance(result){
+	if(!AnyBalance.isAvailable('addon_balance'))
+		return;
+    
+	var json = callAPIProc('mobile/api/v1/profile/sasBalance');
+	
+	if(json.data)
+		getParam(json.data.sasBalanceValue, result, 'addon_balance', null, null, apiParseBalanceRound);
 }
 
 function processApiInfo(result){
@@ -304,17 +332,29 @@ function processApiPrepaid(result){
 		getParam(json.currency, result, ['currency_code', 'balance']);
 		getParam(g_currencys[json.currency], result, ['currency', 'balance']);
 	}
-    
-	if(AnyBalance.isAvailable('addon_balance')){
-		var json = callAPIProc('mobile/api/v1/profile/sasBalance');
-		
-		getParam(json.data.sasBalanceValue, result, 'addon_balance', null, null, apiParseBalanceRound);
+	
+	try{
+	    processApiUnifiedBalance(result);
+	}catch(e){
+		AnyBalance.trace('Не удалось получить общий баланс: ' + e.message);
+	}
+	
+	try{
+	    processApiAddonBalance(result);
+	}catch(e){
+		AnyBalance.trace('Не удалось получить баланс для доп. услуг: ' + e.message);
 	}
 
 	try{
     	processApiRemaindersPrepaid(result);
 	}catch(e){
-		AnyBalance.trace('Не удалось получить бонусы: ' + e.message);
+		AnyBalance.trace('Не удалось получить остатки: ' + e.message);
+	}
+	
+	try{
+	    processApiExpensesPrepaid(result);
+	}catch(e){
+		AnyBalance.trace('Не удалось получить детализацию расходов: ' + e.message);
 	}
 
 	if(typeof(processApiDetalizationPrepaid) == 'function')
@@ -402,7 +442,6 @@ function processApiRemaindersPrepaid(result){
 	}
 }
 
-
 function getPostpaidBalanceApi(ctn){
 	if(!getPostpaidBalanceApi.json)
 		getPostpaidBalanceApi.json = {};
@@ -446,11 +485,29 @@ function processApiPostpaid(result){
 			AnyBalance.trace('Не удалось получить переплату: ' + e.message);
 		}
 	}
+	
+	try{
+	    processApiUnifiedBalance(result);
+	}catch(e){
+		AnyBalance.trace('Не удалось получить общий баланс: ' + e.message);
+	}
+	
+	try{
+	    processApiAddonBalance(result);
+	}catch(e){
+		AnyBalance.trace('Не удалось получить баланс для доп. услуг: ' + e.message);
+	}
 
 	try{
 		processApiRemaindersPostpaid(result);
 	}catch(e){
-		AnyBalance.trace('Не удалось получить постоплатные бонусы: ' + e.message);
+		AnyBalance.trace('Не удалось получить постоплатные остатки: ' + e.message);
+	}
+	
+	try{
+	    processApiExpensesPostpaid(result);
+	}catch(e){
+		AnyBalance.trace('Не удалось получить детализацию расходов: ' + e.message);
 	}
 }
 
@@ -504,9 +561,8 @@ function apiParseBalanceRound(val) {
 	return Math.round(balance*100)/100;
 }
 
-
 function processApiServices(result){
-	if(!AnyBalance.isAvailable('services_paid', 'services_free', 'services_count', 'services_abon'))
+	if(!AnyBalance.isAvailable('services_paid', 'services_free', 'services_count', 'services_abon', 'services_abon_day'))
 		return;
 
 	var prefs = AnyBalance.getPreferences();
@@ -514,24 +570,110 @@ function processApiServices(result){
 
 	getParam(json.services ? json.services.length : 0, result, 'services_count')
 	getParam(0, result, 'services_abon');
+	getParam(0, result, 'services_abon_day');
 
 	for(var i=0; i<json.services.length; ++i){
 		var s = json.services[i];
 		
 		if(s.rcRate){
-			var dt = new Date();
-			if(/сутки/i.test(s.rcRatePeriodText)){
-                var sp = new Date(dt.getFullYear(), dt.getMonth()+1, 0).getDate(); // Дней в этом месяце
-            }else{
-                var sp = 1;
-            }
 			AnyBalance.trace('Платная услуга ' + s.entityName + ': ' + s.rcRate + ' ₽ ' + s.rcRatePeriodText);
-			sumParam(s.rcRate*sp, result, 'services_abon', null, null, null, aggregate_sum);
+			if(!/сутки/i.test(s.rcRatePeriodText)){
+				sumParam(s.rcRate, result, 'services_abon', null, null, null, aggregate_sum);
+            }else{
+				sumParam(s.rcRate, result, 'services_abon_day', null, null, null, aggregate_sum);
+            }
 			sumParam(1, result, 'services_paid', null, null, null, aggregate_sum);
 	    }else{
 			sumParam(1, result, 'services_free', null, null, null, aggregate_sum);
 		}
 	}
+}
+
+function processApiExpensesPrepaid(result){
+	if(!AnyBalance.isAvailable(['month_refill', 'debet', 'traffic_used_4g', 'traffic_used_total']))
+		return;
+	
+	var prefs = AnyBalance.getPreferences();
+	
+	var dt = new Date();
+	var ym = dt.getFullYear() + '-' + n2(dt.getMonth()+1) + '-';
+	
+	var startDate = ym + '01';
+	var endDate = ym + n2(dt.getDate());
+	
+	var json = callAPIProc('mobile/api/v1/billing/details', {startDate: startDate, endDate: endDate, combinedSessions: true});
+    
+	if(AnyBalance.isAvailable('month_refill', 'debet')) {
+	    var main_balance = json.data.balanceAndBonuses.filter(function (b) { return (b.title && /Личный баланс/i.test(b.title)) });
+        
+	    if (main_balance.length>0) {
+		    getParam(aggregate_max([0, main_balance[0].addedBonuses.value, AnyBalance.getData('addedBonuses' + ym)]), result, 'month_refill', null, null, apiParseBalanceRound);
+            AnyBalance.setData('addedBonuses' + ym, result.month_refill);
+    	    getParam(aggregate_max([0, main_balance[0].spentBonuses.value, AnyBalance.getData('spentBonuses' + ym)]), result, 'debet', null, null, apiParseBalanceRound);
+            AnyBalance.setData('spentBonuses' + ym, result.debet);
+            AnyBalance.saveData();
+        }
+	    
+	    if(!result.month_refill)
+		    result.month_refill = 0;
+	    
+	    if(!result.debet)
+		    result.debet = 0;
+	}
+	
+	if(AnyBalance.isAvailable('traffic_used_4g', 'traffic_used_total')) {
+	    var category_unlim4g = json.data.transactions.filter(function (t) { return ((t.expence && t.expence.type && t.expence.type == 'mobileInternet') && (t.expence && t.expence.operation && /Безлимит в 4G/i.test(t.expence.operation))) });
+	    var category_traff = json.data.transactions.filter(function (t) { return ((t.expence && t.expence.type && t.expence.type == 'mobileInternet') || (t.expence && t.expence.operation && /интернет/i.test(t.expence.operation))) });
+		
+	    if (category_unlim4g.length>0) {
+			category_unlim4g.forEach(function (cat){
+    			sumParam(cat.expence.volume + ' ' + cat.expence.unit, result, 'traffic_used_4g', null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+    		})
+	    }
+		
+		if (category_traff.length>0) {
+    	    category_traff.forEach(function (cat){
+    			sumParam(cat.expence.volume + ' ' + cat.expence.unit, result, 'traffic_used_total', null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+    		})
+	    }
+		
+		if(!result.traffic_used_4g)
+		    result.traffic_used_4g = 0;
+	    
+	    if(!result.traffic_used_total)
+		    result.traffic_used_total = 0;
+	}
+}
+
+function processApiExpensesPostpaid(result){
+	if(!AnyBalance.isAvailable('month_refill', 'debet'))
+		return;
+	
+	var prefs = AnyBalance.getPreferences();
+	
+	var dt = new Date();
+	var ym = dt.getFullYear() + '-' + n2(dt.getMonth()+1) + '-';
+	
+	var startDate = ym + '01';
+	var endDate = ym + n2(dt.getDate());
+	
+	var json = callAPIProc('mobile/api/v1/billing/details', {startDate: '', endDate: '', ctnFor: prefs.phone, combinedSessions: true});
+    
+	var main_balance = json.data.balanceAndBonuses.filter(function (b) { return (b.title && /Личный баланс/i.test(b.title)) });
+    
+	if (main_balance.length>0) {
+		getParam(aggregate_max([0, main_balance[0].addedBonuses.value, AnyBalance.getData('addedBonuses' + ym)]), result, 'month_refill', null, null, apiParseBalanceRound);
+        AnyBalance.setData('addedBonuses' + ym, result.month_refill);
+    	getParam(aggregate_max([0, main_balance[0].spentBonuses.value, AnyBalance.getData('spentBonuses' + ym)]), result, 'debet', null, null, apiParseBalanceRound);
+        AnyBalance.setData('spentBonuses' + ym, result.debet);
+        AnyBalance.saveData();
+    }
+	
+	if(!result.month_refill)
+		result.month_refill = 0;
+	
+	if(!result.debet)
+		result.debet = 0;
 }
 
 function createNewPasswordApi(){
@@ -604,7 +746,6 @@ function processPaymentsPost(baseurl, html, result){
         }
     };
 
-
     var cols = initCols(colsDef, arr[0]);
 
     for (var i = 1; i < arr.length; i++) {
@@ -615,7 +756,6 @@ function processPaymentsPost(baseurl, html, result){
 
         payments.push(d);
     }
-
 }
 
 function processDetailsAndPaymentsPre(baseurl, phone, result){
@@ -665,10 +805,12 @@ function processApiPayments0(json, result){
 		getParam(payment.paymentType, p, 'payments.type_code');
 		getParam(payment.paymentStatus, p, 'payments.status_code');
 		getParam(payment.payTypeName, p, 'payments.type');
-		if(payment.payPoint)
+		if(!payment.payPoint || (payment.payPoint && /Проверить баланс в приложении/i.test(payment.payPoint))){
+			getParam(payment.payTypeName, p, 'payments.place');
+		}else{
 			getParam(payment.payPoint, p, 'payments.place');
+		}
 
 		result.payments.push(p);
 	}
 }
-

@@ -503,9 +503,6 @@ function fetchB2B(baseurl, html, result) {
  	*/
     }
 
-
-
-
     // Бонусы
     var bonuses = sumParam(html, null, null, /class="accumulator"[^>]*>([\s\S]*?)<\/div/ig);
     AnyBalance.trace('Найдено бонусов и пакетов: ' + bonuses.length);
@@ -1192,4 +1189,3 @@ function sheet_to_array(sheet){
     }
     return out;
 }
-

@@ -39,7 +39,7 @@
 		entries="Мобильное приложение|Официальный сайт"
 		entryValues="app|site"
 		defaultValue="app">
-	</ListPreference>	
+	</ListPreference>
     <ListPreference 
         key="country" 
         title="Страна"

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="175">ab-cell-beeline-new</id>
+	<id version="178">ab-cell-beeline-new</id>
 	<name>Билайн (новый кабинет)</name>
 	<api flags="no_browser" min_level="5"/>
 	<description html="true"><![CDATA[
@@ -39,7 +39,7 @@
 		<module id="extract/abe-cell-beeline"/>
 	</depends>
 	<files>
-		<icon>icon.png</icon>
+	    <icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>lkkz.js</js>
 		<js>lkuz.js</js>
@@ -49,6 +49,7 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
+		<counter id="unified_balance" name="Общий баланс" units=" {@currency}"/>
 		<counter id="prebal" name="Предварительная сумма по договору" units=" {@currency}"/>
 		<counter id="overpay" name="Переплата" units=" {@currency}"/>
 		<counter id="sms_left" name="Остаток SMS" units=" sms"/>
@@ -69,18 +70,25 @@
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="agreement" name="Договор" type="text"/>
+		<counter id="type" name="Тип кабинета" type="text"/>
+		<counter id="month_refill" name="Пополнения за месяц" units=" {@currency}"/>
 		<counter id="last_pay_sum" name="Сумма последнего платежа" units=" {@currency}"/>
 		<counter id="last_pay_date" name="Дата последнего платежа" type="time" format="dd.MM.yyyy"/>
 		<counter id="last_pay_place" name="Место последнего платежа" type="text"/> <!-- Только для предоплатных абонентов -->
 		<counter id="statuslock" name="Статус блокировки" type="text"/>
 		<counter id="total_balance" name="Сумма по всем номерам" units=" {@currency}"/>
 		<counter id="traffic_used" name="Использовано трафика" units=" Mb"/>
+		<counter id="traffic_used_4g" name="Трафик по Безлимит в 4G" units=" Mb"/>
+		<counter id="traffic_used_total" name="Общий расход трафика" units=" Мб"/>
 		<counter id="traffic_total" name="Всего трафика" units=" Mb"/>
 		<counter id="min_local_till" name="Срок действия пакета минут" type="time" format="dd.MM.yyyy"/>
 		<counter id="services_count" name="Подключенные услуги" prefix="💼 " units=" шт"/>
 		<counter id="services_paid" name="Платные услуги" prefix="💵 " units=" шт"/>
 		<counter id="services_free" name="Бесплатные услуги" prefix="🎁 " units=" шт"/>
-		<counter id="services_abon" name="Абонплата за услуги" units=" {@currency}"/>
+		<counter id="services_abon" name="Абонплата за услуги (месяц)" units=" {@currency}"/>
+		<counter id="services_abon_day" name="Абонплата за услуги (сутки)" units=" {@currency}"/>
+		<counter id="debet" name="Начислено за услуги" units=" {@currency}"/>
+		<counter id="abon_tariff" name="Абонплата по тарифу" units=" {@currency}"/>
 		<counter id="bills" name="Выставленные счета" units=" шт"/>
 		<counter id="addon_balance" name="Баланс для доп. услуг" units=" {@currency}"/>
 	</counters>

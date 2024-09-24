@@ -7,7 +7,7 @@ var g_headers = {
 //	'Accept-Language': 'en-US,en;q=0.9',
 	'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
-        'Accept-Encoding': 'gzip, deflate, br',
+    'Accept-Encoding': 'gzip, deflate, br',
 	'sec-ch-ua': '"Chromium";v="119", "Not?A_Brand";v="24"',
 	'sec-ch-ua-mobile': '?0',
 	'sec-ch-ua-platform': '"Windows"',
@@ -117,7 +117,7 @@ function main() {
 		var curLevel = getParam(g_status[json.currentLevel]||json.currentLevel, result, 'currlevel');
 		var cashLevel = getParam(json.cashbackLevel, result, 'cashlevel');
 		result.__tariff = curLevel + ' | ' + cashLevel + '%';
-	    getParam(json.cardNumber, result, 'cardnum');
+//	    getParam(json.cardNumber, result, 'cardnum');
 		
 		getParam(json.buySum, result, 'buysum', null, null, parseBalance);
 		
@@ -157,6 +157,12 @@ function main() {
 		
 		getParam(json.items && json.items.length, result, 'favorite', null, null, parseBalance);
 	}
+	
+	if(AnyBalance.isAvailable('notifications')){
+		var json = callApi('profiles/current/notifications?page=1');
+		
+		getParam(json.notifications && json.notifications.length, result, 'notifications', null, null, parseBalance);
+	}
 /*	
 	if(AnyBalance.isAvailable('last_oper_date', 'last_oper_sum', 'last_oper_desc')){
 	    var dt = new Date();
@@ -184,7 +190,7 @@ function main() {
         	getParam(o.date.replace(/(\d{4})-(\d\d)-(\d\d)/,'$3.$2.$1'), result, 'last_order_date', null, null, parseDate);
         	getParam(o.number, result, 'last_order_number');
         	getParam(o.totalCost, result, 'last_order_sum', null, null, parseBalance);
-        	getParam(o.status.sm.text, result, 'last_order_status');
+        	getParam(o.status.text, result, 'last_order_status');
         }else{
 			AnyBalance.trace('Последний заказ не найден');
 		}
@@ -198,9 +204,30 @@ function main() {
         	getParam(r.date.replace(/(\d{4})-(\d\d)-(\d\d)/,'$3.$2.$1'), result, 'last_retail_date', null, null, parseDate);
         	getParam(r.number, result, 'last_retail_number');
         	getParam(r.totalCost, result, 'last_retail_sum', null, null, parseBalance);
-        	getParam(r.status.sm.text, result, 'last_retail_status');
+        	getParam(r.status.text, result, 'last_retail_status');
         }else{
 			AnyBalance.trace('Последняя покупка не найдена');
+		}
+    }
+	
+	if(AnyBalance.isAvailable('promocodes')){
+        var json = callApi('profiles/current/promocodes');
+		
+        if(json.promocodes && json.promocodes.length > 0){
+			AnyBalance.trace('Найдено промокодов: ' + json.promocodes.length);
+			for(var i=0; i<json.promocodes.length; ++i){
+				var p = json.promocodes[i];
+				
+				var res = '<b>' + p.value + '</b>';
+				if(p.name)
+			        res += '<br> ' + p.name;
+				if(p.expirationDate)
+		            res += ' по ' + p.expirationDate.replace(/(\d{4})-(\d{2})-(\d{2})/i, '$3.$2.$1');
+			    sumParam(res, result, 'promocodes', null, null, null, create_aggregate_join('.<br><br> '));
+			}
+	    }else{
+			AnyBalance.trace('Не удалось получить информацию по промокодам');
+			result.promocodes = 'Нет промокодов';
 		}
     }
 
@@ -251,15 +278,15 @@ function loadProtectedPage(url, headers){
     var html = AnyBalance.requestGet(url, headers);
     if(/__qrator/.test(html) || AnyBalance.getLastStatusCode() == 401) {
         AnyBalance.trace("Обнаружена защита от роботов. Пробуем обойти...");
-        clearAllCookies();
+//        clearAllCookies(); // Закрываем, иначе придётся логиниться заново
 
         const bro = new BrowserAPI({
             provider: 'sportmaster',
             //userAgent: headers["user-agent"] || headers["User-Agent"],
-	    noInterception: true,
+	        noInterception: true,
             //win: true,
-	    incognito: true,
-	    singlePage: true,	        
+	        incognito: true,
+	        singlePage: true,	        
             headful: true,
             rules: [{
                 url: /^data:/.toString(),
@@ -281,8 +308,8 @@ function loadProtectedPage(url, headers){
                 url: /cdn.sportmaster.ru/.toString(),
                 action: 'abort'
             }, {
-		url: /.*/.toString(),
-		action: 'abort'
+		        url: /.*/.toString(),
+		        action: 'abort'
             }],
             debug: AnyBalance.getPreferences().debug
         });
@@ -296,8 +323,8 @@ function loadProtectedPage(url, headers){
         } finally {
             bro.close(r.page);
         }
-        console.log(html);
-        if(/__qrator|HTTP 40[31]|block-msg/.test(html)||AnyBalance.getLastStatusCode() >= 400)
+        
+        if(/__qrator|HTTP 40[31]|block-msg/.test(html)||AnyBalance.getLastStatusCode() >= 401)
             throw new AnyBalance.Error('Не удалось обойти защиту. Сайт изменен?');
 
         AnyBalance.trace("Защита от роботов успешно пройдена");

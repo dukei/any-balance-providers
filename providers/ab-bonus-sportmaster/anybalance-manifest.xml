@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id version="38">ab-bonus-sportmaster</id>
+	<id version="40">ab-bonus-sportmaster</id>
 	<name>Спортмастер</name>
 	<description html="true"><![CDATA[
     <p>Предоставляет информацию по бонусной карте для участников клубной программы сети магазинов Спортмастер (https://www.sportmaster.ru/).</p> 
@@ -31,7 +31,7 @@
     	<counter id="cashbacktilldate" name="Дата сгорания кешбэка" type="time" format="dd.MM.yyyy"/>
 		<counter id="promotillsum" name="Сгораемые промо бонусы" units=" Б"/>
     	<counter id="promotilldate" name="Дата сгорания промо" type="time" format="dd.MM.yyyy"/>
-		<counter id="cardnum" name="Номер карты" type="text"/>
+<!--    <counter id="cardnum" name="Номер карты" type="text"/> -->
 		<counter id="currlevel" name="Текущий уровень" type="text"/>
 		<counter id="cashlevel" name="Уровень кешбэка" units="%"/>
 		<counter id="buysum" name="Накопленная сумма покупок" units=" ₽"/>
@@ -48,7 +48,9 @@
 		<counter id="last_retail_number" name="Номер последней покупки" type="text"/>
 		<counter id="last_retail_sum" name="Сумма последней покупки" units=" ₽"/>
 		<counter id="last_retail_status" name="Статус последней покупки" type="text"/>
+		<counter id="promocodes" name="Промокоды" type="html"/>
 		<counter id="favorite" name="Избранное" units=" шт"/>
+		<counter id="notifications" name="Уведомления" units=" шт"/>
 		<counter id="email" name="E-mail" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>

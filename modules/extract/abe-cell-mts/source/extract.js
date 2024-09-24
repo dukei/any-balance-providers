@@ -35,6 +35,13 @@ var g_headers = {
 
 var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4'];
 
+function generateUUID(){
+	function s4() {
+  		return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+	}
+  	return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
+
 function getParamByName(html, name) {
     return getParam(html, null, null, new RegExp('name=["\']' + name + '["\'][^>]*value=["\']([^"\']+)"', 'i'));
 }
@@ -446,7 +453,7 @@ function getLKJsonNew(html) {
 function getLKJson2(html) {
     var html = AnyBalance.requestGet('https://lk.mts.ru/api/login/profile', addHeaders({
     	Referer: g_baseurl + '/',
-		'X-Login': '7' + fetchNumber()
+		'X-Login': fetchNumber()
     }));
 
     var json = getJson(html);
@@ -481,7 +488,7 @@ function getLKJson2(html) {
 function getLKJson1(html) {
     var html = AnyBalance.requestGet('https://login.mts.ru/profile/header?ref=https%3A//lk.mts.ru/&scheme=https&style=2015v2', addHeaders({
     	Referer: g_baseurl + '/',
-		'X-Login': '7' + fetchNumber()
+		'X-Login': fetchNumber()
     }));
 
     var json = {};
@@ -935,9 +942,9 @@ function callNewLKApiToken(verb, params){
 		var csrfToken = getCsrfToken(); // Нужен для POST-запросов
 		params_str = JSON.stringify(params);
 		method = 'POST';
-		headers = addHeaders({Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json', 'X-Csrf-Token': csrfToken, 'X-Login': fetchNumber(), 'X-Requested-With': 'XMLHttpRequest'});
+		headers = addHeaders({Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json', 'Referer': 'https://lk.mts.ru/', 'X-Csrf-Token': csrfToken, 'X-Login': fetchNumber()});
 	}else{
-		headers = addHeaders({Accept: 'application/json, text/plain, */*', 'X-Login': fetchNumber(), 'X-Requested-With': 'XMLHttpRequest'});
+		headers = addHeaders({Accept: 'application/json, text/plain, */*', 'Referer': 'https://lk.mts.ru/', 'X-Login': fetchNumber()});
 	}
 	
 	var html = AnyBalance.requestPost('https://lk.mts.ru/api/' + verb, params_str, headers, {HTTP_METHOD: method});
@@ -959,8 +966,9 @@ function callNewLKApiResult(token){
 	for(var i=0; i<30; ++i){
 		var html = AnyBalance.requestGet('https://lk.mts.ru/api/longtask/check/' + token.token + '?for=' + token.verb, addHeaders({
 			Accept: 'application/json, text/plain, */*',
+			'Referer': 'https://lk.mts.ru/',
 		    'X-Login': fetchNumber(),
-		    'X-Requested-With': 'XMLHttpRequest'
+		    'X-Trace-Id': generateUUID()
 		}));
 		AnyBalance.trace('Ожидание результата ' + token.verb + ' ' + (i+1) + '/' + 30);
 		if(AnyBalance.getLastStatusCode() >= 400){
@@ -986,9 +994,9 @@ function callNewLKApiData(verb, params){ // Для прямых запросов
 		var csrfToken = getCsrfToken(); // Нужен для POST-запросов
 		params_str = JSON.stringify(params);
 		method = 'POST';
-		headers = addHeaders({Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json', 'X-Csrf-Token': csrfToken, 'X-Login': fetchNumber(), 'X-Requested-With': 'XMLHttpRequest'});
+		headers = addHeaders({Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json', 'Referer': 'https://lk.mts.ru/', 'X-Csrf-Token': csrfToken, 'X-Login': fetchNumber()});
 	}else{
-		headers = addHeaders({Accept: 'application/json, text/plain, */*', 'X-Login': fetchNumber(), 'X-Requested-With': 'XMLHttpRequest'});
+		headers = addHeaders({Accept: 'application/json, text/plain, */*', 'Referer': 'https://lk.mts.ru/', 'X-Login': fetchNumber()});
 	}
 	
 	var html = AnyBalance.requestPost('https://lk.mts.ru/api/' + verb, params_str, headers, {HTTP_METHOD: method});
@@ -1061,7 +1069,7 @@ function processCountersLK(result){
 	    getParam(data.balance, result.remainders, 'remainders.cashback');
 	}
 	
-	if (isAvailable(['remainders.statuslock', 'remainders.services', 'remainders.services_free', 'remainders.services_paid', 'remainders.services_abon'])) {
+	if (isAvailable(['remainders.statuslock', 'remainders.services', 'remainders.services_free', 'remainders.services_paid', 'remainders.services_abon', 'remainders.services_abon_day'])) {
 	    var token = callNewLKApiToken('services/list/active');
 	    var data = callNewLKApiResult(token);
 	    var status = {
@@ -1075,6 +1083,7 @@ function processCountersLK(result){
 	    getParam(0, result.remainders, 'remainders.services_free');
 	    getParam(0, result.remainders, 'remainders.services_paid');
 	    getParam(0, result.remainders, 'remainders.services_abon');
+		getParam(0, result.remainders, 'remainders.services_abon_day');
 	    for(var i=0; i<data.services.length; ++i){
 		    var c = data.services[i];
 
@@ -1083,14 +1092,12 @@ function processCountersLK(result){
 			    sumParam(1, result.remainders, 'remainders.services_free', null, null, parseBalanceSilent, aggregate_sum);
 		    }else if(c.isSubscriptionFee === true && c.primarySubscriptionFee.value !== 0){
 			    AnyBalance.trace('Найдена платная услуга ' + c.name + ': ' + c.primarySubscriptionFee.quotaPeriodicity + ' ' + c.primarySubscriptionFee.value + ' ₽');
-			    var dt = new Date();
 			    sumParam(1, result.remainders, 'remainders.services_paid', null, null, parseBalanceSilent, aggregate_sum);
 		        if(c.primarySubscriptionFee.unitOfMeasure !== 'Month'){
-                    var cp = new Date(dt.getFullYear(), dt.getMonth()+1, 0).getDate(); // Дней в этом месяце
+					sumParam(c.primarySubscriptionFee.value, result.remainders, 'remainders.services_abon_day', null, null, parseBalanceSilent, aggregate_sum);
                 }else{
-                    var cp = 1;
+					sumParam(c.primarySubscriptionFee.value, result.remainders, 'remainders.services_abon', null, null, parseBalanceSilent, aggregate_sum);
                 }
-		        sumParam(c.primarySubscriptionFee.value*cp, result.remainders, 'remainders.services_abon', null, null, parseBalanceSilent, aggregate_sum);
 		    }else{
 			    AnyBalance.trace('Неизвестный тип услуги: ' + JSON.stringify(c));
 		    }
@@ -1112,7 +1119,7 @@ function processCountersLK(result){
 	    processMessagesLK(result);
 	}
 	
-	if (isAvailable(['expenses.usedinthismonth', 'expenses.usedinprevmonth', 'expenses.abonservice', 'expenses.refill'])) {
+	if (isAvailable(['expenses.traffic_used_total_mb', 'expenses.usedinthismonth', 'expenses.usedinprevmonth', 'expenses.abonservice', 'expenses.refill'])) {
 	    processExpensesLK(result);
 	}
 	
@@ -1124,6 +1131,7 @@ function processCountersLK(result){
 function getCsrfToken(){
 	var html = AnyBalance.requestGet('https://lk.mts.ru/api/login/refreshCsrfToken', addHeaders({
 		Accept: 'application/json, text/plain, */*',
+		'Referer': 'https://lk.mts.ru/',
 		'X-Login': fetchNumber()
 	}));
 
@@ -1181,59 +1189,112 @@ function processExpensesLK(result){
 	var dateFrom = dt.getFullYear() + '-' + n2(dt.getMonth()+1) + '-' + '01' + 'T00:00:00+03:00';
 	var dateTo = dt.getFullYear() + '-' + n2(dt.getMonth()+1) + '-' + n2(dt.getDate()) + 'T23:59:59+03:00';
 	
-	try{
-	    html = AnyBalance.requestPost('https://federation.mts.ru/graphql', JSON.stringify({
-            "operationName": "GetExpensesInfoBaseQueryInput",
-            "variables": {
-                "pageIndex": 1,
-                "filter": {
-                    "dateFrom": dateFrom,
-                    "dateTo": dateTo,
-                    "showFree": false,
-                    "tabType": null,
-                    "categoryId": null,
-                    "textSearch": "",
-                    "transactionsDirection": null,
-                    "cashbackType": "ALL"
-                }
-            },
-            "query": "query GetExpensesInfoBaseQueryInput($pageIndex: Int!, $filter: TransactionsFilterInput!) {\n  transactionsByFilter(input: {pageIndex: $pageIndex, filter: $filter}) {\n    totalInfo {\n      currency\n      incomeAmount\n      outcomeAmount\n      cashback {\n        incomeAmount\n        outcomeAmount\n        __typename\n      }\n      period {\n        dateFrom\n        dateTo\n        __typename\n      }\n      __typename\n    }\n    categories {\n      alias\n      value\n      name\n      color\n      amount\n      percentage\n      __typename\n    }\n    totalPages\n    transactions {\n      name\n      type\n      subtitle\n      dateTime\n      unitValue\n      value\n      direction\n      amount\n      icon\n      darkIcon\n      description\n      productType\n      globalCode\n      actionLabel\n      hints\n      cashbackInfo {\n        amount\n        direction\n        __typename\n      }\n      chargePeriod {\n        dateFrom\n        dateTo\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n}"
-        }), addHeaders({
-		    'Content-Type': 'application/json',
-            'Referer': g_baseurl + '/',
-		    'X-Client-Id': 'LK',
-		    'X-Login': fetchNumber()
-	    }));
-	    
-	    var json = getJson(html);
-	}catch(e){
-        AnyBalance.trace('Ошибка получения данных по расходам за этот месяц: ' + e.message);
-		return;
-    }
-	
-	AnyBalance.trace(JSON.stringify(json));
-	
-	var data = json.data;
-	
-	if(data.transactionsByFilter && data.transactionsByFilter.categories && data.transactionsByFilter.categories.length > 0){
-		for(var i=0; data.transactionsByFilter.categories && i<data.transactionsByFilter.categories.length; ++i){
-			var categorie = data.transactionsByFilter.categories[i];
-			AnyBalance.trace('Найдена категория "' + categorie.name + '": ' + categorie.amount + ' ₽');
-			if(!/Абонентская плата/i.test(categorie.name)){
-	            continue;
-			}else{
-				sumParam(categorie.amount, result.expenses, 'expenses.abonservice', null, null, parseBalanceSilent, aggregate_sum);
+	if(isAvailable('expenses.traffic_used_total_mb')){
+	    var transactions = [];
+		var pageIndex = 1;
+		var pageTotal = 1;
+		do {
+		    try{
+			    html = AnyBalance.requestPost('https://federation.mts.ru/graphql', JSON.stringify({
+                    "operationName": "GetExpensesInfoQueryInput",
+                    "variables": {
+                        "pageIndex": pageIndex,
+                        "filter": {
+                            "dateFrom": dateFrom,
+                            "dateTo": dateTo,
+                            "showFree": true,
+                            "tabType": null,
+                            "categoryId": "mobile_internet",
+                            "textSearch": "",
+                            "transactionsDirection": null,
+                            "cashbackType": "ALL"
+                        }
+                    },
+                    "query": "query GetExpensesInfoQueryInput($pageIndex: Int!, $filter: TransactionsFilterInput!) {\n  transactionsByFilter(input: {pageIndex: $pageIndex, filter: $filter}) {\n    transactions {\n      name\n      type\n      subtitle\n      dateTime\n      unitValue\n      value\n      direction\n      amount\n      icon\n      darkIcon\n      description\n      productType\n      globalCode\n      actionLabel\n      hints\n      cashbackInfo {\n        amount\n        direction\n        __typename\n      }\n      chargePeriod {\n        dateFrom\n        dateTo\n        __typename\n      }\n      __typename\n    }\n    totalPages\n    __typename\n  }\n}"
+                }), addHeaders({
+		            'Content-Type': 'application/json',
+                    'Referer': g_baseurl + '/',
+		            'X-Client-Id': 'LK',
+		            'X-Login': fetchNumber()
+	            }));
+	            
+	            var json = getJson(html);
+				
+				if(json.data && json.data.transactionsByFilter){
+				    pageTotal = json.data.transactionsByFilter.totalPages;
+				    transactions = transactions.concat(json.data.transactionsByFilter.transactions);
+				}
+	        }catch(e){
+				throw new AnyBalance.Error('Ошибка получения данных по общему расходу трафика: ' + e.message);
+            }
+		} while (true && (++ pageIndex < (pageTotal +1)));
+		
+		if(transactions && transactions.length > 0){
+			AnyBalance.trace('Найдено записей по общему расходу трафика: ' + transactions.length);
+			for(var i=0; i<transactions.length; ++i){
+		        var t = transactions[i];
+			    
+				if(t.type !== 'Network' || /Бесплатные интернет-ресурсы МТС/i.test(t.name)) // Пропускаем сервисные пометки
+					continue;
+				
+			    sumParam(t.value + ' ' + t.unitValue, result.expenses, 'expenses.traffic_used_total_mb', null, null, parseTraffic, aggregate_sum);
 			}
-		}
-    }else{
-		AnyBalance.trace('Не удалось получить данные по категориям расходов за этот месяц');
+		}else{
+		    AnyBalance.trace('Не удалось получить данные по общему расходу трафика');
+	    }
 	}
 	
-	if(data.transactionsByFilter && data.transactionsByFilter.totalInfo){
-		getParam(data.transactionsByFilter.totalInfo.incomeAmount, result.expenses, 'expenses.refill');
-		getParam(data.transactionsByFilter.totalInfo.outcomeAmount, result.expenses, 'expenses.usedinthismonth');
-	}else{
-		AnyBalance.trace('Не удалось получить сводные данные по расходам за этот месяц');
+	if (isAvailable(['expenses.usedinthismonth', 'expenses.abonservice', 'expenses.refill'])) {
+	    try{
+	        html = AnyBalance.requestPost('https://federation.mts.ru/graphql', JSON.stringify({
+                "operationName": "GetExpensesInfoBaseQueryInput",
+                "variables": {
+                    "pageIndex": 1,
+                    "filter": {
+                        "dateFrom": dateFrom,
+                        "dateTo": dateTo,
+                        "showFree": false,
+                        "tabType": null,
+                        "categoryId": null,
+                        "textSearch": "",
+                        "transactionsDirection": null,
+                        "cashbackType": "ALL"
+                    }
+                },
+                "query": "query GetExpensesInfoBaseQueryInput($pageIndex: Int!, $filter: TransactionsFilterInput!) {\n  transactionsByFilter(input: {pageIndex: $pageIndex, filter: $filter}) {\n    totalInfo {\n      currency\n      incomeAmount\n      outcomeAmount\n      cashback {\n        incomeAmount\n        outcomeAmount\n        __typename\n      }\n      period {\n        dateFrom\n        dateTo\n        __typename\n      }\n      __typename\n    }\n    categories {\n      alias\n      value\n      name\n      color\n      amount\n      percentage\n      __typename\n    }\n    totalPages\n    transactions {\n      name\n      type\n      subtitle\n      dateTime\n      unitValue\n      value\n      direction\n      amount\n      icon\n      darkIcon\n      description\n      productType\n      globalCode\n      actionLabel\n      hints\n      cashbackInfo {\n        amount\n        direction\n        __typename\n      }\n      chargePeriod {\n        dateFrom\n        dateTo\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n}"
+            }), addHeaders({
+		        'Content-Type': 'application/json',
+                'Referer': g_baseurl + '/',
+		        'X-Client-Id': 'LK',
+		        'X-Login': fetchNumber()
+	        }));
+	        
+	        var json = getJson(html);
+	        
+	        AnyBalance.trace(JSON.stringify(json));
+	        
+	        var data = json.data;
+	        
+	        if(data.transactionsByFilter && data.transactionsByFilter.categories && data.transactionsByFilter.categories.length > 0){
+		        for(var i=0; data.transactionsByFilter.categories && i<data.transactionsByFilter.categories.length; ++i){
+			        var categorie = data.transactionsByFilter.categories[i];
+			        AnyBalance.trace('Найдена категория расходов "' + categorie.name + '": ' + categorie.amount + ' ₽');
+			        
+				    sumParam(categorie.amount, result.expenses, 'expenses.abonservice', null, null, parseBalanceSilent, aggregate_sum);
+		        }
+            }else{
+		        AnyBalance.trace('Не удалось получить данные по категориям расходов за этот месяц');
+	        }
+	        
+	        if(data.transactionsByFilter && data.transactionsByFilter.totalInfo){
+		        getParam(data.transactionsByFilter.totalInfo.incomeAmount, result.expenses, 'expenses.refill');
+		        getParam(data.transactionsByFilter.totalInfo.outcomeAmount, result.expenses, 'expenses.usedinthismonth');
+	        }else{
+		        AnyBalance.trace('Не удалось получить сводные данные по расходам за этот месяц');
+	        }
+		}catch(e){
+            AnyBalance.trace('Ошибка получения данных по расходам за этот месяц: ' + e.message);
+        }
 	}
 	
 	if(isAvailable('expenses.usedinprevmonth')){
@@ -1267,21 +1328,20 @@ function processExpensesLK(result){
 	        }));
 	        
 	        var json = getJson(html);
-	    }catch(e){
+	        
+	        AnyBalance.trace(JSON.stringify(json));
+	        
+	        var data = json.data;
+	        
+	        if (data.transactionsByFilter && data.transactionsByFilter.totalInfo) {
+		        getParam(data.transactionsByFilter.totalInfo.incomeAmount, result.expenses, 'expenses.refillinprevmonth');
+		        getParam(data.transactionsByFilter.totalInfo.outcomeAmount, result.expenses, 'expenses.usedinprevmonth');
+	        }else{
+		        AnyBalance.trace('Не удалось получить сводные данные по расходам за прошлый месяц');
+	        }
+		}catch(e){
             AnyBalance.trace('Ошибка получения данных по расходам за прошлый месяц: ' + e.message);
-		    return;
         }
-	    
-	    AnyBalance.trace(JSON.stringify(json));
-	    
-	    var data = json.data;
-	    
-	    if (data.transactionsByFilter && data.transactionsByFilter.totalInfo) {
-		    getParam(data.transactionsByFilter.totalInfo.incomeAmount, result.expenses, 'expenses.refillinprevmonth');
-		    getParam(data.transactionsByFilter.totalInfo.outcomeAmount, result.expenses, 'expenses.usedinprevmonth');
-	    }else{
-		    AnyBalance.trace('Не удалось получить сводные данные по расходам за прошлый месяц');
-	    }
 	}
 }
 
@@ -1618,29 +1678,61 @@ function turnOffLoginSMSNotify(){
 	}
 	
 	html = AnyBalance.requestGet('https://profile.mts.ru/_next/data/' + _next + '/account/safety.json', addHeaders({Accept: '*/*', Referer: 'https://profile.mts.ru/account'}));
-	var json = getJson(html);
-	if(!json || !json.pageProps){
-		AnyBalance.trace('Не удалось получить страницу настроек безопасности. Пропускаем проверку способа входа');
+	var safetyJson = getJson(html);
+	if(!safetyJson || !safetyJson.pageProps){
+		AnyBalance.trace('Не удалось получить страницу настроек безопасности. Пропускаем проверку способа входа и оповещения о входе');
 		return;
 	}
 	
-	var authLevel = json.pageProps.initialState.settings.authuserlevel;
-	if(authLevel !== '1'){
-		AnyBalance.trace('SMS для входа в кабинет включено. Выключаем...');
-		html = AnyBalance.requestPost('https://profile.mts.ru/api', JSON.stringify({
-            "call": "updateAuthUserLevel",
-            "arg": "1"
-        }), addHeaders({'Content-Type': 'application/json', Referer: 'https://profile.mts.ru/account/safety/auth-level'}));
-		
-		var json = getJson(html);
-	    AnyBalance.trace(JSON.stringify(json));
-   
-        if(json.result !== 'success'){
-			AnyBalance.trace('Не удалось отключить SMS для входа');
-		}else{
-			AnyBalance.trace('SMS для входа успешно отключено');
-		}
+	if(safetyJson.pageProps.initialState && safetyJson.pageProps.initialState.settings && safetyJson.pageProps.initialState.settings.authuserlevel){
+	    var authLevel = safetyJson.pageProps.initialState.settings.authuserlevel;
+	    if(authLevel !== '1'){
+		    AnyBalance.trace('SMS подтверждение для входа в кабинет включено. Выключаем...');
+		    html = AnyBalance.requestPost('https://profile.mts.ru/api', JSON.stringify({
+                "call": "updateAuthUserLevel",
+                "arg": "1"
+            }), addHeaders({'Content-Type': 'application/json', Referer: 'https://profile.mts.ru/account/safety/auth-level'}));
+		    
+		    var json = getJson(html);
+	        AnyBalance.trace(JSON.stringify(json));
+            
+            if(json.result !== 'success'){
+			    AnyBalance.trace('Не удалось отключить SMS подтверждение для входа');
+		    }else{
+			    AnyBalance.trace('SMS подтверждение для входа успешно отключено');
+		    }
+	    }else{
+		    AnyBalance.trace('SMS подтверждение для входа уже отключено');
+	    }
 	}else{
-		AnyBalance.trace('SMS для входа уже отключено');
+		AnyBalance.trace('Не удалось получить настройки способа входа');
+	}
+	
+	if(safetyJson.pageProps.initialState && safetyJson.pageProps.initialState.smsNotification && safetyJson.pageProps.initialState.smsNotification.notifications){
+	    var notifyArgs = safetyJson.pageProps.initialState.smsNotification.notifications;
+		
+	    if(notifyArgs && (notifyArgs.lg_sms !== false)){
+		    AnyBalance.trace('SMS уведомление о входе в кабинет включено. Выключаем...');
+			notifyArgs.lg = false;
+			notifyArgs.lg_sms = false;
+		    html = AnyBalance.requestPost('https://profile.mts.ru/api', JSON.stringify({
+                "call": "patchSettingNotification",
+                "arg": notifyArgs
+            }), addHeaders({'Content-Type': 'application/json', Referer: 'https://profile.mts.ru/account/safety/sms-notifications'}));
+			
+		    AnyBalance.trace(html);
+//		    var json = getJson(html);
+//	        AnyBalance.trace(JSON.stringify(json));
+            
+            if(!/successfully/i.test(html)){
+			    AnyBalance.trace('Не удалось отключить SMS уведомление о входе');
+		    }else{
+			    AnyBalance.trace('SMS уведомление о входе успешно отключено');
+		    }
+	    }else{
+		    AnyBalance.trace('SMS уведомление о входе уже отключено');
+	    }
+	}else{
+		AnyBalance.trace('Не удалось получить настройки оповещения о входе');
 	}
 }

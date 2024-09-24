@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change major_version="4.1" version="238" date="2024-08-29">
+    <change major_version="4.1" version="240" date="2024-09-20">
+	- Исправлено получение общего расхода трафика
+	- Исправлено получение начислений за услуги
+	</change>
+    <change major_version="4.1" version="239" date="2024-09-19">
+	- Автоматическое отключение SMS уведомления о входе
+	- Счетчик Абонплата за услуги разделен по периодам
+	- Добавлен счетчик Общий расход трафика
+	</change>
+    <change major_version="4.1" version="238" date="2024-08-29">
 	- Небольшая оптимизация обхода защиты от роботов
 	</change>
     <change major_version="4.1" version="237" date="2024-08-28">

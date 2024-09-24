@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="4.1" version="238">ab-cell-mts-russia</id>
+	<id major_version="4.1" version="240">ab-cell-mts-russia</id>
 	<name>МТС (Россия)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусных баллах, использованных минутах на локальные, мобильные и любимые номера, расходах, статусе блокировки, кредите, номере лицевого счета, ежемесячной плате.</p>
@@ -58,6 +58,7 @@
 		<counter id="traffic_used_mb" name="Истрачено трафика" units=" Mb"/>
 		<counter id="traffic_total_mb" name="Всего трафика" units=" Mb"/>
 		<counter id="traffic_used_by_acceptors_mb" name="Истрачено трафика участниками" units=" Mb"/>
+		<counter id="traffic_used_total_mb" name="Общий расход трафика" units=" Мб"/>
 		<counter id="last_pay_sum" name="Сумма последнего платежа" units=" ₽"/>
 		<counter id="last_pay_date" name="Дата последнего платежа" type="time" format="dd.MM.yyyy"/>
 		<counter id="last_pay_descr" name="Место последнего платежа" type="text"/>
@@ -66,7 +67,8 @@
 		<counter id="services" name="Подключенные услуги" prefix="💼 " units=" шт"/>
 		<counter id="services_paid" name="Платные услуги" prefix="💵 " units=" шт"/>
 		<counter id="services_free" name="Бесплатные услуги" prefix="🎁 " units=" шт"/>
-		<counter id="services_abon" name="Абонплата за услуги" units=" ₽"/>
+		<counter id="services_abon" name="Абонплата за услуги (месяц)" units=" ₽"/>
+		<counter id="services_abon_day" name="Абонплата за услуги (сутки)" units=" ₽"/>
 		<counter id="usedinthismonth" name="Расходы за этот месяц" units=" ₽"/>
 		<counter id="usedinprevmonth" name="Расходы за прошлый месяц" units=" ₽"/>
 		<counter id="license" name="Лицевой счет" type="text"/>

@@ -4,7 +4,7 @@
 
 function main() {
     var prefs = AnyBalance.getPreferences();
-
+	
 	AnyBalance.setOptions({
 		CLIENT: 'okhttp', 
 		PER_DOMAIN: {
@@ -14,7 +14,6 @@ function main() {
 		}
 	});
 	
-
     if(prefs.__initialization)
 	    return initialize();
 
@@ -58,6 +57,7 @@ var g_countersTable = {
 		"min_left_mts": "remainders.min_left_mts",
 		"min_left_mts_rf": "remainders.min_left_mts_rf",
 		"tourist": "remainders.tourist",
+		"traffic_used_total_mb": "expenses.traffic_used_total_mb",
 		"abonservice": "expenses.abonservice",
 		"refill": "expenses.refill",
 		"total_msg": "messages.total_msg",
@@ -84,6 +84,7 @@ var g_countersTable = {
 		"services_paid": "remainders.services_paid",
 		"services_free": "remainders.services_free",
 		"services_abon": "remainders.services_abon",
+		"services_abon_day": "remainders.services_abon_day",
 		"usedinthismonth": "expenses.usedinthismonth",
 		"usedinprevmonth": "expenses.usedinprevmonth",
 		"license": "info.licschet",
@@ -112,4 +113,3 @@ function initialize(){
 
     AnyBalance.setResult(result);
 }
-

@@ -17,7 +17,6 @@ var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(
 /** API Megafon LK*/
 function callAPI(method, url, params, allowerror) {
     var html;
-	AnyBalance.trace('Запрос: ' + api_url + url);/////////////////////////////////////
     if(method == 'post') {
         if(typeof(params) == 'string')
             html = AnyBalance.requestPost(api_url + url, params, addHeaders({'Content-Type': 'application/json; charset=utf-8'}, g_api_headers));
@@ -26,7 +25,7 @@ function callAPI(method, url, params, allowerror) {
     }else
         html = AnyBalance.requestGet(api_url + url, g_api_headers);
     
-    var json = {};
+	var json = {};
     if(html){
         try{
             json = getJson(html);
@@ -34,7 +33,6 @@ function callAPI(method, url, params, allowerror) {
             json = getJsonEval(html);
         }
     }
-    AnyBalance.trace('Ответ: ' + JSON.stringify(json));/////////////////////////////////////
     if(json.code === 'a216'){ //Аккаунт заблокирован, надо явно его разблокировать через ussd или поддержку
     	throw new AnyBalance.Error(json.message, null, true);
     }
@@ -195,47 +193,64 @@ function megafonLkAPIDo(options, result) {
     }
      
     if (AnyBalance.isAvailable('balance', 'credit', 'available')) {
-        json = callAPI('get', 'api/main/balance');
-        const limit = (json.balanceWithLimit || json.limit || 0);
-        getParam(limit + '', result, 'available', null, replaceTagsAndSpaces, parseBalance);
-        getParam(json.balance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
-        getParam((limit - json.balance) + '', result, 'credit', null, replaceTagsAndSpaces, parseBalance);
+        try{
+		    json = callAPI('get', 'api/main/balance');
+            const limit = (json.balanceWithLimit || json.limit || 0);
+            getParam(limit + '', result, 'available', null, replaceTagsAndSpaces, parseBalance);
+            getParam(json.balance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
+            getParam((limit - json.balance) + '', result, 'credit', null, replaceTagsAndSpaces, parseBalance);
+		}catch(e){
+    	    AnyBalance.trace('Ошибка получения информации о балансе: ' + e.message);
+        }
+    }
+	
+	if(AnyBalance.isAvailable('tariff', 'sub_smit') && !result.tariff){
+		try{
+    	    json = callAPI('get', 'api/tariff/2019-3/current');
+    	    getParam(json.name, result, 'tariff', null, replaceTagsAndSpaces);
+		    if(json.ratePlanCharges && json.ratePlanCharges.price){
+				var per = 1; // Почему-то периоды возвращает по-разному (то за 30 дней, то за день)
+				if(/в [день|сутки]/i.test(json.ratePlanCharges.price.unitPeriod))
+					per = 30;
+		        getParam(json.ratePlanCharges.price.value*per + '', result, 'sub_smit', null, replaceTagsAndSpaces, parseBalance);
+		    }
+		}catch(e){
+    	    AnyBalance.trace('Ошибка получения информации о тарифном плане: ' + e.message);
+        }
     }
 
-    if(AnyBalance.isAvailable('tariff') && !result.tariff){
-    	json = callAPI('get', 'api/tariff/2019-3/current');
-    	getParam(json.name, result, 'tariff', null, replaceTagsAndSpaces);
-    }
-
-    try{
-        if(AnyBalance.isAvailable('bonus_status', 'bonus_burn')){
+    if(AnyBalance.isAvailable('bonus_status', 'bonus_burn')){
+	    try{
             json = callAPI('get', 'api/bonus/status');
             getParam(json.statusDesc, result, 'bonus_status', null, replaceTagsAndSpaces);
             getParam(null, result, 'bonus_burn');
+        }catch(e){
+    	    AnyBalance.trace('Ошибка получения информации о бонусной программе: ' + e.message);
         }
-    }catch(e){
-    	AnyBalance.trace('Не удалось получить информацию о бонусной программе: ' + e.message);
-    }
+	}
 
+	processPersonalOffers(result);
 	processServices(result);
     processRemaindersApi(result);
     processMonthExpensesApi(result);
 
     processPaymentsApi(result);
 
-    if (AnyBalance.isAvailable('sub_scl')) {
+    if (AnyBalance.isAvailable('month_refill', 'sub_scl')) {
     	try{
             json = callAPI('get', 'api/payments/info');
-            
-            getParam(json.outcome + '', result, 'sub_scl', null, replaceTagsAndSpaces, parseBalance);
+            getParam(json.income + '', result, 'month_refill', null, replaceTagsAndSpaces, parseBalance);
+			getParam(json.outcome + '', result, 'sub_scl', null, replaceTagsAndSpaces, parseBalance);
         }catch(e){
-            AnyBalance.trace('Ошибка получения информации о расходах: ' + e.message + '\n' + e.stack);
+            AnyBalance.trace('Ошибка получения информации о расходах и пополнениях: ' + e.message + '\n' + e.stack);
         }
     }
 
     processInfoApi(result);
 	
 	processAddNumApi(result);
+	
+	processMegaPowersApi(result);
 
     if(AnyBalance.isAvailable('detalization'))
         processDetalizationApi(result);
@@ -345,28 +360,28 @@ function processRemaindersApi(result){
                         AnyBalance.trace('Parsing minutes...' + JSON.stringify(current));
                         var unlim = /^9{6,}$/i.test(current.total); //Безлимитные значения только из девяток состоят
 						if(unlim || +current.total > 2600000){
-							AnyBalance.trace('пропускаем безлимит минут: ' + name + ' ' + (current.available + current.unit) + '/' + (current.total + current.unit));
+							AnyBalance.trace('Пропускаем безлимит минут: ' + name + ' ' + (current.available + ' ' + current.unit) + '/' + (current.total + ' ' + current.unit));
 							continue;
 						}
 						if(/в сутки/i.test(name)) {
-							getParam(current.available + units, remainders, 'remainders.mins_day', null, replaceTagsAndSpaces, parseMinutes);
+							getParam(current.available + ' ' + units, remainders, 'remainders.mins_day', null, replaceTagsAndSpaces, parseMinutes);
                         }else if(/бесплат/i.test(name)) {
-                            getParam(current.available + units, remainders, 'remainders.mins_n_free', null, replaceTagsAndSpaces, parseMinutes);
+                            getParam(current.available + ' ' + units, remainders, 'remainders.mins_n_free', null, replaceTagsAndSpaces, parseMinutes);
                         }else if((/\.\s*МегаФон|на мегафон|на МФ/i.test(name) && !/МТС/i.test(name) && !/стационар/i.test(name))
                             || /внутри сети/i.test(name)) {
-                            sumParam(current.available + units, remainders, 'remainders.mins_net_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+                            sumParam(current.available + ' ' + units, remainders, 'remainders.mins_net_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 						}else if(/Безлимитные входящие/i.test(name)) {
 							AnyBalance.trace('Бесконечное значение минут (' + name + '), пропускаем...');
 							continue;
                         } else {
-                            sumParam(current.available + units, remainders, 'remainders.mins_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
-                            sumParam(current.total + units, remainders, 'remainders.mins_total', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+                            sumParam(current.available + ' ' + units, remainders, 'remainders.mins_left', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+                            sumParam(current.total + ' ' + units, remainders, 'remainders.mins_total', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
                         }
                         // Сообщения
                     } else if(/шт|sms|смс|mms|ммс/i.test(units)) {
                         var unlim = /^9{6,}$/i.test(current.total); //Безлимитные значения только из девяток состоят
 						if(unlim){
-							AnyBalance.trace('пропускаем безлимит смс: ' + name + ' ' + (current.available + current.unit) + '/' + (current.total + current.unit));
+							AnyBalance.trace('Пропускаем безлимит смс: ' + name + ' ' + (current.available + ' ' + current.unit) + '/' + (current.total + ' ' + current.unit));
 							continue;
 						}
                         if(/mms|ММС/i.test(name)){
@@ -383,38 +398,40 @@ function processRemaindersApi(result){
                         AnyBalance.trace('Parsing data...' + JSON.stringify(current));
 
                         if(/Гигабайт в дорогу/i.test(name)) {
-                            getParam(current.available + current.unit, remainders, 'remainders.gb_with_you', null, replaceTagsAndSpaces, parseTraffic);
+                            getParam(current.available + ' ' + current.unit, remainders, 'remainders.gb_with_you', null, replaceTagsAndSpaces, parseTraffic);
 						}else if(/Интернет в роуминге/i.test(name)) {
 							if(/Остальные страны/i.test(name))
-								getParam(current.available + current.unit, remainders, 'remainders.internet_roam_other', null, replaceTagsAndSpaces, parseTraffic);
+								getParam(current.available + ' ' + current.unit, remainders, 'remainders.internet_roam_other', null, replaceTagsAndSpaces, parseTraffic);
 							else if(/Популярные страны/i.test(name))
-								getParam(current.available + current.unit, remainders, 'remainders.internet_roam_popular', null, replaceTagsAndSpaces, parseTraffic);
+								getParam(current.available + ' ' + current.unit, remainders, 'remainders.internet_roam_popular', null, replaceTagsAndSpaces, parseTraffic);
 							else if(/ЕВРОПА/i.test(name))
-								getParam(current.available + current.unit, remainders, 'remainders.internet_roam_europe', null, replaceTagsAndSpaces, parseTraffic);
+								getParam(current.available + ' ' + current.unit, remainders, 'remainders.internet_roam_europe', null, replaceTagsAndSpaces, parseTraffic);
 						}else if(/Автопродление/i.test(name)) {
-								getParam(current.available + current.unit, remainders, 'remainders.internet_auto_prolong', null, replaceTagsAndSpaces, parseTraffic);
+								getParam(current.available + ' ' + current.unit, remainders, 'remainders.internet_auto_prolong', null, replaceTagsAndSpaces, parseTraffic);
 						}else if(/Интернет в (?:Крыму|поездке)/i.test(name)) {
-								getParam(current.available + current.unit, remainders, 'remainders.internet_left_crimea', null, replaceTagsAndSpaces, parseTraffic);
+								getParam(current.available + ' ' + current.unit, remainders, 'remainders.internet_left_crimea', null, replaceTagsAndSpaces, parseTraffic);
                         } else {
                             var suffix = '';
                             if(/ноч/i.test(name)) suffix = '_night';
                             
                             var unlim = /^9{7,}$/i.test(current.total); //Безлимитные значения только из девяток состоят
                             
-                            var internet_left = getParam(current.available + current.unit, null, null, null, replaceTagsAndSpaces, parseTraffic);
-                            var internet_total = getParam(current.total + current.unit, null, null, null, replaceTagsAndSpaces, parseTraffic);
+                            var internet_left = getParam(current.available + ' ' + current.unit, null, null, null, replaceTagsAndSpaces, parseTraffic);
+                            var internet_total = getParam(current.total + ' ' + current.unit, null, null, null, replaceTagsAndSpaces, parseTraffic);
                             
 							if(!unlim)
 								unlim = (internet_total >= 999000); //Больше 999 ГБ это же явно безлимит
 							if(unlim)
-								AnyBalance.trace('пропускаем безлимит трафика: ' + name + ' ' + (current.available + current.unit) + '/' + (current.total + current.unit));
+								AnyBalance.trace('Пропускаем безлимит трафика: ' + name + ' ' + (current.available + ' ' + current.unit) + '/' + (current.total + ' ' + current.unit));
                             
                             if(isset(internet_left) && !unlim)
                                 sumParam(internet_left, remainders, 'remainders.internet_left' + suffix, null, null, null, aggregate_sum);
                             if(isset(internet_total) && !unlim)
                                 sumParam(internet_total, remainders, 'remainders.internet_total' + suffix, null, null, null, aggregate_sum);
-                            if(isset(internet_left) && isset(internet_total))
-                                sumParam(internet_total - internet_left, remainders, 'remainders.internet_cur' + suffix, null, null, null, aggregate_sum);
+							if(isset(internet_left) && isset(internet_total) && !unlim)
+								sumParam(internet_total - internet_left, remainders, 'remainders.internet_cur' + suffix, null, null, null, aggregate_sum);
+							if(isset(internet_left) && isset(internet_total)) // Для счетчика Общий расход трафика собираем весь трафик
+                                sumParam(internet_total - internet_left, remainders, 'remainders.internet_cur_total', null, null, null, aggregate_sum);
 
                             if(current.dateTo)
                                 sumParam(current.dateTo, remainders, 'remainders.internet_till', null, replaceTagsAndSpaces, parseDate, aggregate_min);
@@ -442,47 +459,59 @@ function processInfoApi(result){
     if(AnyBalance.isAvailable('info')){
         AnyBalance.trace('Получаем инфо');
 
-        var json = callAPI('get', 'api/profile/info');
-
-        var info = result.info = {};
-
-        getParam(json.contractStart, info, 'info.date_start', null, null, parseDate);
-        getParam(json.birthdate, info, 'info.birthday', null, null, parseDate);
-        getParam(json.email, info, 'info.email');
-        getParam(json.name, info, 'info.fio');
-		getParam(json.accountNumber, info, 'info.license');
-        getParam(json.region.id, info, 'info.region_id');
-        getParam(json.region.name, info, 'info.region_name');
-		var filial = {100: 'nw', 200: 'mos', 300: 'ctr', 400: 'kv', 500: 'vlg', 600: 'url', 700: 'sib', 800: 'dv'};
-		getParam(filial[json.region.id]||json.region.id, info, 'info.filial');
+        try{
+		    var json = callAPI('get', 'api/profile/info');
+            
+            var info = result.info = {};
+            
+            getParam(json.contractStart, info, 'info.date_start', null, null, parseDate);
+            getParam(json.birthdate, info, 'info.birthday', null, null, parseDate);
+            getParam(json.email, info, 'info.email');
+            getParam(json.name, info, 'info.fio');
+		    getParam(json.accountNumber, info, 'info.license');
+            getParam(json.region.id, info, 'info.region_id');
+            getParam(json.region.name, info, 'info.region_name');
+		    var filial = {100: 'nw', 200: 'mos', 300: 'ctr', 400: 'kv', 500: 'vlg', 600: 'url', 700: 'sib', 800: 'dv'};
+		    getParam(filial[json.region.id]||json.region.id, info, 'info.filial');
+		}catch(e){
+    	    AnyBalance.trace('Ошибка получения информации о персональных данных: ' + e.message);
+        }
     }
 	
 	if(AnyBalance.isAvailable('license') && !info.license){
-		var json = callAPI('get', 'api/profile/accountNumber');
-		
-        getParam(json.accountNumber, info, 'info.license');
+		try{
+		    var json = callAPI('get', 'api/profile/accountNumber');
+		    
+            getParam(json.accountNumber, info, 'info.license');
+		}catch(e){
+    	    AnyBalance.trace('Ошибка получения информации о лицевом счете: ' + e.message);
+        }
     }
 }
 
 function processAddNumApi(result){
 	if(!AnyBalance.isAvailable('add_num', 'add_num1', 'add_num2'))
         return;
-
-    var json = callAPI('get', 'api/additionalNumbers/list');
+	
+	try{
+        var json = callAPI('get', 'api/additionalNumbers/list');
 		
-	if(json.additionalNumbersList && json.additionalNumbersList.length > 0){
-		AnyBalance.trace('Найдено доп. номеров: ' + json.additionalNumbersList.length);
-		for(var i = 0; i<json.additionalNumbersList.length; i++){
-			var num = (i >= 1 ? 'add_num' + (i + 1) : 'add_num');
-			var prefix = (i >= 1 ? 'add_num_prefix' + (i + 1) : 'add_num_prefix');
-			var charge = (i >= 1 ? 'add_num_charge' + (i + 1) : 'add_num_charge');
-		   	getParam(json.additionalNumbersList[i].number, result, num, null, replaceNumber);
-			getParam(json.additionalNumbersList[i].prefix, result, prefix);
-			getParam(json.additionalNumbersList[i].dailyCharge, result, charge);
-		}
-	}else{
-		AnyBalance.trace('Не удалось получить список доп. номеров: ' + JSON.stringify(json));
-	}
+	    if(json.additionalNumbersList && json.additionalNumbersList.length > 0){
+		    AnyBalance.trace('Найдено доп. номеров: ' + json.additionalNumbersList.length);
+		    for(var i = 0; i<json.additionalNumbersList.length; i++){
+			    var num = (i >= 1 ? 'add_num' + (i + 1) : 'add_num');
+			    var prefix = (i >= 1 ? 'add_num_prefix' + (i + 1) : 'add_num_prefix');
+			    var charge = (i >= 1 ? 'add_num_charge' + (i + 1) : 'add_num_charge');
+		   	    getParam(json.additionalNumbersList[i].number, result, num, null, replaceNumber);
+			    getParam(json.additionalNumbersList[i].prefix, result, prefix);
+			    getParam(json.additionalNumbersList[i].dailyCharge, result, charge);
+		    }
+	    }else{
+		    AnyBalance.trace('Не удалось получить список доп. номеров: ' + JSON.stringify(json));
+	    }
+	}catch(e){
+    	AnyBalance.trace('Ошибка получения информации о дополнительных номерах: ' + e.message);
+    }
 }
 
 function processSmsTurnOffApi(){
@@ -508,35 +537,87 @@ function processSmsTurnOffApi(){
     }
 }
 
-function processServices(result){
-	if(!AnyBalance.isAvailable('services_free', 'services_paid', 'services_count', 'services_abon', 'statuslock'))
+function processMegaPowersApi(result){
+	if(!AnyBalance.isAvailable('megapowers'))
+        return;
+	
+	var mpOn = 0;
+	var mpAvailable = 0;
+	
+	try{
+        var json = callAPI('get', 'api/preconstructor/megapowers');
+		
+		if(!/[МегаСилы|они] недоступны/i.test(json.description)){
+	        if(json.options && json.options.length > 0){
+		        for(var i = 0; i<json.options.length; i++){
+			        var mpStatus = json.options[i].status;
+			        
+			        if(mpStatus && mpStatus !== '0') mpOn += 1;
+		        }
+	        }else{
+		        AnyBalance.trace('Не удалось получить список доступных мегасил: ' + JSON.stringify(json));
+	        }
+	        
+	        if(json.badges && json.badges.length > 0){
+		        for(var i = 0; i<json.badges.length; i++){
+			        mpAvailable += json.badges[i].counterLimit;
+		        }
+	        }else{
+		        AnyBalance.trace('Не удалось получить лимит доступных мегасил: ' + JSON.stringify(json));
+	        }
+		}else{
+		    AnyBalance.trace('Не удалось получить список мегасил: ' + json.description);
+	    }
+	}catch(e){
+    	AnyBalance.trace('Ошибка получения информации о мегасилах: ' + e.message);
+    }
+	
+	getParam(mpOn + '/' + mpAvailable + ' шт', result, 'megapowers');
+}
+
+function processPersonalOffers(result){
+	if(!AnyBalance.isAvailable('personal_offers'))
 		return;
 
-    var json = callAPI('get', 'api/options/list/current');
-	
-    getParam(json.free ? json.free.length : 0, result, 'services_free');
-    getParam(json.paid ? json.paid.length : 0, result, 'services_paid');
-	getParam((json.free ? json.free.length : 0) + (json.paid ? json.paid.length : 0), result, 'services_count');
-	getParam(0, result, 'services_abon');
-	getParam('Номер не блокирован', result, 'statuslock');
-	
-	// Добровольная блокировка номера - платная услуга, проверяем её наличие в подключённых платных
-	if(json.paid && json.paid.length > 0){
-	    for(var i=0; i<json.paid.length; ++i){
-	    	var s = json.paid[i];
-			var dt = new Date();
-            
-		    if(s.monthly !== true){
-                var sp = new Date(dt.getFullYear(), dt.getMonth()+1, 0).getDate(); // Дней в этом месяце
-            }else{
-                var sp = 1;
-            }
-		    AnyBalance.trace('Платная услуга ' + s.optionName + ': ' + s.fees[0]);
-		    sumParam(s.monthRate*sp, result, 'services_abon', null, null, null, aggregate_sum);
-			
-			if(/Блокировка номера/i.test(s.optionName)){
-                getParam('Номер заблокирован', result, 'statuslock');
-            }
+    try{
+	    var json = callAPI('get', 'api/personaloffer/summary');
+	    getParam(json.count, result, 'personal_offers');
+	}catch(e){
+    	AnyBalance.trace('Ошибка получения информации о персональных предложениях: ' + e.message);
+    }
+}
+
+function processServices(result){
+	if(!AnyBalance.isAvailable('services_free', 'services_paid', 'services_count', 'services_abon', 'services_abon_day', 'statuslock'))
+		return;
+
+    try{
+	    var json = callAPI('get', 'api/options/list/current');
+	    
+        getParam(json.free ? json.free.length : 0, result, 'services_free');
+        getParam(json.paid ? json.paid.length : 0, result, 'services_paid');
+	    getParam((json.free ? json.free.length : 0) + (json.paid ? json.paid.length : 0), result, 'services_count');
+	    getParam(0, result, 'services_abon');
+		getParam(0, result, 'services_abon_day');
+	    getParam('Номер не блокирован', result, 'statuslock');
+	    
+	    // Добровольная блокировка номера - платная услуга, проверяем её наличие в подключённых платных
+	    if(json.paid && json.paid.length > 0){
+	        for(var i=0; i<json.paid.length; ++i){
+	    	    var s = json.paid[i];
+			    AnyBalance.trace('Платная услуга ' + s.optionName + ': ' + s.fees[0]);
+                
+		        var suffix = '';
+                if(s.monthly !== true) suffix = '_day';
+				
+				sumParam(s.monthRate, result, 'services_abon' + suffix, null, null, null, aggregate_sum);
+			    
+			    if(/Блокировка номера/i.test(s.optionName)){
+                    getParam('Номер заблокирован', result, 'statuslock');
+                }
+	        }
 	    }
-	}
+	}catch(e){
+    	AnyBalance.trace('Ошибка получения информации об услугах: ' + e.message);
+    }
 }

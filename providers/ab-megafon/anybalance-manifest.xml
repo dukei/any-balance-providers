@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="4.0" version="247">ab-megafon</id>
+	<id major_version="4.0" version="253">ab-megafon</id>
 	<api flags="no_browser"/>
 	<name>МегаФон</name>
 	<description html="true"><![CDATA[
@@ -57,6 +57,7 @@
 		<counter id="gb_with_you" name="Гигабайт в дорогу (Столица)" units=" Mb"/>
 		<counter id="internet_cur" name="Интернет (использовано)" units=" Mb"/>
 		<counter id="internet_cur_night" name="Интернет ночь (использовано)" units=" Mb"/>
+		<counter id="internet_cur_total" name="Общий расход трафика" units=" Мб"/>
 		<counter id="internet_total" name="Интернет (всего)" units=" Mb"/>
 		<counter id="internet_total_night" name="Интернет ночь (всего)" units=" Mb"/>
 		<counter id="internet_till" name="Срок действия пакета интернет" type="time" format="dd.MM.yyyy"/>
@@ -81,19 +82,22 @@
 		<counter id="sub_scl" name="Начислено за услуги" units=" ₽"/>
 		<counter id="sub_soi" name="Начислено за звонки" units=" ₽"/>
 		<counter id="sub_scr" name="Начислено за роуминг" units=" ₽"/>
-		<counter id="sub_smit" name="Начислено АП по тарифу" units=" ₽"/>
-		<counter id="sub_smio" name="Начислено АП за услуги" units=" ₽"/>
+		<counter id="sub_smit" name="Абонплата по тарифу" units=" ₽"/>
 		<counter id="internet_cost" name="Начислено за интернет" units=" ₽"/>
+		<counter id="month_refill" name="Пополнения за месяц" units=" ₽"/>
 		<counter id="last_pay_sum" name="Сумма последнего платежа" units=" ₽"/>
 		<counter id="last_pay_date" name="Дата последнего платежа" type="time" format="dd.MM.yyyy"/>
 		<counter id="last_pay_descr" name="Место последнего платежа" type="text"/>
 		<counter id="statuslock" name="Статус блокировки" type="text"/>
 		<counter id="bonus_burn" name="Бонусные баллы, сгорающие в конце текущего месяца" units=" Б"/>
 		<counter id="bonus_status" name="Статус бонусной программы" prefix="Бонус: " type="text"/>
+		<counter id="megapowers" name="МегаСилы" prefix="⚡ " type="text"/>
 		<counter id="services_count" name="Подключенные услуги" prefix="💼 " units=" шт"/>
 		<counter id="services_paid" name="Платные услуги" prefix="💵 " units=" шт"/>
 		<counter id="services_free" name="Бесплатные услуги" prefix="🎁 " units=" шт"/>
-		<counter id="services_abon" name="Абонплата за услуги" units=" ₽"/>
+		<counter id="services_abon" name="Абонплата за услуги (месяц)" units=" ₽"/>
+		<counter id="services_abon_day" name="Абонплата за услуги (сутки)" units=" ₽"/>
+		<counter id="personal_offers" name="Персональные предложения" units=" шт"/>
 		<counter id="add_num" name="Дополнительный номер" type="text"/>
 		<counter id="add_num2" name="Дополнительный номер 2" type="text"/>
 		<counter id="add_num3" name="Дополнительный номер 3" type="text"/>

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="7">ab-bonus-ostin</id>
+	<id version="8">ab-bonus-ostin</id>
 	<name>O’STIN БОНУС</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе бонусных баллов и другие данные по бонусной программе O’STIN БОНУС.</p>

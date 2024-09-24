@@ -25,11 +25,18 @@ function main(){
     if (!/^\d{10}$/.test(prefs.login))
 		throw new AnyBalance.Error('Неверный номер телефона!');
 	
-	AnyBalance.trace('Пробуем войти в личный кабинет...');
-	
 	var token = AnyBalance.getData(prefs.login + 'token');
 	
+	AnyBalance.trace('Пробуем войти в личный кабинет...');
+	
 	AnyBalance.restoreCookies();
+	
+	var html = loadProtectedPage(('https://ostin.com/', g_headers));
+	
+	if(!html || AnyBalance.getLastStatusCode() >= 500) {
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
+	}
 	
 	var html = AnyBalance.requestGet(baseurl + 'personal/club/', addHeaders({'Referer': baseurl}), g_headers);
 	
@@ -43,7 +50,7 @@ function main(){
 		
 		html = loadProtectedPage(('https://ostin.com/', g_headers));
 	
-	    if(AnyBalance.getLastStatusCode() >= 500 || !html) {
+	    if(!html || AnyBalance.getLastStatusCode() >= 500) {
 	    	throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
 	    }
 		
@@ -52,34 +59,12 @@ function main(){
             "recaptchaToken": ""
         }), addHeaders({
 	    	'Accept': 'application/json, text/plain, */*',
-	    	'Content-Type': 'application/json;charset=UTF-8',
-	    	'Referer': baseurl,
-	    	'X-TS-AJAX-Request': true
+	    	'Content-Type': 'application/json',
+	    	'Referer': baseurl
 	    }));
 	    
 	    AnyBalance.trace(html);
 		
-		if(/Доступ к сайту заблокирован/i.test(html) || AnyBalance.getLastStatusCode() == 403){
-			AnyBalance.trace('Доступ к сайту заблокирован. Пробуем перейти на главную страницу и повторить запрос...');
-			html = loadProtectedPage(('https://ostin.com/', g_headers));
-			
-			html = AnyBalance.requestPost(baseurl + 'api/v2/front/profile/exists', JSON.stringify({
-                "phone": "+7" + prefs.login,
-                "recaptchaToken": ""
-            }), addHeaders({
-	        	'Accept': 'application/json, text/plain, */*',
-	        	'Content-Type': 'application/json;charset=UTF-8',
-	        	'Referer': baseurl,
-	        	'X-TS-AJAX-Request': true
-	        }));
-	    
-	        AnyBalance.trace(html);
-		}
-		
-		if(/Доступ к сайту заблокирован/i.test(html) || AnyBalance.getLastStatusCode() == 403) {
-            throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
-	    }
-	    
 	    var json = getJson(html);
 	    
 	    if(json.success !== true){
@@ -92,9 +77,8 @@ function main(){
             "recaptchaToken": ""
         }), addHeaders({
 	    	'Accept': 'application/json, text/plain, */*',
-	    	'Content-Type': 'application/json;charset=UTF-8',
-	    	'Referer': baseurl,
-	    	'X-TS-AJAX-Request': true
+	    	'Content-Type': 'application/json',
+	    	'Referer': baseurl
 	    }));
 	
 	    AnyBalance.trace(html);
@@ -118,9 +102,8 @@ function main(){
             "target": "+7" + prefs.login
         }), addHeaders({
 	    	'Accept': 'application/json, text/plain, */*',
-	    	'Content-Type': 'application/json;charset=UTF-8',
-	    	'Referer': baseurl,
-	    	'X-TS-AJAX-Request': true
+	    	'Content-Type': 'application/json',
+	    	'Referer': baseurl
 	    }));
 	
 	    AnyBalance.trace(html);
@@ -150,9 +133,8 @@ function main(){
             "isCartPage": false
         }), addHeaders({
 	    	'Accept': 'application/json, text/plain, */*',
-	    	'Content-Type': 'application/json;charset=UTF-8',
-	    	'Referer': baseurl,
-	    	'X-TS-AJAX-Request': true
+	    	'Content-Type': 'application/json',
+	    	'Referer': baseurl
 	    }));
 		
 		var json = getJson(html);
@@ -213,21 +195,26 @@ function main(){
 function loadProtectedPage(headers){
 	var prefs = AnyBalance.getPreferences();
 	const url = 'https://ostin.com/';
-
+	
     var html = AnyBalance.requestGet(url, headers);
     if(/__qrator/.test(html) || AnyBalance.getLastStatusCode() == 403) {
         AnyBalance.trace("Обнаружена защита от роботов. Пробуем обойти...");
-        clearAllCookies();
+//      clearAllCookies(); // Закрываем, иначе придётся логиниться заново
 
         const bro = new BrowserAPI({
             provider: 'ostin',
-            userAgent: g_headers["User-Agent"],
+            //userAgent: headers["User-Agent"],
+            noInterception: true,
+            //win: true,
+	        incognito: true,
+	        singlePage: true,	        
+            headful: true,
             rules: [{
                 resType: /^(image|stylesheet|font)$/.toString(),
                 action: 'abort',
             }, {
-                url: /_qrator\/qauth_utm_v2\.js/.toString(),
-                action: 'cache',
+		        url: /_qrator\/qauth(?:_\w+)*\.js/.toString(),
+                action: 'request',
                 valid: 3600*1000
             }, {
                 url: /_qrator/.toString(),
@@ -242,13 +229,6 @@ function loadProtectedPage(headers){
                 url: /.*/.toString(),
                 action: 'request',
             }],
-            additionalRequestHeaders: [
-		{
-                    headers: {
-			'User-Agent': g_headers["User-Agent"]
-		    }
-		}
-            ],
             debug: AnyBalance.getPreferences().debug
         });
 
@@ -262,7 +242,7 @@ function loadProtectedPage(headers){
             bro.close(r.page);
         }
 
-        if(/__qrator/.test(html)||AnyBalance.getLastStatusCode() >= 400)
+        if(/__qrator|Доступ к сайту заблокирован/.test(html) || AnyBalance.getLastStatusCode() >= 400)
             throw new AnyBalance.Error('Не удалось обойти защиту. Сайт изменен?');
 
         AnyBalance.trace("Защита от роботов успешно пройдена");

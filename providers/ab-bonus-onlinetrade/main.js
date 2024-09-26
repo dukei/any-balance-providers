@@ -17,9 +17,8 @@ var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	
-	AnyBalance.setDefaultCharset('windows-1251');
-	
+    	AnyBalance.setOptions({CLIENT: "apache", cookiePolicy: 'netscape', DEFAULT_CHARSET: 'windows-1251'});
+		
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
@@ -28,13 +27,13 @@ function main() {
 
 	g_savedData.restoreCookies();
 	
-	html = AnyBalance.requestGet(baseurl + 'member/', g_headers);
+	html = loadProtectedPage(g_headers);
 	
 	if (!/\?log_out=1/i.test(html)) {
 		AnyBalance.trace('Сессия новая. Будем логиниться заново...');
 		clearAllCookiesExceptProtection();
 		
-		var html = AnyBalance.requestGet(baseurl, addHeaders({"Referer": "android-app://ru.onlinetrade.app/"}));
+//		var html = AnyBalance.requestGet(baseurl, addHeaders({"Referer": "android-app://ru.onlinetrade.app/"}));
 		
 		html = AnyBalance.requestGet(baseurl + 'member/login.html', g_headers);
 		
@@ -128,3 +127,64 @@ function main() {
 function clearAllCookiesExceptProtection(){
 	clearAllCookies(function(c){return!/spid|spsc/i.test(c.name)})
 }
+
+function loadProtectedPage(headers){
+	var prefs = AnyBalance.getPreferences();
+	const url = 'https://m.onlinetrade.ru/member/';
+
+    var html = AnyBalance.requestGet(url, headers);
+    if(/get_cookie_spsc_encrypted_part/.test(html) || AnyBalance.getLastStatusCode() == 401) {
+        AnyBalance.trace("Обнаружена защита от роботов. Пробуем обойти...");
+//      clearAllCookies(); // Закрываем, иначе придётся логиниться заново
+
+        const bro = new BrowserAPI({
+            provider: 'onlinetrade',
+            userAgent: headers["User-Agent"],
+            headful: false,
+            singlePage: false,
+            binaryResponses: true,
+            rules: [{
+                resType: /^(image|stylesheet|font)$/.toString(),
+                action: 'abort',
+            }, {
+		url: /\/static\//.toString(),
+                action: 'cache',
+                valid: 3600*1000
+            }, {
+                resType: /^(image|stylesheet|font|script)$/i.toString(),
+                action: 'abort',
+            }, {
+                url: /\.(png|jpg|ico|svg)/.toString(),
+                action: 'abort',
+            }, {
+                url: /\/member\//.toString(),
+                action: 'request',
+            }, {
+                url: /.*/.toString(),
+                action: 'abort',
+            }],
+            debug: AnyBalance.getPreferences().debug
+        });
+
+        const r = bro.open(url);
+        try {
+            bro.waitForLoad(r.page);
+            html = bro.content(r.page).content;
+            const cookies = bro.cookies(r.page, url);
+            BrowserAPI.useCookies(cookies);
+        } finally {
+            bro.close(r.page);
+        }
+
+        if(!/Личный кабинет\s*-\s*Вход/.test(html) || AnyBalance.getLastStatusCode() >= 400)
+            throw new AnyBalance.Error('Не удалось обойти защиту. Сайт изменен?');
+
+        AnyBalance.trace("Защита от роботов успешно пройдена");
+        g_savedData.setCookies();
+	g_savedData.save();
+
+    }
+
+    return html;
+}
+

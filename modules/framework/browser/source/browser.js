@@ -21,7 +21,8 @@ const BrowserAPI = (() => {
         incognito?: boolean, //По умолчанию true
         headful?: boolean,
         noInterception?: boolean,
-        rules?: RuleSource[]
+        rules?: RuleSource[],
+        binaryResponses?: false,
         additionalRequestHeaders: {
             url?: RegExp,
             maxCount?: number,
@@ -38,7 +39,7 @@ const BrowserAPI = (() => {
         requestAPI(verb, json) {
             const browserApi = this.options.debug ? browserApiDebug : (this.options.win ? browserApiWinRelease : browserApiRelease);
             const html = json
-                ? AnyBalance.requestPost(browserApi + '/' + verb, JSON.stringify(json), {"Referer": this.options.provider + '', "Content-Type": "application/json"})
+                ? AnyBalance.requestPost(browserApi + '/' + verb, JSON.stringify(json), {"Referer": this.options.provider + '', "Content-Type": "application/json"}, {options: {"DEFAULT_CHARSET": "utf-8"}})
                 : AnyBalance.requestGet(browserApi + '/' + verb + (verb.indexOf('?') >= 0 ? '&' : '?') + '_=' + (+new Date()), {"Referer": this.options.provider + ''});
             const ret = JSON.parse(html);
             if (ret.status !== 'ok') {
@@ -65,7 +66,7 @@ const BrowserAPI = (() => {
 
         waitForLoad(page) {
             let num = 0, json;
-
+            const forcedCharset = this.options.binaryResponses ? 'base64' : undefined;
             do {
                 ++num;
                 AnyBalance.sleep(3000);
@@ -104,7 +105,7 @@ const BrowserAPI = (() => {
                             }
                         }
 
-                        const html = AnyBalance.requestPost(pr.url, pr.body, addHeaders(additionalHeaders, headers), {HTTP_METHOD: pr.method});
+                        const html = AnyBalance.requestPost(pr.url, pr.body, addHeaders(additionalHeaders, headers), {HTTP_METHOD: pr.method, options: {FORCE_CHARSET: forcedCharset}});
                         const params = AnyBalance.getLastResponseParameters();
                         const convertedHeaders = {};
                         let ct;
@@ -134,6 +135,7 @@ const BrowserAPI = (() => {
                             r: {
                                 status: AnyBalance.getLastStatusCode(),
                                 headers: convertedHeaders,
+				charset: forcedCharset,
                                 contentType: ct,
                                 body: html
                             }
@@ -161,7 +163,7 @@ const BrowserAPI = (() => {
             }
             return this.requestAPI('base/cookies', {
                 page, urls: urlOrUrls
-            });
+            }).cookies;
         }
 
         close(page) {

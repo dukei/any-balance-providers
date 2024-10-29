@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="26" date="2024-10-29">
+	- Поддержка новой версии мобильного приложения
+	</change>
 	<change version="25" date="2024-04-18">
 	- Поддержка новой версии мобильного приложения
 	</change>

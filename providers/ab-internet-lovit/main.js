@@ -35,7 +35,7 @@ function callApi(verb, params){
 		}
 	}
 	
-	AnyBalance.trace('Запрос: ' + verb);
+	AnyBalance.trace('Запрос: ' + verb.replace(/([password|pass]*=)([\s\S]*?)(?:&|$)/i, '$1**********'));
 	var html = AnyBalance.requestPost('https://mobile-api-v2.tut.net/api/v6/' + verb, params, headers, {HTTP_METHOD: method});
 	var json = getJson(html);
 	AnyBalance.trace('Ответ: ' + JSON.stringify(json));
@@ -96,6 +96,7 @@ function loginAccessToken(){
 	    AnyBalance.trace('Токен сохранен. Пробуем войти...');
 		var json = callApi('auth', {username: userId, password: prefs.password, grant_type: 'password'}, 'POST');
 		AnyBalance.trace('Успешно вошли по accessToken');
+		saveTokens(json);
 		return true;
 	}catch(e){
 		AnyBalance.trace('Не удалось войти по accessToken: ' + e.message);

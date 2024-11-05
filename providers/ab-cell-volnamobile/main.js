@@ -49,8 +49,10 @@ function callApi(verb, params){
 	AnyBalance.trace('Ответ: ' + JSON.stringify(json));
 	if(json.message || json.error){
 		var error = json.message || json.error;
+		if(/wrong_credentials/i.test(error))
+			throw new AnyBalance.Error('Неверный номер или пароль', null, true);
 		if(error)
-			throw new AnyBalance.Error(error, null, /парол/i.test(error));
+			throw new AnyBalance.Error(error, null, /credential|номер|парол/i.test(error));
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
 	}
@@ -58,7 +60,7 @@ function callApi(verb, params){
 	return json;
 }
 
-function loginPure(action, params, method){
+function loginPure(verb, params){
 	var prefs = AnyBalance.getPreferences(), json;
 	
     var deviceId = AnyBalance.getData('deviceId');
@@ -68,7 +70,13 @@ function loginPure(action, params, method){
 		AnyBalance.saveData();
     }
 	
-    var json = callApi('api/clients/auth', {phone: prefs.login, password: prefs.password}, 'POST');
+	var json = callApi('api/clients/check?phone=' + prefs.login);
+	
+	if(json.is_exists !== true){
+    	throw new AnyBalance.Error('Пользователь не существует или заблокирован', null, true);
+    }
+	
+    var json = callApi('api/clients/auth', {phone: prefs.login, password: prefs.password});
 
     if(!json || !json.token){
     	AnyBalance.trace(JSON.stringify(json));
@@ -103,7 +111,7 @@ function loginRefreshToken(){
 	var refreshToken = AnyBalance.getData('refreshToken');
 	try{
 		AnyBalance.trace('Токен устарел. Пробуем обновить...');
-		var json = callApi('connect/token', {grant_type: 'refresh_token', username: prefs.login, refresh_token: refreshToken, client_id: 'mobile-app.client'}, 'POST');
+		var json = callApi('connect/token', {grant_type: 'refresh_token', username: prefs.login, refresh_token: refreshToken, client_id: 'mobile-app.client'});
 		AnyBalance.trace('Успешно вошли по refreshToken');
 		saveTokens(json);
 		return true;
@@ -165,6 +173,8 @@ function main() {
 	getParam(json.name, result, '__tariff');
 	
 	if(AnyBalance.isAvailable('abon')){
+		var dt = new Date();
+		
 	    if(json.prices && json.prices.length > 0){
 			for(var i=0; i<json.prices.length; ++i){
                 var p = json.prices[i];

@@ -1,18 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-municipal-pik</id>
+	<id version="5">ab-municipal-pik</id>
 	<api flags="no_browser"/>
-	<name>Пик Комфорт</name>
+	<name>ПИК-Комфорт</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе в системе Пик Комфорт https://pik-comfort.ru/.</p>
-	<p>Информация берется из личного кабинета https://new.pik-comfort.ru/</p>
+	<p>Предоставляет информацию о балансе и состоянии счета для клиентов управляющей компании <a href="https://new.pik-comfort.ru/">ПИК-Комфорт</a>.</p>
+	<p>Информация берется из личного кабинета ПИК-Комфорт на сайте https://new.pik-comfort.ru/</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет ПИК-Комфорт.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>
 	<files>
-		<icon>icon.png</icon>
+	    <icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
 		<js>main.js</js>
 		<history>history.xml</history>
@@ -22,7 +25,7 @@
 		<counter id="charge" name="Начислено" units=" ₽"/>
 		<counter id="chargecorrect" name="Перерасчет" units=" ₽"/>
 		<counter id="incomingbalance" name="Переплата" units=" ₽"/>
-		<counter id="period" name="Платежный период" type="time" format="dd.MM.yyyy"/>
+		<counter id="period" name="Расчетный период" type="text"/>
 		<counter id="paid" name="Оплачено" units=" ₽"/>
 		<counter id="penalty" name="Пени" units=" ₽"/>
 		<counter id="subsidy" name="Льготы" units=" ₽"/>
@@ -33,10 +36,11 @@
 		<counter id="lastpaydate" name="Дата посл. платежа" type="time" format="dd.MM.yyyy"/>
 		<counter id="lastpayplace" name="Место посл. платежа" type="text"/>
 		<counter id="address" name="Адрес" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
 		<counter id="fio" name="ФИО владельца" type="text"/>
 	</counters>
-	<keywords>пик комфорт, pik comfort</keywords>
+	<keywords>ПИК, пик комфорт, pik comfort, управляющая компания</keywords>
 	<type>municipal</type>
 	<country>ru</country>
 </provider>

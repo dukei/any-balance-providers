@@ -10,7 +10,7 @@
 var g_headers = {
 	'user-agent': 'Dart/2.19 (dart:io)',
 	'ra': 'ma',
-	'mversion': '3.6.0',
+	'mversion': '3.12.1',
 	'customer': 'ikus-spb',
 	'context': 'ikus-spb',
 };
@@ -28,7 +28,7 @@ function generateUUID() {
 function main(){
     var prefs = AnyBalance.getPreferences();
 
-    checkEmpty(prefs.login, 'Введите E-mail!');
+    checkEmpty(prefs.login, 'Введите логин!');
     checkEmpty(prefs.password, 'Введите пароль!');
 
     AnyBalance.setDefaultCharset('utf-8');
@@ -118,27 +118,32 @@ function main(){
 	AnyBalance.trace('Найдено лицевых счетов: ' + accounts.length);
 
 	var result = {success: true};
+	
+	var deliveryType = {PAPER: 'Бумажная', ELECTRONIC: 'Электронная', undefined: ''};
 
 	for(var i=0; i<accounts.length; ++i){
 		var acc = accounts[i];
-		
-		if(isAvailable('__tariff')){
-			if(acc.address)
-			    sumParam(acc.address, result, '__tariff', null, null, null, aggregate_join);
-		}
 
 		for(var j=0; j<acc.accountDisplayKey.length; ++j){
 			var f = acc.accountDisplayKey[j];
-			if(f.fieldCode === 'accountNumber')
+			if(f.fieldCode === 'accountNumber'){
+				sumParam(f.fieldValue, result, '__tariff', null, null, null, aggregate_join);
 				sumParam(f.fieldValue, result, 'licschet', null, null, null, aggregate_join);
+			}
 		}
 
-		var name_balance = 'balance' + (i || ''), name_peni = 'peni' + (i || '')
+		var name_balance = 'balance' + (i || ''), name_peni = 'peni' + (i || ''), name_provider = 'provider' + (i || ''), name_delivery = 'delivery' + (i || '');
 
 		AnyBalance.trace('Найден счет ' + acc.providerName + ' (' + acc.serviceName + ')');
+		
+		if(AnyBalance.isAvailable(name_provider))
+		    getParam(acc.providerName + (acc.serviceName ? ' (' + acc.serviceName + ')' : ''), result, name_provider);
+		
+		if(AnyBalance.isAvailable(name_delivery))
+			getParam(deliveryType[acc.deliveryType]||acc.deliveryType, result, name_delivery);
 
 		if(AnyBalance.isAvailable(name_balance, name_peni)){
-			html = AnyBalance.requestGet(baseurl + 'api/v5/accounts/' + acc.accountId + '/data', g_headers);
+			html = AnyBalance.requestGet(baseurl + 'api/v6/accounts/' + acc.accountId + '/data', g_headers);
 			json = getExtJson(html);
 
 			if(json.balanceDetails){
@@ -149,6 +154,17 @@ function main(){
 			    }
 			}else{
 		        AnyBalance.trace('Баланс и пени по счету не найдены');
+	        }
+		}
+		
+		if(AnyBalance.isAvailable('address')){
+			html = AnyBalance.requestGet(baseurl + 'api/v8/accounts/' + acc.accountId + '/address', g_headers);
+			json = getExtJson(html);
+
+			if(json.value){
+				sumParam(json.value, result, 'address', null, null, null, create_aggregate_join(',\n '));
+			}else{
+		        AnyBalance.trace('Адрес по счету не найден');
 	        }
 		}
 	}

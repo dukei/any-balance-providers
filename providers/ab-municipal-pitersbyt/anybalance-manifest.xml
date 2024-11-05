@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="48">ab-municipal-pitersbyt</id>
+    <id version="49">ab-municipal-pitersbyt</id>
     <api flags="no_browser"/>
     <name>Петербургская сбытовая компания</name>
     <description html="true"><![CDATA[
@@ -8,6 +8,7 @@
     <p>Информация берется из мобильного приложения ЕИРЦ СПб/ПСК.</p>
     ]]></description>
     <instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет ЕИРЦ СПб/ПСК.</p>
 	<p>Если у вас еще нет доступа к личному кабинету или данные не отображаются, зарегистрируйтесь по ссылке https://ikus.pesc.ru/login/.</p>
     ]]></instruction>
     <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
@@ -32,7 +33,18 @@
         <counter id="peni2" name="Пени 2" units=" ₽"/>
         <counter id="peni3" name="Пени 3" units=" ₽"/>
         <counter id="peni4" name="Пени 4" units=" ₽"/>
+		<counter id="provider" name="Оператор" type="text"/>
+        <counter id="provider1" name="Оператор 1" type="text"/>
+        <counter id="provider2" name="Оператор 2" type="text"/>
+        <counter id="provider3" name="Оператор 3" type="text"/>
+        <counter id="provider4" name="Оператор 4" type="text"/>
+		<counter id="delivery" name="Тип квитанции" type="text"/>
+        <counter id="delivery1" name="Тип квитанции 1" type="text"/>
+        <counter id="delivery2" name="Тип квитанции 2" type="text"/>
+        <counter id="delivery3" name="Тип квитанции 3" type="text"/>
+        <counter id="delivery4" name="Тип квитанции 4" type="text"/>
         <counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="address" name="Адрес" type="text"/>
 		<counter id="email" name="E-mail" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>

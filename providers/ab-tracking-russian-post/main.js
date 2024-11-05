@@ -43,9 +43,8 @@ function mainRussianPost() {
         }
 	}
 	
-	info = AnyBalance.requestPost(baseurl + 'api/nano-apps/api/v1/tracking.get-by-barcodes?language=ru', JSON.stringify([prefs.code]), addHeaders({
+	info = AnyBalance.requestGet(baseurl + 'api/tracking/api/v1/trackings/by-barcodes?language=ru&track-numbers=' + prefs.code, addHeaders({
 		'Accept': 'application/json',
-		'Content-Type': 'application/json',
 		'Referer': baseurl + 'tracking'
 	}));
 	
@@ -78,17 +77,32 @@ function mainRussianPost() {
 	getParam(item.mailTypeText+'', result, 'type', null, replaceTagsAndSpaces);
 	getParam(item.mailRankText+'', result, 'rank', null, replaceTagsAndSpaces);
 	
-	var op = item.trackingHistoryItemList[0];
-	
-	getParam(op.humanStatus, result, ['operation', 'fulltext']);
-	getParam(op.date+'', result, ['time', 'fulltext'], null, replaceTagsAndSpaces, parseDateISO);
-	sumParam(op.cityName, result, ['location', 'fulltext'], null, null, null, aggregate_join);
-	sumParam(op.countryName, result, ['location', 'fulltext'], null, null, null, aggregate_join);
-	sumParam(op.index, result, ['location', 'fulltext'], null, null, null, aggregate_join);
-	getParam(op.description, result, ['attribute', 'fulltext']);
-	getParam(op.countryCustomName, result, ['operator', 'fulltext']);
-//	getParam(op.Payment+'', result, 'addcost', null, replaceTagsAndSpaces, parseBalance);
-	getParam(getFormattedDate(null, new Date(result.time)) + ': ' + result.operation + ',<br/>' + result.location + ',<br/>' + result.attribute + (result.addcost ? ', Н/п ' + result.addcost + ' ₽' : ''), result, 'fulltext');
+	if(item.trackingHistoryItemList && item.trackingHistoryItemList[0]){
+	    var op = item.trackingHistoryItemList[0];
+	    
+	    getParam(op.humanStatus, result, ['operation', 'fulltext']);
+	    getParam(op.date+'', result, ['time', 'fulltext'], null, replaceTagsAndSpaces, parseDateISO);
+	    sumParam(op.cityName, result, ['location', 'fulltext'], null, null, null, aggregate_join);
+	    sumParam(op.countryName, result, ['location', 'fulltext'], null, null, null, aggregate_join);
+	    sumParam(op.index, result, ['location', 'fulltext'], null, null, null, aggregate_join);
+	    getParam(op.description, result, ['attribute', 'fulltext']);
+	    getParam(op.countryCustomName, result, ['operator', 'fulltext']);
+//	    getParam(op.Payment+'', result, 'addcost', null, replaceTagsAndSpaces, parseBalance);
+	    getParam(getFormattedDate(null, new Date(result.time)) + ': ' + result.operation + ',<br/>' + result.location + ',<br/>' + result.attribute + (result.addcost ? ', Н/п ' + result.addcost + ' ₽' : ''), result, 'fulltext');
+	}else{
+		AnyBalance.trace('История перемещений не найдена. Пробуем получить последние данные из основной информации...');
+		
+		getParam(item.commonStatus, result, ['operation', 'fulltext']);
+	    getParam(item.lastOperationDateTime+'', result, ['time', 'fulltext'], null, replaceTagsAndSpaces, parseDateISO);
+	    sumParam(item.destinationCityName, result, ['location', 'fulltext'], null, null, null, aggregate_join);
+	    sumParam(item.destinationCountryName, result, ['location', 'fulltext'], null, null, null, aggregate_join);
+	    sumParam(item.indexTo, result, ['location', 'fulltext'], null, null, null, aggregate_join);
+	    getParam(item.indexTo, result, ['attribute', 'fulltext'], null, null, null, aggregate_join);
+		sumParam(item.destinationCityName, result, ['attribute', 'fulltext'], null, null, null, aggregate_join);
+	    getParam('Почта России', result, ['operator', 'fulltext']);
+//	    getParam(item.Payment+'', result, 'addcost', null, replaceTagsAndSpaces, parseBalance);
+	    getParam(getFormattedDate(null, new Date(result.time)) + ': ' + result.operation + ',<br/>' + result.location + ',<br/>' + result.attribute + (result.addcost ? ', Н/п ' + result.addcost + ' ₽' : ''), result, 'fulltext');
+	}
 	
 	AnyBalance.setResult(result);
 }

@@ -561,7 +561,7 @@ function getInfoByAlternative(prefs){
 		'Referer': 'https://platiuslugi.ru/'
 	}), headers);
 	
-	var form = getElement(html, /<form[^>]+"rtelecom_mnt__CLIENTSresults"[^>]*>/i);
+	var form = getElement(html, /<form[^>]+name="[\s\S]*?__CLIENTSresults"[^>]*>/i);
 	if(!form){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
@@ -578,7 +578,9 @@ function getInfoByAlternative(prefs){
 	
     params['clientID'] = new Date().getTime() + '' + (100000 + Math.floor(Math.random() * 900000)); // 1708642102136193349
 	
-	html = AnyBalance.requestPost('https://platiuslugi.ru/call_app/rtelecom_mnt::next_step/', params, addHeaders({
+	var blockIndex = getParam(form, /<form[^>]+name="([\s\S]*?)__CLIENTSresults"/i, replaceTagsAndSpaces);
+	
+	html = AnyBalance.requestPost('https://platiuslugi.ru/call_app/' + blockIndex + '::next_step/', params, addHeaders({
     	'Accept': 'text/html, */*; q=0.01',
 		'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
     	'Origin': 'https://platiuslugi.ru',
@@ -599,7 +601,7 @@ function getInfoByAlternative(prefs){
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /a3_PA_BALANCE[\s\S]*?value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /_PA_BALANCE[\s\S]*?value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
 	result.__tariff = prefs.login;
 	result.licschet = prefs.login;
 		

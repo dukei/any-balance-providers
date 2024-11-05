@@ -1,5 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change major_version="2.3" version="37" date="2024-10-21">
+	- Поддержка изменений на сайте
+	</change>
+	<change major_version="2.3" version="36" date="2024-07-20">
+	- Поддержка изменений на сайте
+	</change>
+	<change major_version="2.3" version="35" date="2024-07-14">
+	- Поддержка изменений на сайте
+	</change>
+	<change major_version="2.3" version="34" date="2024-06-29">
+	- Поддержка изменений на сайте
+	</change>
+	<change major_version="2.3" version="33" date="2023-11-15">
+	- Получение информации с нового сайта
+	- Автоматическое определение города
+	- Добавлены дополнительные счетчики
+	</change>
 	<change major_version="2.2" version="32" date="2023-05-11">
 	- Исправление работы для AnyBalance+
 	</change>

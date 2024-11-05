@@ -1,12 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-internet-ellcom</id>
+	<id version="8">ab-internet-ellcom</id>
 	<api flags="no_browser"/>
-	<name>Ellco (Электросвязь)</name>
+	<name>Ellco (Дагестан)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера Ellco (Электросвязь) http://www.ellco.ru/</p>
-	<p>Информация берется из личного кабинета https://bill.ellco.ru/my/</p>
+	<p>Предоставляет информацию о балансе и состоянии счета для пользователей услуг интернет-провайдера <a href="https://ellco.ru/">Ellco</a> (Дагестан).</p>
+	<p>Информация берется из личного кабинета Ellco на сайте https://bill.ellco.ru/my/ для физических лиц или на сайте https://bill.ellcom.ru/my/ для юридических.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Ellco.</p> 
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -18,9 +21,26 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="to_pay" name="К оплате" units=" ₽"/>
+		<counter id="traffic_out" name="Исходящий трафик" units=" Mb"/>
+		<counter id="traffic_in" name="Входящий трафик" units=" Mb"/>
+		<counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="period" name="Расчетный период" type="text"/>
+		<counter id="status" name="Статус аккаунта" type="text"/>
+		<counter id="state" name="Состояние аккаунта" type="text"/>
+		<counter id="limit" name="Лимит" units=" ₽"/>
+		<counter id="last_oper_date" name="Дата посл. платежа" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_oper_sum" name="Сумма посл. платежа" units=" ₽"/>
+		<counter id="last_oper_type" name="Тип посл. платежа" type="text"/>
+		<counter id="last_oper_desc" name="Описание посл. платежа" type="text"/>
+		<counter id="last_operating_period" name="Период посл. наработки" type="text"/>
+		<counter id="last_operating_sum_total" name="Наработка за период" units=" ₽"/>
+		<counter id="last_operating_sum" name="Сумма посл. наработки" units=" ₽"/>
+		<counter id="last_operating_type" name="Тип посл. наработки" type="text"/>
+		<counter id="username" name="Владелец" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>Дагестан, Махачкала, Электросвязь, ellco, связь, интернет</keywords>
 	<type>internet</type>
 	<country>ru</country>
 </provider>

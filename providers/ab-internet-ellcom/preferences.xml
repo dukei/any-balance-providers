@@ -3,22 +3,31 @@
 	<EditTextPreference
 		title="Логин"
 		key="login"
-		summary="||{@s}"
+		summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n"
 		obligatory="true"
 		dialogTitle="Логин"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
+		dialogMessage="Введите логин, используемый для входа в личный кабинет">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Пароль"
 		key="password"
-		summary="||***********"
+		summary="Пароль для входа в личный кабинет|Введите пароль\n|**********\n"
 		obligatory="true"
 		dialogTitle="Пароль"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет"
 		inputType="textPassword">
 	</EditTextPreference>
+	<ListPreference
+		key="type"
+		title="Тип кабинета"
+		summary="Тип кабинета для получения данных||{@s}\n"
+		dialogTitle="Тип кабинета"
+		entries="Для физических лиц|Для юридических лиц"
+		entryValues="individual|business"
+		defaultValue="individual">
+	</ListPreference>
 </PreferenceScreen>

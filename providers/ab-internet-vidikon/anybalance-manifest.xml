@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="3">ab-internet-vidikon</id>
+	<api flags="no_browser"/>
+	<name>Видикон (Рязань)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и тарифном плане для пользователей интернет-провайдера <a href="https://vidikon.tv/">Видикон (Рязань)</a>.</p>
+	<p>Информация берется из личного кабинета Видикон на сайте https://cabinet.vidikon.tv/.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Видикон.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="agreement" name="Номер договора" type="text"/>
+		<counter id="account" name="Учетная запись" type="text"/>
+		<counter id="account_status" name="Статус учетной записи" type="text"/>
+		<counter id="tariff_abon" name="Абонентская плата" units=" ₽"/>
+		<counter id="tariff_speed" name="Скорость интернета" units=" {@speedunit}"/>
+		<counter id="services" name="Подключенные услуги" type="text"/>
+		<counter id="month_payments" name="Платежи в текущем месяце" units=" ₽"/>
+		<counter id="month_expenses" name="Расходы в текущем месяце" units=" ₽"/>
+		<counter id="last_payment_date" name="Дата посл. платежа" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_payment_number" name="Номер посл. платежа" type="text"/>
+		<counter id="last_payment_agreement" name="Договор посл. платежа" type="text"/>
+		<counter id="last_payment_state" name="Состояние посл. платежа" type="text"/>
+		<counter id="last_payment_type" name="Способ посл. платежа" type="text"/>
+		<counter id="last_payment_sum" name="Сумма посл. платежа" units=" ₽"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>Видикон, vidikon, интернет, тв</keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

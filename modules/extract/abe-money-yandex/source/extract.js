@@ -99,7 +99,7 @@ function login(){
 	    
 		var jsonProcess = callApi('yooid/signin/api/process/start/standard', {
 			"origin": "Wallet",
-            "tmxSessionId": "groupib-" + data.staticData.groupIb.sessionId,
+            "tmxSessionId": "groupib-" + data.staticData.antifraudProfiler.sessionId,
             "isAutoStart": false,
             "login": prefs.login
 		});
@@ -108,7 +108,7 @@ function login(){
 	    do{
 	    	var json = callApiProgress('yooid/signin/api/process/start/standard', {
         		"origin": "Wallet",
-                "tmxSessionId": "groupib-" + data.staticData.groupIb.sessionId,
+                "tmxSessionId": "groupib-" + data.staticData.antifraudProfiler.sessionId,
                 "isAutoStart": false,
                 "login": prefs.login,
                 "processId": jsonProcess.result.processId,
@@ -187,7 +187,7 @@ function processStep(data, stepData){
             "authProcessId": stepData.authProcessId,
             "type": "Sms"
         });
-		var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, высланный на номер ' + json.result.session.phone, null, {inputType: 'number', time: 170000});
+		var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, высланный на номер ' + json.success.session.phone, null, {inputType: 'number', time: 170000});
 		json = callApiProgress('yooid/api/2fa/session/check', {
             "authProcessId": stepData.authProcessId,
             "secret": code

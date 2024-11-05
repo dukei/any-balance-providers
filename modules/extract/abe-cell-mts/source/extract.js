@@ -1020,7 +1020,7 @@ function processCountersLK(result){
 			AnyBalance.sleep(2000);
 		    var token = callNewLKApiToken('sharing/counters');
 		    var data = callNewLKApiResult(token);
-		} while (data.counters.length < 3 && ++ tries < 5);
+		} while (data.counters.length < 3 && ++ tries < 3);
 	}
 
 	for(var i=0; i<data.counters.length; ++i){
@@ -1040,23 +1040,23 @@ function processCountersLK(result){
 			let del = 1;
 			if(c.unitType === 'Second')
 				del = 60;
-			getParam(c.deadlineDate, result.remainders, 'remainders.min_till', null, null, parseDateISO);
-			getParam(c.usedAmount/del, result.remainders, 'remainders.min_local');
-			getParam(c.totalAmount/del, result.remainders, 'remainders.min_total');
-			getParam((c.totalAmount - c.usedAmount)/del, result.remainders, 'remainders.min_left');
+			sumParam(c.deadlineDate, result.remainders, 'remainders.min_till', null, null, parseDateISO, aggregate_min);
+			sumParam(c.usedAmount/del, result.remainders, 'remainders.min_local', null, null, parseBalanceSilent, aggregate_sum);
+			sumParam(c.totalAmount/del, result.remainders, 'remainders.min_total', null, null, parseBalanceSilent, aggregate_sum);
+			sumParam((c.totalAmount - c.usedAmount)/del, result.remainders, 'remainders.min_left', null, null, parseBalanceSilent, aggregate_sum);
 		}else if(c.packageType === 'Messaging'){
 			AnyBalance.trace('Это сообщения');
-			getParam(c.deadlineDate, result.remainders, 'remainders.sms_till', null, null, parseDateISO);
-			getParam(c.usedAmount, result.remainders, 'remainders.sms_used');
-			getParam(c.totalAmount, result.remainders, 'remainders.sms_total');
-			getParam(c.totalAmount - c.usedAmount, result.remainders, 'remainders.sms_left');
+			sumParam(c.deadlineDate, result.remainders, 'remainders.sms_till', null, null, parseDateISO, aggregate_min);
+			sumParam(c.usedAmount, result.remainders, 'remainders.sms_used', null, null, parseBalanceSilent, aggregate_sum);
+			sumParam(c.totalAmount, result.remainders, 'remainders.sms_total', null, null, parseBalanceSilent, aggregate_sum);
+			sumParam(c.totalAmount - c.usedAmount, result.remainders, 'remainders.sms_left', null, null, parseBalanceSilent, aggregate_sum);
 		}else if(c.packageType === 'Internet'){
 			AnyBalance.trace('Это трафик');
-			getParam(c.deadlineDate, result.remainders, 'remainders.traffic_left_till', null, null, parseDateISO);
-			getParam((c.usedAmount) + ' ' + c.unitType, result.remainders, 'remainders.traffic_used_mb', null, null, parseTraffic);
-			getParam((c.totalAmount) + ' ' + c.unitType, result.remainders, 'remainders.traffic_total_mb', null, null, parseTraffic);
-			getParam((c.usedByAcceptors) + ' ' + c.unitType, result.remainders, 'remainders.traffic_used_by_acceptors_mb', null, null, parseTraffic);
-			getParam((c.totalAmount - c.usedAmount) + ' ' + c.unitType, result.remainders, 'remainders.traffic_left_mb', null, null, parseTraffic);
+			sumParam(c.deadlineDate, result.remainders, 'remainders.traffic_left_till', null, null, parseDateISO, aggregate_min);
+			sumParam((c.usedAmount) + ' ' + c.unitType, result.remainders, 'remainders.traffic_used_mb', null, null, parseTraffic, aggregate_sum);
+			sumParam((c.totalAmount) + ' ' + c.unitType, result.remainders, 'remainders.traffic_total_mb', null, null, parseTraffic, aggregate_sum);
+			sumParam((c.usedByAcceptors) + ' ' + c.unitType, result.remainders, 'remainders.traffic_used_by_acceptors_mb', null, null, parseTraffic, aggregate_sum);
+			sumParam((c.totalAmount - c.usedAmount) + ' ' + c.unitType, result.remainders, 'remainders.traffic_left_mb', null, null, parseTraffic, aggregate_sum);
 		}else{
 			AnyBalance.trace('Неизвестный счетчик: ' + JSON.stringify(c));
 		}
@@ -1075,6 +1075,7 @@ function processCountersLK(result){
 	    var status = {
 		    Unblocked: 'Номер не блокирован',
 		    OnlyInboundCalls: 'Частичная блокировка',
+			VoluntaryBlock: 'Добровольная блокировка',
 		    BlockDueToInsufficiencyOfMoney: 'Номер заблокирован',
 		    Blocked: 'Номер заблокирован'
 	    };
@@ -1102,6 +1103,32 @@ function processCountersLK(result){
 			    AnyBalance.trace('Неизвестный тип услуги: ' + JSON.stringify(c));
 		    }
 	    }
+		
+		var token = callNewLKApiToken('contentSubscription/list/active'); // Часть услуг МТС отдаёт по доп. запросу, проверяем их наличие
+	    var data = callNewLKApiResult(token);
+		
+		if(data && data.length && data.length > 0){
+	        for(var i=0; i<data.length; ++i){
+		        var c = data[i];
+                
+		        sumParam(1, result.remainders, 'remainders.services', null, null, parseBalanceSilent, aggregate_sum);
+			    
+			    if(c.cost === 0){
+			        AnyBalance.trace('Найдена бесплатная услуга ' + c.contentName);
+			        sumParam(1, result.remainders, 'remainders.services_free', null, null, parseBalanceSilent, aggregate_sum);
+		        }else{
+			        AnyBalance.trace('Найдена платная услуга ' + c.contentName + ': ' + c.cost + ' ₽' + c.costInfo);
+			        sumParam(1, result.remainders, 'remainders.services_paid', null, null, parseBalanceSilent, aggregate_sum);
+		            if(!/30 дней|1 месяц/i.test(c.costInfo)){
+					    sumParam(c.cost, result.remainders, 'remainders.services_abon_day', null, null, parseBalanceSilent, aggregate_sum);
+                    }else{
+					    sumParam(c.cost, result.remainders, 'remainders.services_abon', null, null, parseBalanceSilent, aggregate_sum);
+                    }
+		        }
+	        }
+		}else{
+			AnyBalance.trace('Не удалось получить список дополнительных услуг. Возможно, они отсутствуют');
+		}
     }
 	
 	if (isAvailable('remainders.credit')) {
@@ -1123,8 +1150,12 @@ function processCountersLK(result){
 	    processExpensesLK(result);
 	}
 	
-	if (isAvailable(['payments.sum', 'payments.date'])) {
+	if (isAvailable(['payments.sum', 'payments.date', 'payments.descr'])) {
 	    processTransactionsLK(result);
+	}
+	
+	if (isAvailable('tariff_abon')) {
+	    processTariffAbonLK(result);
 	}
 }
 
@@ -1399,6 +1430,38 @@ function processTransactionsLK(result){
 		}
     }else{
 		AnyBalance.trace('Не удалось получить данные по последней транзакции');
+	}
+}
+
+function processTariffAbonLK(result){
+	try{
+	    html = AnyBalance.requestPost('https://federation.mts.ru/graphql', JSON.stringify({
+            "operationName": "GetProductsTariffInfo",
+            "variables": {
+                "screenName": "default"
+            },
+            "query": "query GetProductsTariffInfo($screenName: String!) {\n  tariffInfo(input: {screenName: $screenName}) {\n    name\n    alias\n    tariffPricesInfo {\n      mainPrice {\n        price\n        basePrice\n        date\n        descriptionPrice\n        __typename\n      }\n      discounts {\n        value\n        dateTo\n        description\n        __typename\n      }\n      __typename\n    }\n    tariffType\n    industryCode\n    tariffManage\n    tariffPaymentType\n    tariffContent {\n      tariffButton\n      tariffSettingUrl\n      autoconvergent {\n        widgetMobile\n        hintBadge\n        badge\n        __typename\n      }\n      familyGroup {\n        addUser\n        addUserUrl\n        __typename\n      }\n      recommendedAmount {\n        title\n        amount\n        text\n        icon\n        modalSheet {\n          text\n          buttons {\n            text\n            url\n            __typename\n          }\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    tariffSigns {\n      key\n      value\n      __typename\n    }\n    __typename\n  }\n}"
+        }), addHeaders({
+		    'Content-Type': 'application/json',
+            'Referer': g_baseurl + '/',
+		    'X-Client-Id': 'LK',
+		    'X-Login': fetchNumber()
+	    }));
+	    
+	    var json = getJson(html);
+	}catch(e){
+        AnyBalance.trace('Ошибка получения данных по тарифу: ' + e.message);
+		return;
+    }
+	
+	AnyBalance.trace(JSON.stringify(json));
+	
+	var data = json.data;
+	
+	if(data.tariffInfo && data.tariffInfo.tariffPricesInfo && data.tariffInfo.tariffPricesInfo.mainPrice && data.tariffInfo.tariffPricesInfo.mainPrice.price){
+		getParam(data.tariffInfo.tariffPricesInfo.mainPrice.price, result, 'tariff_abon', null, null, parseBalance);
+    }else{
+		AnyBalance.trace('Не удалось получить данные по абонплате по тарифу');
 	}
 }
 

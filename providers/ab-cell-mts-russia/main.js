@@ -40,6 +40,7 @@ var g_countersTable = {
 	common: {
 		"balance": "balance",
 		"bonus": "bonus",
+		"tariff_abon": "tariff_abon",
 		"min_local": "remainders.min_local",
 		"min_left": "remainders.min_left",
 		"min_left_mezh": "remainders.min_left_mezh",

@@ -132,11 +132,10 @@ function loadProtectedPage(fromUrl, headers){
 
     var html = AnyBalance.requestGet(url, headers);
     
-    if(/__qrator/.test(html)) {
+	if(/__qrator/.test(html)) {
         AnyBalance.trace("Требуется обойти QRATOR");
-	if(!AnyBalance.getCapabilities().clientOkHttp)
+		if(!AnyBalance.getCapabilities().clientOkHttp)
         	throw new AnyBalance.Error('Для работы провайдера требуется обновить приложение. Новая версия AnyBalance доступна на RuStore');
-
         clearAllCookies();
 
         const bro = new BrowserAPI({
@@ -148,7 +147,7 @@ function loadProtectedPage(fromUrl, headers){
                 resType: /^(image|stylesheet|font)$/.toString(),
                 action: 'abort',
             }, {
-		url: /_qrator\/qauth(?:_\w+)*\.js/.toString(),
+		        url: /_qrator\/qauth(?:_\w+)*\.js/.toString(),
                 action: 'cache',
                 valid: 360*1000
             }, {

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser"/>
-	<id major_version="4.1" version="240">ab-cell-mts-russia</id>
+	<id major_version="4.1" version="241">ab-cell-mts-russia</id>
 	<name>МТС (Россия)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, бонусных баллах, использованных минутах на локальные, мобильные и любимые номера, расходах, статусе блокировки, кредите, номере лицевого счета, ежемесячной плате.</p>
@@ -71,6 +71,7 @@
 		<counter id="services_abon_day" name="Абонплата за услуги (сутки)" units=" ₽"/>
 		<counter id="usedinthismonth" name="Расходы за этот месяц" units=" ₽"/>
 		<counter id="usedinprevmonth" name="Расходы за прошлый месяц" units=" ₽"/>
+		<counter id="tariff_abon" name="Абонплата по тарифу" units=" ₽"/>
 		<counter id="license" name="Лицевой счет" type="text"/>
 		<counter id="premium_state" name="Подписка Premium" type="text"/>
 		<counter id="refill" name="Пополнения за этот месяц" units=" ₽"/>

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="9" date="2024-11-03">
+	- Исправлено получение бонусов к аннулированию
+	</change>
     <change version="8" date="2024-09-03">
 	- Поддержка изменений в процедуре входа
 	</change>

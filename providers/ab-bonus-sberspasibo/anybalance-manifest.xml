@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="8">ab-bonus-sberspasibo</id>
+	<id version="9">ab-bonus-sberspasibo</id>
 	<api flags="no_browser"/>
 	<name>СберСпасибо</name>
 	<description html="true"><![CDATA[

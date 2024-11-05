@@ -391,7 +391,7 @@ function main() {
 		if(json.data.loyaltySystem){
 	        getParam(json.data.loyaltySystem.balance, result, 'balance', null, null, parseBalance);
 	        getParam(json.data.loyaltySystem.miles, result, 'miles', null, null, parseBalance);
-			if(json.data.loyaltySystem.bon_to_annulment && json.data.loyaltySystem.bon_to_annulment.length > 0){
+			if(json.data.loyaltySystem.bon_to_annulment){
 	            getParam(json.data.loyaltySystem.bon_to_annulment.value, result, 'annul', null, null, parseBalance);
 	            getParam(json.data.loyaltySystem.bon_to_annulment.date, result, 'annuldate', null, null, parseDate);
 	        }
@@ -490,7 +490,7 @@ function main() {
 			    getParam(transaction.operationDate, result, 'lastoperdate', null, null, parseDate);
 			    getParam(-(transaction.amount), result, 'lastoperrubsum', null, null, parseBalance);
 	            getParam(transaction.bonusBalanceChange, result, 'lastopersum', null, null, parseBalance);
-			    getParam(transaction.cardName + ' (' + transaction.cardLastDigits + ')', result, 'lastopercard');
+			    getParam(transaction.cardName + (transaction.cardLastDigits ? ' (' + transaction.cardLastDigits + ')' : ''), result, 'lastopercard');
 	            getParam(transaction.partnerName, result, 'lastoperdesc');
 			    
 			    break;

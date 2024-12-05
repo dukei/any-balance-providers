@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="4">ab-tracking-boxberry</id>
+	<id version="5">ab-tracking-boxberry</id>
 	<api flags="no_browser"/>
 	<name>Boxberry</name>
 	<description html="true"><![CDATA[
@@ -21,17 +21,19 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
+	    <counter id="status" name="Статус заказа" type="text"/>
+		<counter id="date" name="Время изменения" type="time" format="dd.MM.yyyy HH:mm"/>
 		<counter id="orderNum" name="Номер заказа магазина" type="text"/>
 		<counter id="storeName" name="Название магазина" type="text"/>
 		<counter id="orderNumBox" name="Номер заказа Boxberry" type="text"/>
 		<counter id="dest" name="Город назначения" type="text"/>
 		<counter id="weight" name="Вес" units=" кг"/>
+		<counter id="deliveryDate" name="Срок доставки" type="time" format="dd.MM.yyyy"/>
 		<counter id="toPay" name="К оплате" units=" ₽"/>
 		<counter id="point" name="Пункт выдачи" type="text"/>
+		<counter id="storeDate" name="Срок хранения" type="time" format="dd.MM.yyyy"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
-		<counter id="status" name="Статус заказа" type="text"/>
-		<counter id="date" name="Время изменения" type="time" format="dd.MM.yyyy HH:mm"/>
-		<counter id="all" name="Сводка" type="text"/>
+		<counter id="all" name="Сводка" type="html"/>
 	</counters>
 	<keywords>Почтовое отправление, боксберри, доставка</keywords>
 	<type>tracking</type>

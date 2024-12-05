@@ -49,46 +49,50 @@ function main() {
 	if(json.length == 0)
 		throw new AnyBalance.Error('Неизвестный тип почтового отправления, проверьте правильность введенных данных');
 	
-	var info = json[0];
+	var info = json.parcel_with_statuses[0];
 	
 	var infoOrderNum = (info && info.imCode) || '',
 	    infoOrderNumBox = (info && info.order_id) || '',
 		infoStoreName = (info && info.NameIM) || '???',
 		infoWeight = (info && info.Weight) || 0,
+		infoDeliveryDate = (info && info.delivery_date) || '???',
 		infoToPay = (info && info.sum) || 0,
 		infoPointCity = (info && info.point_city) || '???',
 		infoPointAddress = (info && info.point_address) || '???',
 		infoPointPhone = (info && info.point_phone) || '???',
+		infoStoreDate = (info && info.store_date) || '???',
 		infoTrackNum = (info && info.ProgramNumber) || '',
-		infoTrackId = (info && info.track_id) || '';
+		infoTrackId = (info && (info.track_id || info.ProgramNumber)) || '';
 
-	var json = callApi('api/v1/tracking/status/get?trackId=' + infoTrackId);
+	var statuses = info.Statuses;
 	
-	var status = json.Statuses[json.Statuses.length-1]; // Статус ищем с конца
+	var status = statuses[statuses.length-1]; // Статус ищем с конца
 	
 	var statusDate = (status && status.date_time) || '',
 //		statusPlace = (status && status.location) || '',
 		statusName = (status && status.name) || '???';
 	
+	getParam(statusName, result, 'status');
+	getParam(statusDate, result, 'date', null, [/\(|\)/g, ''], parseDate);
 	getParam(infoOrderNum, result, 'orderNum');
 	getParam(infoOrderNumBox, result, 'orderNumBox');
 	getParam(infoTrackNum, result, '__tariff');
     getParam(infoStoreName, result, 'storeName');
-    getParam(statusDate, result, 'date', null, [/\(|\)/g, ''], parseDate);
 	getParam(infoPointCity, result, 'dest');
 	getParam(infoToPay, result, 'toPay');
     getParam(infoPointAddress, result, 'point');
 	getParam(infoPointPhone, result, 'phone', null, [/\(|\)/g, ' ']);
-    getParam(statusName, result, 'status');
+	getParam(infoStoreDate, result, 'storeDate', null, null, parseDate);
 	getParam(infoWeight, result, 'weight');
+	getParam(infoDeliveryDate, result, 'deliveryDate', null, null, parseDate);
 	
 	if(isAvailable('all')) {
-		var items = json.Statuses;
+		var items = statuses;
 		if(items && items.length > 0){
 			for(var i=items.length-1; i>=0; i--){
 				var item = items[i];
                 
-				sumParam(item.date_time.replace(/\(|\)/g, '') + ': ' + item.name, result, 'all', null, null, null, create_aggregate_join('.\n '));
+				sumParam('<b>' + item.date_time.replace(/\(|\)/g, '') + ':</b><br> ' + item.name, result, 'all', null, null, null, create_aggregate_join('.<br> '));
 			}
 		}else{
 		    AnyBalance.trace('Не удалось получить информацию по статусам отправления');

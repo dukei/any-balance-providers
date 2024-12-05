@@ -1,47 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="104">ab-money-sberbank</id>
+	<id version="105">ab-money-sberbank</id>
 	<api flags="no_browser"/>
 	<name>СберБанк Онлайн</name>
 	<description html="true"><![CDATA[
-	<p>Проверяйте информацию о текущем остатке/балансе денежных средств и других параметрах карт и счетов "СберБанка".</p> 
-	<p>Информация берётся из личного кабинета "СберБанк Онлайн" (https://online.sberbank.ru).</p>
-	<p><b>ВНИМАНИЕ!</b> Чтобы получить баланс, провайдер заходит в ваш СберБанк Онлайн. По умолчанию СберБанк на каждый вход присылает СМС.
-	Вам будет приходить SMS всякий раз, когда провайдер будет проверять ваш баланс. Это можно отключить, заменив уведомление на е-мейл в настройках интернет-банка.
+	<p>Предоставляет информацию о текущем остатке и других параметрах карт и счетов для клиентов <a href="https://www.sberbank.ru/">СберБанка</a>.</p>
+	<p>Информация берется из мобильного приложения <a href="https://www.rustore.ru/catalog/app/ru.sberbankmobile/">СберБанк Онлайн</a>.</p>
+	<p><b>ВНИМАНИЕ!</b> По умолчанию СберБанк оповещает о каждом входе в интернет-банк. Вы будете получать уведомление при каждом обновлении провайдера.</p>
+	<p>Этого можно избежать, отключив для установленного на устройстве приложения СберБанк Онлайн соответствующую категорию уведомлений в общих настройках.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Как получить доступ к "СберБанк Онлайн":</p>
-	<ol> 
-		<li>Получите банковскую карту СберБанка с подключенной услугой «Мобильный банк»</li>
-		<li>Получите логин и пароль пользователя в банкомате или терминале</li>
-		<li>Начните использовать СберБанк Онлайн!</li>
-	</ol>
-	<p>Видео-инструкция подключения СберБанка Онлайн: https://sberbank.ru/common/img/uploaded/sbol/01_proj02_menu.html. К сожалению, требуется Flash плеер, смотреть получится только с компьютера.
-	<p><b>Отключение одноразового пароля по СМС при входе</b></p>
-	<p><b>ВНИМАНИЕ!</b> Для работы провайдера требуется отказаться от подтверждения входа в систему "СберБанк Онлайн" одноразовым паролем в разделе "Настройки - Безопасность".<br>
-	<small>Отключение подтверждения даёт возможность только зайти в систему, но НЕ делать переводы! В целях безопасности НЕВОЗМОЖНО отключить подтверждение одноразовым паролем переводов и платежей организациям или частным лицам.</small>
-	<ol>
-		<li>Войдите в Сберанк Онлайн через браузер.</li>
-		<li>Зайдите в Настройки (иконка шестеренки в правом верхнем углу), переключитесь на вкладку "Безопасность".</li>
-		<li>Кликните "Настройка подтверждений в системе".</li>
-		<li>Снимите галочку "Вводить одноразовый пароль при входе".</li>
-		<li>Нажмите "Сохранить" и подтвердите своё решение, следуя инструкциям Интернет-банка.</li>
-	</ol></p>
-	<p><b>Отключение оповещения по СМС при входе</b></p>
-	<p>Чтобы получить баланс, провайдер заходит в ваш СберБанк Онлайн. По умолчанию СберБанк на каждый вход присылает СМС.
-	То есть, вам будет приходить СМС всякий раз, когда провайдер будет проверять ваш баланс. Это можно отключить, перенаправив оповещение на E-Mail.
-	<ol>
-		<li>Войдите в Сберанк Онлайн через браузер.</li>
-		<li>Зайдите в Настройки (иконка шестеренки в правом верхнем углу), переключитесь на вкладку "Оповещения".</li>
-		<li>Кликните "Настройка уведомлений о входе на личную страницу".</li>
-		<li>Установите переключатель в "E-Mail; оповещение отправлять на адрес: ...".
-			<ul>
-				<li>Если у вас E-Mail ещё не установлен, установите его в разделе "Профиль" настроек интернет банка, в блоке "Контактная информация".</li>
-				<li>СОВЕТ: На популярных e-mail серверах, например, gmail, mail.ru или yandex можно настроить фильтр, который будет сразу удалять письма с уведомлениями о входе в СберБанк Онлайн, чтобы они не мозолили глаза.</li>
-			</ul>
-		</li>
-		<li>Нажмите "Сохранить" и подтвердите своё решение, следуя инструкциям Интернет-банка.</li>
-	</ol></p>
+	<p>Для работы провайдера требуется ввести логин и код подтверждения из SMS, высланного на номер телефона, привязанного к личному кабинету СберБанк Онлайн.</p>
+	<p>Кроме того, для авторизации в интернет-банке необходимо ввести PIN-код, используемый для входа в личный кабинет СберБанк Онлайн.</p>
+	<p><b>ВАЖНО!</b> Необходимо вводить именно тот PIN-код, который уже используется для входа в установленное на устройстве приложение СберБанк Онлайн.</p>
+	<p>Если вы установите новый PIN-код, отличающийся от PIN-кода, уже установленного для приложения, может потребоваться повторная привязка устройства.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -56,36 +28,45 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Остаток" units=" {@currency}"/>
-		<counter id="weight" name="Вес" units=" {@weight_units}"/>
-		<counter id="spasibo" name="Спасибо" units=" С"/>
+<!--	<counter id="weight" name="Вес" units=" {@weight_units}"/> -->
+		<counter id="spasibo" name="СберСпасибо" units=" С"/>
+		<counter id="miles" name="СберМили" units=" М"/>
 		<counter id="minpay" name="Минимальный платеж" units=" {@currency}"/>
 		<counter id="minpaydate" name="Дата минимального платежа" type="time" format="dd.MM.yyyy"/>
-		<counter id="electrocash" name="Для покупок" units=" {@currency}"/>
-		<counter id="cash" name="Наличные" units=" {@currency}"/>
+		<counter id="electrocash" name="Доступно для покупок" units=" {@currency}"/>
+		<counter id="cash" name="Доступно для снятия" units=" {@currency}"/>
 		<counter id="own" name="Собственные средства" units=" {@currency}"/>
 		<counter id="cardNumber" name="Номер карты/счета" type="text"/>
 		<counter id="till" name="Срок действия" type="time" format="MM/yyyy"/>
-		<counter id="gracepay" name="Льготный платеж" units=" {@currency}"/>
+        <counter id="gracepay" name="Льготный платеж" units=" {@currency}"/>
 		<counter id="gracepay_till" name="Срок льготного платежа" type="time" format="dd.MM.yyyy"/>
 		<counter id="debt" name="Задолженность" units=" {@currency}"/>
-		<counter id="debt_date" name="Дата последнего отчета по задолженности" type="time" format="dd.MM.yyyy"/>
+		<counter id="debt_date" name="Дата последнего отчета" type="time" format="dd.MM.yyyy"/>
 		<counter id="maxlimit" name="Кредитный лимит" units=" {@currency}"/>
-		<counter id="loan_ammount" name="Сумма кредита" units=" {@currency}"/>
+<!--    <counter id="loan_ammount" name="Сумма кредита" units=" {@currency}"/> -->
 		<counter id="cardName" name="Имя карты/счета" type="text"/>
+		<counter id="type" name="Тип карты/счета" type="text"/>
 		<counter id="status" name="Статус карты/счета" type="text"/>
+		<counter id="payment_system" name="Платежная система" type="text"/>
 		<counter id="pct" name="Процентная ставка" units="%"/>
+		<counter id="pct_next_date" name="Дата выплаты процентов" type="time" format="dd.MM.yyyy"/>
 		<counter id="balance_min" name="Неснижаемый остаток" units=" {@currency}"/>
+		<counter id="categories" name="Повышенный кешбэк" type="html"/>
 		<counter id="lastPurchSum" name="Сумма последней операции" units=" {@currency}"/>
-		<counter id="lastPurchPlace" name="Описание последней операции" type="text"/>
 		<counter id="lastPurchDate" name="Дата последней операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="lastPurchPlace" name="Описание последней операции" type="text"/>
+		<counter id="lastPurchType" name="Тип последней операции" type="text"/>
+    	<counter id="sberprime_state" name="Состояние подписки" type="text"/>
+		<counter id="sberprime_till" name="Срок действия подписки" type="time" format="dd.MM.yyyy"/>
 		<counter id="usdPurch" name="USD покупка" prefix="$↓ " units=" {@currency}"/>
 		<counter id="usdSell" name="USD продажа" prefix="$↑ " units=" {@currency}"/>
 		<counter id="eurPurch" name="EUR покупка" prefix="€↓ " units=" {@currency}"/>
 		<counter id="eurSell" name="EUR продажа" prefix="€↑ " units=" {@currency}"/>
+		<counter id="userPhone" name="Номер телефона" type="text"/>
 		<counter id="userName" name="ФИО владельца" type="text"/>
 		<counter id="currency" name="Валюта счета" type="text"/>
 	</counters>
-	<keywords>сбербанк онлайн, sberbank online, сберегательный банк, спасибо</keywords>
+	<keywords>сбербанк онлайн, sberbank online, sberprime, сберпрайм, сберегательный банк, спасибо</keywords>
 	<type>money, bank</type>
 	<country>ru</country>
 </provider>

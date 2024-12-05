@@ -3,25 +3,25 @@
 	<EditTextPreference
 		title="Логин"
 		positiveButtonText="ОК"
-		summary="ID пользователя, логин или номер карты|Введите логин\n|{@s}\n"
+		summary="Логин для входа в СберБанк Онлайн|Введите логин\n|{@s}\n"
 		dialogTitle="Логин"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите идентификатор пользователя или логин для входа в систему СберБанк Онлайн."
+		dialogMessage="Введите ID пользователя, логин или номер карты, используемый для входа в СберБанк Онлайн"
 		obligatory="true"
 		key="login">
 	</EditTextPreference>
-	<EditTextPreference
+<!--<EditTextPreference
 		positiveButtonText="ОК"
 		key="password"
 		dialogTitle="Пароль"
 		negativeButtonText="Отмена"
 		title="Пароль"
-		summary="Пароль для входа в личный кабинет|Введите пароль\n|***********\n"
+		summary="Пароль для входа в СберБанк Онлайн|Введите пароль\n|***********\n"
 		obligatory="true"
-		dialogMessage="Введите пароль, используемый для входа в систему СберБанк Онлайн."
+		dialogMessage="Введите пароль, используемый для входа в СберБанк Онлайн"
 		inputType="textPassword">
 	</EditTextPreference>
-	<ListPreference
+    <ListPreference
 		key="source"
 		dialogTitle="Способ входа"
 		title="Способ входа"
@@ -29,15 +29,15 @@
 		entries="API Мобильного приложения|Официальный сайт"
 		entryValues="app|site"
 		defaultValue="app">
-	</ListPreference>
+	</ListPreference>-->
 	<EditTextPreference
 		positiveButtonText="ОК"
 		key="pin"
 		dialogTitle="PIN-код"
 		negativeButtonText="Отмена"
 		title="PIN-код"
-		summary="Только для API Мобильного приложения|Сгенерировать PIN-код\n|***********\n"
-		dialogMessage="Введите PIN-код, используемый для входа в мобильное приложение СберБанк Онлайн. Если вы не укажете PIN-код, будет сгенерирован PIN-код по умолчанию."
+		summary="PIN-код для входа в СберБанк Онлайн|Автоматически\n|**********\n"
+		dialogMessage="Введите PIN-код, используемый для входа в СберБанк Онлайн. Если вы не укажете PIN-код, он будет сгенерирован по умолчанию"
 		inputType="numberPassword">
 	</EditTextPreference>
 	<ListPreference
@@ -56,7 +56,7 @@
 		negativeButtonText="Отмена"
 		title="Номер карты/счета"
 		summary="Последние 4 цифры карты/счета|Автоматически\n|{@s}\n"
-		dialogMessage="Введите последние 4 цифры карты/счета, по которым вы хотите получать информацию. Если оставить поле пустым, будет показана информация по первой карте/счету."
+		dialogMessage="Введите последние 4 цифры карты/счета, по которым вы хотите получать информацию. Если оставить поле пустым, будет показана информация по первой карте/счету"
 		inputType="number">
 	</EditTextPreference>
 </PreferenceScreen>

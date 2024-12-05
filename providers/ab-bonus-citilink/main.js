@@ -5,9 +5,10 @@
 var g_headers = {
 	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
 	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+	'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
 	'Upgrade-Insecure-Requests': '1',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
 };
 
 var baseurl = "https://www.citilink.ru";
@@ -19,7 +20,7 @@ function main(){
     AnyBalance.setDefaultCharset('utf-8'); 
 	
 	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(/@|^\d{11}$/.test(prefs.login), 'Введите e-mail или телефон (11 цифр без пробелов и разделителей)!');
+	checkEmpty(/@/.test(prefs.login), 'Введите e-mail!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
 	if(AnyBalance.getData('login') === prefs.login)
@@ -27,18 +28,14 @@ function main(){
 	
 	AnyBalance.trace('Пробуем войти в личный кабинет...');
 	
-	var html = AnyBalance.requestPost(baseurl + '/profile/main', '', addHeaders({
-      	'X-Requested-With': 'XMLHttpRequest',
-      	'Origin': baseurl,
-      	'Referer': baseurl + '/profile/club/'
-    }));
+	var html = AnyBalance.requestGet(baseurl + '/', g_headers);
 	
-	if(!html || AnyBalance.getLastStatusCode() > 403){
+	if(!html || AnyBalance.getLastStatusCode() > 500){
 		AnyBalance.trace(html);
 		throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
 	}
 	
-	if(/user-not-auth/i.test(html) || AnyBalance.getLastStatusCode() == 400){
+	if(!/"userAuth":\s*?1/i.test(html)){
 		AnyBalance.trace('Сессия новая. Будем логиниться заново...');
 		clearAllCookies();
         
@@ -178,31 +175,21 @@ function login(){
 
 	var html = AnyBalance.requestGet(baseurl + '/login/', g_headers);
 	
-	var form = getElement(html, /<form[^>]+action="[^"]*auth\/login[^>]*>/i);
-	var action = getParam(form, null, null, /<form[^>]+action="([^"]+)/i);
+	var token = getParam(html, null, null, /name="token" value="([^"]+)/i, replaceHtmlEntities);
+	var csrf = getParam(html, null, null, /name="csrf" value="([^"]+)/i, replaceHtmlEntities);
+	
+	var params = {
+		'login': prefs.login,
+		'pass': prefs.password,
+		'token': token,
+		'csrf': csrf
+	};
 
-	if(!action) {
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось найти форму входа, сайт изменен?');
-	}
-
-   	var json = getJsonObject(html, /window\s*\[\s*'globalSettings'\s*\]\s*=\s*/);
-
-	var params = createFormParams(form, function(params, str, name, value) {
-		if (name == 'login') 
-			return prefs.login;
-		else if (name == 'pass')
-			return prefs.password;
-	    else if (name == 'token'){
-	    	return json.token + '_' + hex_md5(json.token + json.staticVersion)
-	    } else if(name == 'version'){
-	    	return json.staticVersion;
-	    }
-
-		return value;
-	});
-
-	html = AnyBalance.requestGet(baseurl + '/captcha/image/?_=' + (+new Date()), addHeaders({Accept: 'application/json, text/javascript, */*; q=0.01', 'X-Requested-With': 'XMLHttpRequest', Referer: baseurl + '/'}));
+	html = AnyBalance.requestGet(baseurl + '/captcha/image/?_=' + (+new Date()), addHeaders({
+		Accept: 'application/json, text/javascript, */*; q=0.01', 
+		'X-Requested-With': 'XMLHttpRequest', 
+		Referer: baseurl + '/'
+	}));
 		
 	var jsonCaptcha = getJson(html);
 	
@@ -212,19 +199,22 @@ function login(){
 		params.captcha = AnyBalance.retrieveCode('Пожалуйста, введите код с картинки', img);
 		params.captchaKey = jsonCaptcha.token;
 	}
-
-	var url = joinUrl(baseurl, action);
-
-	AnyBalance.trace('Posting to url: ' + url);
-	html = AnyBalance.requestPost(url, params, addHeaders({Referer: baseurl + '/login/'})); 
+    
+	html = AnyBalance.requestPost('https://login.citilink.ru/auth/login/?_from=/', params, addHeaders({
+		'Content-Type': 'application/x-www-form-urlencoded',
+		'Origin': baseurl,
+		'Referer': baseurl + '/login/'
+	}));
 	
-    if(!/\/login\/exit/i.test(html)){
+	if(!/"userAuth":\s*?1/i.test(html)){
         var error = getElement(html, /<div[^>]+error-message/i, replaceTagsAndSpaces);
         if(error)
             throw new AnyBalance.Error(error, null, /парол/i.test(error));
+		if(/error=\d+/i.test(AnyBalance.getLastUrl()))
+			throw new AnyBalance.Error('К сожалению, не удалось выполнить вход в учетную запись. Пожалуйста, попробуйте еще раз', null, true);
 		
 		AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+        throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
     }
 
     return html;

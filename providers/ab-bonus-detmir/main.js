@@ -134,7 +134,7 @@ function loginSite(prefs) {
 	g_csrf = json.token;
 	AnyBalance.trace('Токен: ' + g_csrf);
         
-    var captcha = solveRecaptcha('Пожалуйста, подтвердите, что вы не робот', AnyBalance.getLastUrl(), '6LdfO3sUAAAAADw1h0n-Gd3rA8ktxs6hEmuSk5OY', {USERAGENT: g_headers['User-Agent']});
+    var captcha = solveRecaptcha('Пожалуйста, подтвердите, что вы не робот', AnyBalance.getLastUrl(), {SITEKEY: '6LdfO3sUAAAAADw1h0n-Gd3rA8ktxs6hEmuSk5OY', TYPE: 'v2', USERAGENT: g_headers['User-Agent']}, 120000);
     AnyBalance.trace('Капча: ' + captcha);
 	
 	html = AnyBalance.requestPost(baseurl + '/v2/users/auth/flash-calls', JSON.stringify({

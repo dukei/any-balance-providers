@@ -19,5 +19,11 @@
         summaryOn="Test manual redirect"
         summaryOff="Skip manual redirect test"
         key="redirect" />
+    <CheckBoxPreference
+        title="Encoding"
+        defaultValue="true"
+        summaryOn="Test encoding"
+        summaryOff="Skip encoding test"
+        key="encoding" />
 
 </PreferenceScreen>

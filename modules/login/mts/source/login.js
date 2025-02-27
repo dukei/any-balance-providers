@@ -133,8 +133,8 @@ function loadProtectedPage(fromUrl, headers){
     var html = AnyBalance.requestGet(url, headers);
     
 	if(/__qrator/.test(html)) {
-        AnyBalance.trace("Требуется обойти QRATOR");
-		if(!AnyBalance.getCapabilities().clientOkHttp)
+        	AnyBalance.trace("Требуется обойти QRATOR");
+	if(!AnyBalance.getCapabilities().clientOkHttp)
         	throw new AnyBalance.Error('Для работы провайдера требуется обновить приложение. Новая версия AnyBalance доступна на RuStore');
         clearAllCookies();
 

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="4">ab-test-api</id>
+	<api flags="no_browser"/>
+	<name>Test api provider</name>
+	<description html="true"><![CDATA[
+	<p>Тестирование API</p>
+	]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="passed" name="Пройдено"/>
+		<counter id="failed" name="Не пройдено" type="text"/>
+		<counter id="total" name="Всего" type="text"/>
+	</counters>
+	<keywords></keywords>
+	<type></type>
+	<country>ru</country>
+</provider>

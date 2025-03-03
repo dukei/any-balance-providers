@@ -1,27 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-internet-global-alania</id>
+	<id version="3">ab-internet-global-alania</id>
 	<api flags="no_browser"/>
-	<name>Интернет Глобал Алания</name>
+	<name>Глобал Алания</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе провайдера Интернет Глобал Алания <a href="">http://globalalania.ru/</a>http://globalalania.ru/</p>
-	<p>Информация берется из личного кабинета <a href="https://bill.globalalania.ru:8443/bgbilling/webexecuter"></a>https://bill.globalalania.ru:8443/bgbilling/webexecuter</p>
-
+	<p>Предоставляет информацию о балансе для абонентов интернет-провайдера <a href="https://www.globalalania.ru/">Глобал Алания</a>.</p>
+	<p>Информация берется из личного кабинета на сайте https://lk.globalalania.ru/.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Глобал Алания.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="account" name="Договор №" type="text"/>
-		<counter id="fee" name="Абонентская плата" type="text"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="fee" name="Абонентская плата" units=" ₽/мес"/>
+		<counter id="account" name="Номер договора" type="text"/>
+		<counter id="period" name="Расчетный период" type="text"/>
+		<counter id="operating_sum" name="Наработка за период" units=" ₽"/>
+		<counter id="arrival_sum" name="Приход за период" units=" ₽"/>
+		<counter id="expense_sum" name="Расход за период" units=" ₽"/>
+		<counter id="premium_sum" name="Премиум абонент" units=" ₽"/>
+		<counter id="services" name="Подключенные услуги" type="html"/>
+		<counter id="last_payment_date" name="Дата посл. платежа" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_payment_sum" name="Сумма посл. платежа" units=" ₽"/>
+		<counter id="last_oper_desc" name="Тип посл. платежа" type="text"/>
+		<counter id="address" name="Адрес подключения" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>интернет, глобал, северная осетия, алания</keywords>
 	<type>internet</type>
 	<country>ru</country>
 </provider>

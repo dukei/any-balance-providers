@@ -398,8 +398,8 @@ function main() {
        	json.fns.groups.forEach(function(g) {
 			result.info+='<b>'+g.name+'</b>';
        		g.bills.forEach(function(n) {
-				result.info+='<br> '+n.billDate.replace(/(\d{4})-(\d{2})-(\d{2})T(\d{2}:\d{2}:\d{2})([\s\S]*)/,'$3.$2.$1 $4');
-       			result.info+=',<br> '+n.amount+' ₽<br>'+(n.billName||n.fnsName);
+				result.info+='<br> '+n.billDate.replace(/(\d{4})-(\d{2})-(\d{2})[\s\S]*?(\d{2}:\d{2}).*/,'$3.$2.$1 $4');
+       			result.info+=',<br> '+n.amount+' ₽,<br> '+(n.billName||n.fnsName);
        		})
 			if(json.fns.groups[json.fns.groups.length - 1] !== g)
 				result.info+='.<br><br> ';
@@ -410,16 +410,19 @@ function main() {
     	json.fine.groups.forEach(function(g) {
     		result.info+='<b>'+g.name+'</b>';
     		g.bills.forEach(function(n) {
-    			n.discountDate=n.discountDate.replace(/(\d*)-(\d*)-(\d*)/,'$3.$2.$1');
-    			if (parseDate(n.discountDate)>new Date()) {
-    				result.info+='<br> '+n.amount+' ₽<br>(до '+n.discountDate+')';
+    			if(n.discountDate)
+				    n.discountDate=n.discountDate.replace(/(\d*)-(\d*)-(\d*)/,'$3.$2.$1');
+    			if(n.discountDate&&(parseDate(n.discountDate)>new Date())){
+    				result.info+='<br> '+n.amount+' ₽<br> (до '+n.discountDate+')';
 			    }else{
-    				result.info+='<br> '+n.originalAmount+' ₽';
-                    result.info+=',<br> '+n.billName+' ('+n.articleCode+')<br> '+n.offenseDate.replace(/(\d{4})-(\d{2})-(\d{2})([\s\S]*)/,'$3.$2.$1 в $4');
-                    if (n.hasPhoto) {
+    				result.info+='<br> '+(n.originalAmount ? n.originalAmount : n.amount)+' ₽';
+					if(/^\d{2}.\d{2}.\d{4}/i.test(n.offenseDate))
+						n.offenseDate=n.offenseDate.replace(/(\d{2}).(\d{2}).(\d{4})[\s\S]*?(\d{2}:\d{2}).*/,'$3-$2-$1 $4');
+					result.info+=',<br> '+n.billName+(n.articleCode ? ' ('+n.articleCode+')' : '')+'<br> '+n.offenseDate.replace(/(\d{4})-(\d{2})-(\d{2})[\s\S]*?(\d{2}:\d{2}).*/,'$3.$2.$1 в $4');
+                    if(n.hasPhoto)
 						result.info+='.<br> Есть фото нарушения'
-                        result.info+='<br> '+n.supplierFullName;
-					}
+					if(n.supplierFullName)
+                        result.info+='.<br> '+n.supplierFullName;
 			    }
         	})
 			if(json.fine.groups[json.fine.groups.length - 1] !== g)

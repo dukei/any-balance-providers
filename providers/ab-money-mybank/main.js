@@ -89,20 +89,24 @@ function main() {
     	if(!prefs.num){
     		p = _p;
     		break;
-    	}
-    	var cs = _p.cards.filter(function(c){ return endsWith(c.pan, prefs.num) });
-        if(searchType === 'card_num' && cs.length > 0){
-            p = _p;
-            card = cs[0];
-            break;
-        }
-    	
-    	cs = _p.cardContract.filter(function(c){ return endsWith(c.contractNum, prefs.num) });
-        if(searchType === 'acc_num' && cs.length > 0){
-            p = _p;
-            cardContract = cs[0];
-            break;
-        }
+		}
+		if (_p.cards) {
+			var cs = _p.cards.filter(function (c) { return endsWith(c.pan, prefs.num) });
+			if (searchType === 'card_num' && cs.length > 0) {
+				p = _p;
+				card = cs[0];
+				break;
+			}
+		}
+
+		if (_p.cardContract) {
+			cs = _p.cardContract.filter(function (c) { return endsWith(c.contractNum, prefs.num) });
+			if (searchType === 'acc_num' && cs.length > 0) {
+				p = _p;
+				cardContract = cs[0];
+				break;
+			}
+		}
     }
 
     if(!p)

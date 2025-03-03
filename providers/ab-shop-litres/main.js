@@ -3,14 +3,19 @@
 */
 
 var g_headers = {
-	'Accept': 			'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-	'Accept-Charset': 	'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 	'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-	'Connection': 		'keep-alive',
-	'User-Agent': 		'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36',
+	'Accept': 'application/json, text/plain, */*',
+	'Accept-Language':'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+	'App-Id': '115',
+	'Cache-Control': 'max-age=0',
+	'Connection': 'keep-alive',
+	'Origin': 'https://www.litres.ru',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+	'Ui-Currency': 'RUB',
+    'Ui-Language-Code': 'ru'
 };
 
 var baseurl = 'https://www.litres.ru/';
+var baseurlApi = 'https://api.litres.ru/foundation/api/';
 var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4'];
 
 function main() {
@@ -21,73 +26,129 @@ function main() {
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(prefs.password, 'Введите пароль!');
 	
-	var html = AnyBalance.requestGet(baseurl + 'pages/login/', g_headers);
+	g_headers['Session-Id'] = AnyBalance.getData('sId' + prefs.login);
 	
-	if(!html || AnyBalance.getLastStatusCode() > 400){
+	AnyBalance.restoreCookies();
+	
+	AnyBalance.trace('Пробуем войти в личный кабинет...');
+	
+	var html = AnyBalance.requestGet(baseurlApi + 'users/me', g_headers);
+	
+	if(!html || AnyBalance.getLastStatusCode() > 500){
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
+		throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
 	}
 	
-	var csrf = getParam(html, null, null, /name="csrf"\s?value="([^"]*)/i, replaceTagsAndSpaces);
+	var json = getJson(html);
 	
-	html = AnyBalance.requestPost(baseurl + 'pages/ajax_empty2/', {
-		'pre_action': 'login',
-		'ref_url': '/',
-		'login': prefs.login,
-		'pwd': prefs.password,
-		'showpwd': 'on',
-		'utc_offset_min': '180',
-		'timestamp': new Date().getTime(),
-		'csrf': csrf,
-		'gu_ajax': true
-	}, addHeaders({
-		Referer: baseurl + 'pages/login/'
-	}));
+	AnyBalance.trace(JSON.stringify(json));
 	
-	if (/error/i.test(html)) {
-		var error = getParam(html, null, null, /"error_msg"\s?:\s?"([^"]*)/i, replaceTagsAndSpaces);
-		if (error)
-			throw new AnyBalance.Error(error, null, /логин|парол/i.test(error));
+	if(AnyBalance.getLastStatusCode() > 400){
+	    AnyBalance.trace('Сессия новая. Будем логиниться заново...');
+		clearAllCookies();
+	    
+	    var html = AnyBalance.requestPost(baseurlApi + 'auth/login-available', JSON.stringify({
+            "login": prefs.login
+        }), addHeaders({
+		    'Content-Type': 'application/json',
+		    'Referer': baseurl + 'auth/login/'
+	    }));
+	    
+	    var json = getJson(html);
+	    
+	    AnyBalance.trace(JSON.stringify(json));
+	    
+	    if(json.error || json.status !== 200) {
+		    var error = json.error.title;
+		    if (error)
+			    throw new AnyBalance.Error(error, null, /логин|парол|incorrect/i.test(error));
+		    
+		    AnyBalance.trace(html);
+		    throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
+	    }
+	    
+	    var html = AnyBalance.requestPost(baseurlApi + 'auth/login', JSON.stringify({
+            "login": prefs.login,
+            "password": prefs.password
+        }), addHeaders({
+		    'Content-Type': 'application/json',
+		    'Referer': baseurl + 'auth/login/'
+	    }));
+	    
+	    var json = getJson(html);
+	    
+	    AnyBalance.trace(JSON.stringify(json));
+	    
+	    if(json.error || json.status !== 200) {
+		    var error = json.error.title;
+		    if (error)
+			    throw new AnyBalance.Error(error, null, /логин|парол|incorrect/i.test(error));
+		    
+		    AnyBalance.trace(html);
+		    throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
+	    }
+	    
+	    if(!json.payload.data.sid)
+			throw new AnyBalance.Error('Не удалось получить идентификатор сессии. Сайт изменен?');
+	    
+	    AnyBalance.setData('sId' + prefs.login, json.payload.data.sid);
+		AnyBalance.saveCookies();
+    	AnyBalance.saveData();
 		
-		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');
+		g_headers['Session-Id'] = AnyBalance.getData('sId' + prefs.login);
+    }else{
+		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
 	}
 	
 	var result = {success: true};
+    
+	var html = AnyBalance.requestGet(baseurlApi + 'users/me/detailed', addHeaders({'Referer': baseurl}));
 	
-	html = AnyBalance.requestGet(baseurl + 'pages/personal_cabinet_notifications/', g_headers);
+	var json = getJson(html);
 	
-	getParam(html, result, 'balance', /setUserBalance\({[\s\S]*?account:([\s\S]*?),/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'bonus', /setUserBalance\({[\s\S]*?bonus:([\s\S]*?),/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, '__tariff', /setUserCredentials\({[\s\S]*?name:\s?"([^"]*)/i, replaceTagsAndSpaces);
-	getParam(html, result, 'regdate', /setUserCredentials\({[\s\S]*?dateRegister:\s?"([^"]*)/i, [replaceTagsAndSpaces, /(\d{4})-(\d{2})-(\d{2})(.*)/, '$3.$2.$1'], parseDate);
-	var fio = getParam(html, null, null, /setUserCredentials\({[\s\S]*?firstName:\s?"([^"]*)/i, replaceTagsAndSpaces);
-	var lastName = getParam(html, null, null, /setUserCredentials\({[\s\S]*?lastName:\s?"([^"]*)/i, replaceTagsAndSpaces); 
-	if (lastName)
+	AnyBalance.trace('Профиль: ' + JSON.stringify(json));
+	
+	var data = json.payload && json.payload.data;
+	
+	var g_abon = {true: 'Подключена', false: 'Не подключена'};
+	
+    getParam(data.account.display, result, 'balance', null, null, parseBalance);
+	getParam(data.account.bonus, result, 'bonus', null, null, parseBalance);
+	getParam(data.cart.purchased_count, result, 'books', null, null, parseBalance);
+	getParam(data.cart.deferred_count, result, 'deferred', null, null, parseBalance);
+	getParam(data.cart.items_count, result, 'basket', null, null, parseBalance);
+	getParam(data.profile.registered_at, result, 'regdate', null, null, parseDateISO);
+	getParam(g_abon[data.abonement.is_active]||data.abonement.is_active, result, 'abonement');
+	getParam(data.abonement.valid_till, result, 'abonementtill', null, null, parseDateISO);
+	getParam(data.profile.nickname, result, 'nickname');
+	getParam(data.profile.nickname ? data.profile.nickname : data.login, result, '__tariff');
+    getParam(data.profile.email, result, 'email');
+	getParam(data.profile.phone_number, result, 'phone', null, replaceNumber);
+	var fio = data.profile.first_name;
+	var lastName = data.profile.last_name; 
+	if(lastName)
 		fio += ' ' + lastName;
 	getParam(fio, result, 'fio');
-	getParam(html, result, 'phone', /setUserCredentials\({[\s\S]*?phoneNumber:\s?"([^"]*)/i, replaceNumber);
-
-	if(AnyBalance.isAvailable('books', 'deferred', 'basket')){
-		html = AnyBalance.requestGet(baseurl + 'pages/my_books_all/', g_headers);
-		getParam(html, result, 'books', /Мои[\s\S]*?"my-books-link__counter"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'deferred', /Отложенные[\s\S]*?"my-books-link__counter"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalance);
-		var basket = getParam(html, null, null, /Корзина[\s\S]*?"my-books-link__counter"[^>]*>([\s\S]*?)<\/span>/i, replaceTagsAndSpaces, parseBalanceSilent);	
-		getParam(0|basket, result, 'basket', null, null, parseBalance);
-	}
 	
 	if (AnyBalance.isAvailable('lastoperdate', 'lastopersum', 'lastoperdesc')) {
-		html = AnyBalance.requestGet(baseurl + 'pages/personal_cabinet_history_log/', g_headers);
-	    var opers = getElements(html, /<div[^>]+class="history-event"[^>]*>/ig);
-	    if(opers){
-	    	AnyBalance.trace('Найдено операций: ' + opers.length);
+		var html = AnyBalance.requestGet(baseurlApi + 'users/me/operations?limit=50', addHeaders({'Referer': baseurl + 'me/payment/history/'}));
+	    
+	    var json = getJson(html);
+	    
+	    AnyBalance.trace('Операции: ' + JSON.stringify(json));
+		
+		var data = json.payload && json.payload.data;
+		
+	    if(data){
+	    	AnyBalance.trace('Найдено операций: ' + data.length);
 			
-	        for(var i = 0; i<opers.length; i++){
-	    		var oper = opers[0]
-	        	getParam(opers[i], result, 'lastoperdate', /<p[^>]+class="event-date">([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseDate);
-	    		var sum = getParam(opers[i], null, null, /<p[^>]+class="payment-amount">([\s\S]*?)<\/p>/i, replaceTagsAndSpaces, parseBalanceSilent);
-				getParam(0|sum, result, 'lastopersum', null, null, parseBalance);
-	    		getParam(opers[i], result, 'lastoperdesc', /<p[^>]+class="event-title">([\s\S]*?)<\/p>/i, replaceTagsAndSpaces);
+			var g_oper_type = {PROMOCODE_ACTIVATION: 'Активация промокода'};
+			
+	        for(var i = 0; i<data.length; i++){
+	    		var oper = data[0]
+	        	getParam(oper.date, result, 'lastoperdate', null, null, parseDateISO);
+				getParam(oper.amount||0, result, 'lastopersum', null, null, parseBalance);
+		        getParam(g_oper_type[oper.specific_data.operation_type]||oper.specific_data.operation_type, result, 'lastoperdesc');
 	        }
 	    }else{
  	    	AnyBalance.trace('Не удалось получить данные по операциям');

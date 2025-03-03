@@ -24,7 +24,12 @@ function myParseCurrency(text) {
 var g_countersTable = {
 	common: {
 		'spasibo': 'spasibo',
+		'miles': 'miles',
+		'categories': 'categories',
+		'sberprime_state': 'sberprime.state',
+		'sberprime_till': 'sberprime.till',
 		'userName': 'info.fio',
+		'userPhone': 'info.phone',
 		'eurPurch': 'eurPurch',
 		'eurSell': 'eurSell',
 		'usdPurch': 'usdPurch',
@@ -36,7 +41,9 @@ var g_countersTable = {
 		"cardNumber": "cards.cardNumber",
 		"till": "cards.till",
 		"status": "cards.status",
+		"payment_system": "cards.payment_system",
 		"cardName": "cards.cardName",
+		"type": "cards.type",
 		"minpaydate": "cards.minpay_till",
 		"minpay": "cards.minpay",
 		"gracepay_till": "cards.gracepay_till",
@@ -47,13 +54,13 @@ var g_countersTable = {
 		"cash": "cards.cash",
 		"own": "cards.own",
 		"electrocash": "cards.electrocash",
-		"userName": "cards.userName",
+//		"userName": "cards.userName",
 		"__tariff": "cards.cardNumber",
 		
 		"lastPurchSum": "cards.transactions10.sum",
+		"lastPurchDate": "cards.transactions10.date",
 		"lastPurchPlace": "cards.transactions10.descr",
-		"lastPurchDate": "cards.transactions10.date"
-		
+		"lastPurchType": "cards.transactions10.type"
 	},
 	loan: {
     	"balance": "credits.balance",
@@ -64,7 +71,8 @@ var g_countersTable = {
 		"minpay": "credits.minpay",
 		"maxlimit": "credits.maxlimit",
 		"loan_ammount": "credits.limit",
-		"userName": "credits.userName",
+		"cash": "credits.cash",
+//		"userName": "credits.userName",
 		"cardNumber": "credits.num",
 		"__tariff": "credits.num",
 	},
@@ -77,13 +85,17 @@ var g_countersTable = {
 		"pct": "accounts.pct",
 		"till": "accounts.till",
 		"status": "accounts.status",
-		"userName": "accounts.userName",
+		"pct_next_date": "accounts.pct_next_date",
+		"cash": "accounts.cash",
+//		"userName": "accounts.userName",
 		"cardName": "accounts.cardName",
+		"type": "accounts.type",
 		"balance_min": "accounts.balance_min",
 		
 		"lastPurchSum": "accounts.transactions10.sum",
+		"lastPurchDate": "accounts.transactions10.date",
 		"lastPurchPlace": "accounts.transactions10.descr",
-		"lastPurchDate": "accounts.transactions10.date"
+		"lastPurchType": "accounts.transactions10.type"
     },
 	metal_acc: {
     	"balance": "accounts_met.balance",
@@ -94,24 +106,25 @@ var g_countersTable = {
 		"weight_units": "accounts_met.weight_units",
 
 		"lastPurchSum": "accounts_met.transactions.sum",
+		"lastPurchDate": "accounts_met.transactions.date",
 		"lastPurchPlace": "accounts_met.transactions.descr",
-		"lastPurchDate": "accounts_met.transactions.date"
-
+		"lastPurchType": "accounts_met.transactions.type"
     }
 };
 
 function main(){
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.setOptions({cookiePolicy: 'rfc2965'});
+	
     if(!/^(card|acc|metal_acc|loan)$/i.test(prefs.type || ''))
     	prefs.type = 'card';
 	
     var adapter = new NAdapter(joinObjects(g_countersTable[prefs.type], g_countersTable.common), shouldProcess);
 	
-	if(prefs.source == 'app') {
+//	if(prefs.source == 'app') { // Через сайт больше не работает
 		mainMobileApp2(prefs, adapter);
 		return;
-	}
+//	}
     adapter.processRates = adapter.envelope(processRates);
     adapter.processCards = adapter.envelope(processCards);
     adapter.processAccounts = adapter.envelope(processAccounts);
@@ -213,19 +226,21 @@ function shouldProcess(counter, info){
 
 function mainMobileApp2(prefs, adapter) {
 	if(prefs.type == 'loan')
-		throw new AnyBalance.Error('Отображение кредитов не поддерживается в API мобильного приложения. Попробуйте получить данные через сайт.');
+		throw new AnyBalance.Error('Кредиты пока не поддерживаются. Обратитесь к автору провайдера для добавления продукта');
+//		throw new AnyBalance.Error('Отображение кредитов не поддерживается в API мобильного приложения. Попробуйте получить данные через сайт');
 	if(prefs.type == 'metal_acc')
-		throw new AnyBalance.Error('Отображение металлических счетов не поддерживается в API мобильного приложения. Попробуйте получить данные через сайт.');
+		throw new AnyBalance.Error('Металлические счета пока не поддерживаются. Обратитесь к автору провайдера для добавления продукта');
+//		throw new AnyBalance.Error('Отображение металлических счетов не поддерживается в API мобильного приложения. Попробуйте получить данные через сайт');
 
-	if(AnyBalance.getLevel() < 9) {
+	if(AnyBalance.getLevel() < 9)
 		throw new AnyBalance.Error('Для использования API мобильного приложения необходим AnyBalance API v9!');
-	}
 	
     adapter.processRatesAPI = adapter.envelope(processRatesAPI);
 	adapter.processInfoAPI = adapter.envelope(processInfoAPI);
     adapter.processCardsAPI = adapter.envelope(processCardsAPI);
     adapter.processAccountsAPI = adapter.envelope(processAccountsAPI);
     adapter.processThanksAPI = adapter.envelope(processThanksAPI);
+	adapter.processSberPrimeAPI = adapter.envelope(processSberPrimeAPI);
 	
 	var html = loginAPI(prefs);
 	
@@ -234,14 +249,15 @@ function mainMobileApp2(prefs, adapter) {
 	adapter.processRatesAPI(result);
 	adapter.processInfoAPI(result);
 	adapter.processThanksAPI(result);
+	adapter.processSberPrimeAPI(result);
 	
-	if(prefs.type == 'card') {
+	if(prefs.type == 'card'){
 		adapter.processCardsAPI(result);
 		
 		if(!adapter.wasProcessed('cards'))
 			throw new AnyBalance.Error(prefs.lastdigits ? 'Не найдена карта с последними цифрами ' + prefs.lastdigits : 'У вас нет ни одной карты!');
 		
-	} else if(prefs.type == 'acc') {
+	}else if(prefs.type == 'acc'){
 		adapter.processAccountsAPI(result);
 
 		if(!adapter.wasProcessed('accounts'))

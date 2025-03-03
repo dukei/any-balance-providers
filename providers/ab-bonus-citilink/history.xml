@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="33" date="2024-11-21">
+	- Поддержка изменений в процедуре входа
+	</change>
+	<change version="32" date="2023-11-28">
+	- Улучшена поддержка сессии
+	</change>
 	<change version="31" date="2023-11-28">
 	- Добавлена поддержка сессии
 	- Исправлено определение дат

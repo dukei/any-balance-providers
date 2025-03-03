@@ -105,7 +105,13 @@ const BrowserAPI = (() => {
                             }
                         }
 
-                        const html = AnyBalance.requestPost(pr.url, pr.body, addHeaders(additionalHeaders, headers), {HTTP_METHOD: pr.method, options: {FORCE_CHARSET: forcedCharset}});
+                        const html = AnyBalance.requestPost(pr.url, pr.body, addHeaders(additionalHeaders, headers), {
+				HTTP_METHOD: pr.method, 
+				options: {
+					FORCE_CHARSET: forcedCharset,
+					MANUAL_REDIRECTS: true
+				}
+			});
                         const params = AnyBalance.getLastResponseParameters();
                         const convertedHeaders = {};
                         let ct;

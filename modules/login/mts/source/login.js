@@ -134,12 +134,12 @@ function loadProtectedPage(fromUrl, headers){
     
 	if(/__qrator/.test(html)) {
         	AnyBalance.trace("Требуется обойти QRATOR");
-	if(!AnyBalance.getCapabilities().clientOkHttp)
+	if(!AnyBalance.getCapabilities().clientOkHttp && !AnyBalance.getCapabilities().clientDebugger)
         	throw new AnyBalance.Error('Для работы провайдера требуется обновить приложение. Новая версия AnyBalance доступна на RuStore');
         clearAllCookies();
 
         const bro = new BrowserAPI({
-            provider: 'mts-login-q2',
+            provider: 'mts-login-q3',
             userAgent: headers["User-Agent"],
             headful: true,
             singlePage: true,

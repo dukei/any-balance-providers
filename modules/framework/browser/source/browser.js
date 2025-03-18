@@ -21,6 +21,7 @@ const BrowserAPI = (() => {
         incognito?: boolean, //По умолчанию true
         headful?: boolean,
         noInterception?: boolean,
+        userInteraction?: boolean,
         rules?: RuleSource[],
         binaryResponses?: false,
         additionalRequestHeaders: {
@@ -56,6 +57,7 @@ const BrowserAPI = (() => {
                 singlePage: this.options.singlePage,
                 headful: this.options.headful,
 		noInterception: this.options.noInterception,
+                userInteraction: this.options.userInteraction,
 		incognito: this.options.incognito,
                 url: url,
                 rules: this.options.rules
@@ -127,10 +129,10 @@ const BrowserAPI = (() => {
                             }
                             if(convertedHeaders[name] === undefined){
                                 convertedHeaders[name] = h[1];
-                            }else if(Array.isArray(convertedHeaders[name])){
-                                convertedHeaders[name].push(h[1]);
-                            }else{
-                                convertedHeaders[name] += [h[1]];
+			    }else if(Array.isArray(convertedHeaders[name])){
+				convertedHeaders[name].push(h[1]);
+                            }else {
+                                convertedHeaders[name] = [convertedHeaders[name], h[1]];
                             }
                             if (name === 'content-type')
                                 ct = h[1];

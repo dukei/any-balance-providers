@@ -139,9 +139,11 @@ function loadProtectedPage(fromUrl, headers){
         clearAllCookies();
 
         const bro = new BrowserAPI({
-            provider: 'mts-login-q3',
+            provider: 'mts-login-q4',
             userAgent: headers["User-Agent"],
             headful: true,
+            //noInterception: true,
+            userInteraction: true,
             singlePage: true,
             rules: [{
                 resType: /^(image|stylesheet|font)$/.toString(),
@@ -160,8 +162,11 @@ function loadProtectedPage(fromUrl, headers){
                 url: /\.(png|jpg|ico|svg)/.toString(),
                 action: 'abort',
             }, {
-                url: /.*/.toString(),
+                url: /\.mts\.ru/.toString(),
                 action: 'request',
+            }, {
+                url: /.*/.toString(),
+                action: 'abort',
             }],
             additionalRequestHeaders: [
 		{

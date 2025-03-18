@@ -29,7 +29,7 @@ var g_headers = {
 	'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
 	'Upgrade-Insecure-Requests': '1',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
     'If-Modified-Since': null, //Иначе МТС глючит с кешированием...
 };
 

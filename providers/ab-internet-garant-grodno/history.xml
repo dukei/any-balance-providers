@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change version="1" date="2020-02-11">
+<change version="2" date="2025-01-01">
 		- Поддержка доступа к личному кабинету через интернет
+	</change>
+
+	<change version="1" date="2020-11-02">
+		- Поддержка доступа к личному кабинету через интернет
+	</change>
+	<change version="2" date="2025-01-01">
+		- Исправление ошибок
 	</change>
 
 </history>

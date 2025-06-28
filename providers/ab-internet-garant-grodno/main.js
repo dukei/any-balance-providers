@@ -18,12 +18,13 @@ function main() {
 	AnyBalance.setExceptions(true);
 	var html = AnyBalance.requestGet(baseurl+'/login', g_headers);
 	
-	if(!/authenticity_token" type="hidden" value="(.*)"/i.test(html)){
+	if(!/authenticity_token" value="(.*)" autocomplete="off/i.test(html)){
 		var baseurl = "https://my.garant.by";
 		var html = AnyBalance.requestGet(baseurl+'/login', g_headers);
 	
 	}
-	var token_aut = getParam(html, null, null, /authenticity_token" type="hidden" value="(.*)"/i, replaceTagsAndSpaces, html_entity_decode);
+	var token_aut = getParam(html, null, null, /authenticity_token" value="(.*)" autocomplete="off/i, replaceTagsAndSpaces, html_entity_decode);
+AnyBalance.trace(token_aut);
 	html = AnyBalance.requestPost(baseurl+'/login', {
 			utf8: "✓",
 			authenticity_token: token_aut,
@@ -33,8 +34,9 @@ function main() {
 		}, addHeaders({
 				Referer: baseurl
 			}));
+AnyBalance.trace(html);
 	if (!/>Личный кабинет</i.test(html)) {
-		var error = getParam(html, null, null, />Личный кабинет</i, replaceTagsAndSpaces, html_entity_decode);
+		var error = getParam(html, null, null, /Личный кабинет/i, replaceTagsAndSpaces, html_entity_decode);
 		if (error)
 			throw new AnyBalance.Error(error);
 		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Сайт изменен?');

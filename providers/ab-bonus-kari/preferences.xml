@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-	<EditTextPreference
-		title="Номер штрих-кода карты"
-		key="login"
-		summary="||{@s}"
+	<EditTextPreference 
 		obligatory="true"
-		dialogTitle="Номер штрих-кода карты"
-		positiveButtonText="ОК"
-		negativeButtonText="Отмена"
-		dialogMessage="Введите номер штрих-кода карты, используемый для входа в личный кабинет.">
-	</EditTextPreference>
-	<EditTextPreference
-		title="Пароль"
-		key="password"
-		summary="||***********"
+        title="Логин" 
+        positiveButtonText="ОК" 
+        summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n" 
+        dialogTitle="Логин" 
+        negativeButtonText="Отмена" 
+        dialogMessage="Введите E-mail или номер телефона для входа в личный кабинет в формате 10 цифр без пробелов и разделителей, например: 9891234567"
+        key="login">
+    </EditTextPreference>
+    <EditTextPreference 
 		obligatory="true"
-		dialogTitle="Пароль"
-		positiveButtonText="ОК"
-		negativeButtonText="Отмена"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
-		inputType="textPassword">
-	</EditTextPreference>
+        positiveButtonText="ОК"
+        key="password" 
+        dialogTitle="Пароль"
+        negativeButtonText="Отмена"
+        title="Пароль"
+        summary="Пароль для входа в личный кабинет|Введите пароль\n|**********\n"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет"
+        inputType="textPassword">
+    </EditTextPreference>
 </PreferenceScreen>

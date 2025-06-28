@@ -1,26 +1,48 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-bonus-kari</id>
+	<id version="3">ab-bonus-kari</id>
 	<api flags="no_browser"/>
-	<name>KARI CLUB</name>
+	<name>Kari CLUB</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе KARI CLUB</p>
-	<p>Информация берется из личного кабинета https://oplata.kari.com/</p>
+	<p>Предоставляет информацию о балансе, бонусных баллах и другие данные по клубным картам сети магазинов обуви и аксессуаров <a href="https://kari.com/">Kari</a>.</p>
+	<p>Информация берется из личного кабинета Kari на сайте https://kari.com/profile/account/.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Kari.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>library.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="bonus" name="Начислено" units=" б"/>
-		<counter id="avail" name="Доступно" units=" б"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="bonuses_active" name="Активные бонусы" units=" Б"/>
+<!--	<counter id="bonuses_inactive" name="Неактивные бонусы" units=" Б"/>
+		<counter id="bonuses_burn" name="Сгораемые бонусы" units=" Б"/>
+		<counter id="bonuses_till" name="Дата сгорания бонусов" type="time" format="dd.MM.yyyy"/> -->
+		<counter id="number" name="Номер карты" type="text"/>
+	    <counter id="orders" name="Заказы" units=" шт"/>
+<!--	<counter id="last_order_date" name="Дата посл. заказа" type="time" format="dd.MM.yyyy"/>
+        <counter id="last_order_sum" name="Сумма посл. заказа" units=" ₽"/>
+		<counter id="last_order_num" name="Номер посл. заказа" type="text"/>
+		<counter id="last_order_desc" name="Описание посл. заказа" type="text"/> -->
+		<counter id="last_oper_date" name="Дата посл. операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_oper_sum" name="Сумма посл. операции" units=" ₽"/>
+		<counter id="last_oper_type" name="Тип посл. операции" type="text"/>
+		<counter id="coupons" name="Купоны" units=" шт"/>
+		<counter id="favorite" name="Избранное" units=" шт"/>
+		<counter id="basket" name="Корзина" units=" шт"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>клубная карта, дисконтная карта, бонусная карта, бонус, bonus, кари, kari, club</keywords>
 	<type>bonus</type>
 	<country>ru</country>
 </provider>

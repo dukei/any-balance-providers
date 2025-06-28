@@ -3,15 +3,15 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.7,en;q=0.6',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
 	'Connection': 'keep-alive',
-	'upgrade-insecure-requests': '1',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36',
+	'Upgrade-Insecure-Requests': '1',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'
 };
 
-var baseurl = 'https://my.kaspersky.com/';
+var g_baseurl = 'https://my.kaspersky.com/';
 var g_savedData;
 
 function main() {
@@ -26,36 +26,46 @@ function main() {
 
 	g_savedData.restoreCookies();
 	
-	var html = AnyBalance.requestGet('https://my.kaspersky.com/MyLicenses', g_headers);
+	var html = AnyBalance.requestGet(g_baseurl + 'MyLicenses', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
-    
-    if(!/\/portal\/pages\/licenses/i.test(html)){
-    	AnyBalance.trace('Сессия новая. Будем логиниться заново...');
-		
-        html = AnyBalance.requestGet('https://my.kaspersky.com/api/config/common', addHeaders({
-	    	Accept: 'application/json, text/plain, */*',
+	
+	if(/"myKasperskyId":\s*?""/i.test(html)){
+        html = AnyBalance.requestGet(g_baseurl + 'api/config/common', addHeaders({
 	    	'Content-Type': 'application/json',
-	    	Referer: 'https://my.kaspersky.com/',
-	    	'x-requested-with': 'XMLHttpRequest'
+	    	'Referer': g_baseurl,
+	    	'X-Requested-With': 'XMLHttpRequest'
 	    }));
 	    
 	    var json = getJson(html);
-	    var token = json.globalSettings.xsrfToken;
-		if(!json || !json.globalSettings || !json.globalSettings.xsrfToken){
+		
+		if(json.globalSettings && json.globalSettings.xsrfToken)
+	        var token = json.globalSettings.xsrfToken;
+		
+		if(!token){
 	    	AnyBalance.trace(html);
         	throw new AnyBalance.Error('Не удалось получить токен авторизации. Сайт изменен?');
 	    }
+		
+		html = AnyBalance.requestPost(g_baseurl + 'SignIn/StartRestLogon', JSON.stringify({}), addHeaders({
+	    	'Content-Type': 'application/json',
+	    	'Referer': AnyBalance.getLastUrl(),
+	    	'X-Requested-With': 'XMLHttpRequest',
+            'X-Xsrf-Token': token
+        }));
+	
+	    var json = getJson(html);
+		AnyBalance.trace('StartRestLogon: ' + JSON.stringify(json));
+		var nonce = json.nonce;
 
 	    html = AnyBalance.requestPost('https://eu.uis.kaspersky.com/v3/logon/start', JSON.stringify({
-            "Realm": "https://center.kaspersky.com/",
+            "Nonce": nonce,
+			"Realm": "https://center.kaspersky.com/",
             "Scope": "userId userName userEmail userSecret"
 	    }), addHeaders({
-	    	Accept: 'application/json, text/plain, */*',
 	    	'Content-Type': 'application/json',
-	    	Origin: 'https://my.kaspersky.com',
-	    	Referer: 'https://my.kaspersky.com/',
+	    	'Referer': g_baseurl,
 	    	'X-ApplicationVersion': 's(MyK)',
             'X-UIS-SupportedAuthFactors': 'Phone, OtpGenerator'
 	    }));
@@ -63,63 +73,67 @@ function main() {
 	    var json = getJson(html);
 		AnyBalance.trace('Start: ' + JSON.stringify(json));
 	    var logon = json.LogonContext;
-	
-	    var params = {
-            "logonContext": logon,
-            "locale": "ru",
-            "login": prefs.login,
-            "password": prefs.password
-        };
-	
-	    if(json.CaptchaRequired && json.CaptchaRequired == true){
-            AnyBalance.trace('Сайт затребовал проверку reCaptcha');
-	    	html = AnyBalance.requestGet('https://my.kaspersky.com/api/config/reCaptcha', g_headers);
-	    
-	        var json = getJson(html);
-	        AnyBalance.trace('Captcha: ' + JSON.stringify(json));
-	    	
-	    	if(!json || !json.siteKey || !json.uisSiteKey || !json.uisTextCaptchaUrl){
-	        	AnyBalance.trace(html);
-            	throw new AnyBalance.Error('Не удалось получить ключ сайта. Сайт изменен?');
-	        }
 		
-	        var siteKey = json.siteKey; // Для рекапчи
-	        var uisSiteKey = json.uisSiteKey; // Для скрытой рекапчи
-	        var uisTextCaptchaUrl = json.uisTextCaptchaUrl; // Для текстовой капчи
-		    
-			var captcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', baseurl + '/', uisSiteKey, {USERAGENT: g_headers['User-Agent']});
-	    	params["captchaAnswer"] = captcha;
-	    	params["captchaType"] = "invisible_recaptcha";
-	    }
-	    
-	    html = AnyBalance.requestPost('https://eu.uis.kaspersky.com/v3/logon/proceed', JSON.stringify(params), addHeaders({
-	    	Accept: 'application/json, text/plain, */*',
-	    	'Content-Type': 'application/json',
-	    	Origin: 'https://my.kaspersky.com',
-	    	Referer: 'https://my.kaspersky.com/',
-	    }));
-	
-	    var json = getJson(html);
-		AnyBalance.trace('Proceed: ' + JSON.stringify(json));
-	    
-	    if(json.Status !== 'Success'){
-	    	var error = json.Status;
-	    	if(error)
-	    		throw new AnyBalance.Error('Неверные логин или пароль!', null, /InvalidRegistrationData/i.test(error));
-	    	
-	    	AnyBalance.trace(html);
-        	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
-	    }
+		if(json.Status == 'CredentialsRequired'){
+			AnyBalance.trace('Сессия новая. Будем логиниться заново...');
+	        
+	        var params = {
+                "logonContext": logon,
+                "locale": "ru",
+                "login": prefs.login,
+                "password": prefs.password
+            };
+	        
+	        if(json.CaptchaRequired && json.CaptchaRequired == true){
+                AnyBalance.trace('Сайт затребовал проверку reCaptcha');
+	    	    html = AnyBalance.requestGet(g_baseurl + 'api/config/reCaptcha', g_headers);
+	            
+	            var json = getJson(html);
+	            AnyBalance.trace('Captcha: ' + JSON.stringify(json));
+	    	    
+	    	    if(!json.siteKey || !json.uisSiteKey || !json.uisTextCaptchaUrl){
+	        	    AnyBalance.trace(html);
+            	    throw new AnyBalance.Error('Не удалось получить параметры капчи. Сайт изменен?');
+	            }
+		        
+	            var siteKey = json.siteKey; // Для рекапчи
+	            var uisSiteKey = json.uisSiteKey; // Для скрытой рекапчи
+	            var uisTextCaptchaUrl = json.uisTextCaptchaUrl; // Для текстовой капчи
+		        
+			    var captcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', g_baseurl, uisSiteKey, {USERAGENT: g_headers['User-Agent']});
+	    	    params["captchaAnswer"] = captcha;
+	    	    params["captchaType"] = "invisible_recaptcha";
+	        }
+	        
+	        html = AnyBalance.requestPost('https://eu.uis.kaspersky.com/v3/logon/proceed', JSON.stringify(params), addHeaders({
+	    	    'Content-Type': 'application/json',
+	    	    'Referer': g_baseurl,
+	        }));
+	        
+	        var json = getJson(html);
+		    AnyBalance.trace('Proceed: ' + JSON.stringify(json));
+	        
+	        if(json.Status !== 'Success'){
+	    	    var error = json.Status;
+	    	    if(error)
+	    		    throw new AnyBalance.Error('Неверные логин или пароль!', null, /InvalidRegistrationData/i.test(error));
+	    	    
+	    	    AnyBalance.trace(html);
+        	    throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
+	        }
+		}else if(json.Status == 'Authenticated'){
+			AnyBalance.trace('Сессия устарела. Пробуем обновить...');
+		}else{
+			AnyBalance.trace('Неизвестный статус запроса: ' + json.Status);
+		}
         
         html = AnyBalance.requestPost('https://eu.uis.kaspersky.com/v3/logon/complete_active', JSON.stringify({
             "logonContext": logon,
             "TokenType": "SamlDeflate",
-            "RememberMe": false
+            "RememberMe": true
         }), addHeaders({
-	    	Accept: 'application/json, text/plain, */*',
 	    	'Content-Type': 'application/json',
-	    	Origin: 'https://my.kaspersky.com',
-	    	Referer: 'https://my.kaspersky.com/',
+	    	'Referer': g_baseurl,
 	    }));
 	
 	    var json = getJson(html);
@@ -132,18 +146,16 @@ function main() {
         
 	    var samlDeflatedToken = json.UserToken;
         
-        html = AnyBalance.requestPost('https://my.kaspersky.com/SignIn/CompleteRestLogon', JSON.stringify({
+        html = AnyBalance.requestPost(g_baseurl + 'SignIn/CompleteRestLogon', JSON.stringify({
             "samlDeflatedToken": samlDeflatedToken,
-            "rememberMe": false,
+            "rememberMe": true,
             "resendActivationLink": false,
-            "returnUrl": "https://my.kaspersky.com/"
+            "returnUrl": g_baseurl
         }), addHeaders({
-	    	Accept: 'application/json, text/plain, */*',
 	    	'Content-Type': 'application/json',
-	    	Origin: 'https://my.kaspersky.com',
-	    	Referer: 'https://my.kaspersky.com/',
-	    	'x-requested-with': 'XMLHttpRequest',
-            'x-xsrf-token': token
+	    	'Referer': g_baseurl,
+	    	'X-Requested-With': 'XMLHttpRequest',
+            'X-Xsrf-Token': token
 	    }));
 	
 	    var json = getJson(html);
@@ -155,24 +167,29 @@ function main() {
 	    
 	    var returnUrl = json.returnUrl;
 	    var userId = json.userId;
+		var regExp = new RegExp('"myKasperskyId":\\s*?"' + userId + '"', 'i');
 	    
 	    html = AnyBalance.requestGet(returnUrl, g_headers);
 	    
-	    if(!/\/portal\/pages\/licenses/i.test(html)){
+	    if(!regExp.test(html)){
 	    	AnyBalance.trace(html);
         	throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
 	    }
-	    
-	    g_savedData.setCookies();
+		
+		if(/\/auth\/layout\/main/i.test(html)){
+	    	AnyBalance.trace(html);
+		    throw new AnyBalance.Error('Требуется принять соглашение с пользователем. Войдите в кабинет ' + g_baseurl + ' через браузер и примите соглашение', null, true);
+	    }
+		
+		g_savedData.setCookies();
 	    g_savedData.save();
 	}else{
 		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
 	}
 	
-	html = AnyBalance.requestGet('https://my.kaspersky.com/MyLicenses/GetProductUsagesAndViewSettings', addHeaders({
-		'Content-Type': 'application/json',
-		Referer: AnyBalance.getLastUrl(),
-		'x-requested-with': 'XMLHttpRequest'
+	html = AnyBalance.requestGet(g_baseurl + 'MyLicenses/GetProductUsagesAndViewSettings', addHeaders({
+		'Referer': AnyBalance.getLastUrl(),
+		'X-Requested-With': 'XMLHttpRequest'
 	}));
 	
 	var json = getJson(html);
@@ -234,10 +251,9 @@ function main() {
 	getParam(svc.totalSlotsCount, result, 'slots_count', null, null, parseBalance);
 
     if (AnyBalance.isAvailable('all_devices')) {
-        html = AnyBalance.requestGet('https://my.kaspersky.com/MyDevices/api/DeviceList', addHeaders({
-	    	'Content-Type': 'application/json',
-	    	Referer: AnyBalance.getLastUrl(),
-	    	'x-requested-with': 'XMLHttpRequest'
+        html = AnyBalance.requestGet(g_baseurl + 'MyDevices/api/DeviceList', addHeaders({
+	    	'Referer': AnyBalance.getLastUrl(),
+	    	'X-Requested-With': 'XMLHttpRequest'
 	    }));
 	
 	    var json = getJson(html);
@@ -257,10 +273,9 @@ function main() {
 	}
 	
 	if (AnyBalance.isAvailable('country', 'email', 'fio')) {
-	    html = AnyBalance.requestGet('https://my.kaspersky.com/MyAccountApi', addHeaders({
-	    	'Content-Type': 'application/json',
-	    	Referer: AnyBalance.getLastUrl(),
-	    	'x-requested-with': 'XMLHttpRequest'
+	    html = AnyBalance.requestGet(g_baseurl + 'MyAccountApi', addHeaders({
+	    	'Referer': AnyBalance.getLastUrl(),
+	    	'X-Requested-With': 'XMLHttpRequest'
 	    }));
 	
 	    var json = getJson(html);

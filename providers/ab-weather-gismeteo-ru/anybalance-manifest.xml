@@ -1,22 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="2.3" version="37">ab-weather-gismeteo-ru</id>
+	<id major_version="3.0" version="39">ab-weather-gismeteo-ru</id>
 	<api flags="no_browser"/>
 	<name>Gismeteo</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о прогнозе погоды, текущей погоде, температуре водоемов, времени восхода/захода Солнца и фазе Луны для выбранного города.</p>
+	<p>Предоставляет информацию о прогнозе погоды и другие данные для выбранного города от погодного сервиса <a href="https://www.gismeteo.ru/">Gismeteo</a>.</p>
+	<p>Информация берется со страницы прогноза погоды на сайте https://www.gismeteo.ru/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Настройки подключения:</p>
-	<ul>
-	<li>Для экономии трафика вы можете подключить только прогноз погоды. Для этого необходимо взять индекс города со страницы https://informer.gismeteo.ru/getcode/xml.php.
-	<br/><small>Индекс города Москвы 27612_1.</small>
-	</ul>
+	<p>Для работы провайдера требуется ввести название города.</p>
+	<p>Название региона вводить необязательно, но при его наличии точность поиска нужного города увеличивается.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
-  </depends>
+    </depends>
 	<files>
 		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
@@ -31,8 +29,10 @@
 		<counter id="windGust" name="Порывы ветра" units=" м/с"/>
 		<counter id="pressure" name="Атмосферное давление" units=" мм.рт.ст."/>
 		<counter id="humidity" name="Влажность" units="%"/>
-		<counter id="cloudiness" name="Облачность" units="%"/>
-		<counter id="dewPoint" name="Точка росы" units=" °C"/>
+		<counter id="radiation" name="УФ-индекс" units=" Б"/>
+		<counter id="geomagnetic" name="Г/м активность" type="text"/>
+<!--	<counter id="cloudiness" name="Облачность" units="%"/>
+		<counter id="dewPoint" name="Точка росы" units=" °C"/> -->
 		<counter id="precipitation" name="Осадки" units=" мм"/>
 		<counter id="waterTemperature" name="Температура воды" units=" °C"/>
 		<counter id="time" name="Время прогноза" type="time" format="dd.MM.yyyy HH:mm"/>

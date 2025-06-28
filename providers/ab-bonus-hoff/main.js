@@ -69,9 +69,9 @@ function main() {
 	var user = json.data;
 	
 	var fio = {};
-	sumParam(user.name, fio, '__n', null, null, null, create_aggregate_join(', '));
-	sumParam(user.second_name, fio, '__n', null, null, null, create_aggregate_join(', '));
-	sumParam(user.last_name, fio, '__n', null, null, null, create_aggregate_join(', '));
+	sumParam(user.name, fio, '__n', null, null, null, create_aggregate_join(' '));
+//	sumParam(user.second_name, fio, '__n', null, null, null, create_aggregate_join(' '));
+	sumParam(user.last_name, fio, '__n', null, null, null, create_aggregate_join(' '));
 	getParam(fio.__n, result, 'fio');
 		
 	getParam(user.id, result, 'user_id');
@@ -91,8 +91,8 @@ function main() {
 		var type = {0: 'Виртуальная', 1: 'Пластиковая', 2: 'Цифровая'};
 	    var cardData = cards[0];
 		cardNum = cardData.number;
-	    getParam(cardData.balance, result, 'balance', null, null, parseBalance);
-	    getParam(cardData.balance_active, result, 'balance_active', null, null, parseBalance);
+	    getParam(cardData.balance, result, 'balance', null, null, parseBalance); // Общая сумма баллов
+	    getParam(cardData.balance_active, result, 'balance_active', null, null, parseBalance); // Активный баланс
 	    getParam(cardData.number, result, 'card');
 		getParam(state[cardData.STATUS]||cardData.STATUS, result, 'card_status');
 		getParam(type[cardData.VIRTUAL]||cardData.VIRTUAL, result, 'card_type');
@@ -104,9 +104,52 @@ function main() {
 		if(cardData && cardData.soon_available && cardData.soon_available.length > 0){
 		    getParam(cardData.soon_available[0].amount, result, 'soon_available', null, null, parseBalance);
 		    getParam(cardData.soon_available[0].date, result, 'soon', null, null, parseDate);
+		}else{
+			getParam(cardData.balance - cardData.balance_active, result, 'soon_available', null, null, parseBalance);
 		}
 	}else{
 		AnyBalance.trace('Не удалось получить информацию по картам');
+	}
+	
+	if(AnyBalance.isAvailable(['active_orders', 'last_order_date', 'last_order_sum', 'last_order_num', 'last_order_status', 'last_order_delivery']) && cardNum){
+		html = AnyBalance.requestPost(g_baseurl + '/vue/axws/', JSON.stringify({
+            "alias": "slv2v1",
+            "data": {
+                "ShowOrderTips": true,
+                "RequestSource": "ISTORE",
+                "ClientIDList": [
+                    {
+                        "ClientIDType": "Phone",
+                        "ClientIDValue": prefs.login
+                    }
+                ]
+            }
+        }), addHeaders({'Referer': g_baseurl + '/personal/'}));
+	
+	    json = getJson(html);
+	    AnyBalance.trace(JSON.stringify(json));
+	    
+	    var o = [];
+		
+		if(json.ActiveOrdersList && json.ActiveOrdersList.length > 0){ // Сначала проверяем активные заказы
+	    	AnyBalance.trace('Найдено активных заказов: ' + json.ActiveOrdersList.length);
+			o = json.ActiveOrdersList;
+		}else{ // Если активных заказов нет, ищем в завершённых
+			AnyBalance.trace('Найдено завершенных заказов: ' + json.CompletedOrdersList.length);
+			o = json.CompletedOrdersList;
+		}
+		
+		getParam(json.ActiveOrdersList.length, result, 'active_orders', null, null, parseBalance);
+		
+	    if(o && o.length > 0){
+	    	getParam(o[0].OrderCreatedDateTime, result, 'last_order_date', null, null, parseDateISO);
+			getParam(o[0].TotalAmount, result, 'last_order_sum', null, null, parseBalance);
+	    	getParam(o[0].OrderId + (o[0].PreOrderId ? '(' + o[0].PreOrderId + ')' : ''), result, 'last_order_num');
+			getParam(o[0].OrderStatus, result, 'last_order_status');
+			getParam(o[0].TypeofDeliveryName, result, 'last_order_delivery');
+	    }else{
+ 	    	AnyBalance.trace('Не удалось получить информацию по заказам');
+ 	    }
 	}
 	
 	if(AnyBalance.isAvailable(['last_oper_date', 'last_oper_sum', 'last_oper_type']) && cardNum){
@@ -127,6 +170,20 @@ function main() {
 	    }else{
  	    	AnyBalance.trace('Не удалось получить информацию по операциям');
  	    }
+	}
+	
+	if(AnyBalance.isAvailable('notifications') && cardNum){
+		html = AnyBalance.requestPost(g_baseurl + '/vue/axws/', JSON.stringify({
+            "alias": "return_notifications_count",
+            "data": {
+                "hoffId": prefs.login
+            }
+        }), addHeaders({'Referer': g_baseurl + '/personal/'}));
+	
+	    json = getJson(html);
+	    AnyBalance.trace(JSON.stringify(json));
+	    
+	    getParam(json.messagesCount||0, result, 'notifications', null, null, parseBalance);
 	}
 
 	AnyBalance.setResult(result);

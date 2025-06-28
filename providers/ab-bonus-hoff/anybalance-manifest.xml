@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="10">ab-bonus-hoff</id>
+	<id version="11">ab-bonus-hoff</id>
 	<api flags="no_browser"/>
 	<name>Hoff (бонусы)</name>
 	<description html="true"><![CDATA[
@@ -34,9 +34,16 @@
 		<counter id="card_type" name="Тип карты" type="text"/>
 		<counter id="card_status" name="Статус карты" type="text"/>
 		<counter id="user_id" name="ID пользователя" type="text"/>
+		<counter id="active_orders" name="Активные заказы" units=" шт"/>
+		<counter id="last_order_date" name="Дата посл. заказа" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_order_sum" name="Сумма посл. заказа" units=" ₽"/>
+		<counter id="last_order_num" name="Номер посл. заказа" type="text"/>
+		<counter id="last_order_delivery" name="Тип посл. доставки" type="text"/>
+		<counter id="last_order_status" name="Статус посл. заказа" type="text"/>
 		<counter id="last_oper_date" name="Дата посл. операции" type="time" format="dd.MM.yyyy"/>
 		<counter id="last_oper_sum" name="Сумма посл. операции" units=" Б"/>
 		<counter id="last_oper_type" name="Тип посл. операции" type="text"/>
+		<counter id="notifications" name="Уведомления" units=" шт"/>
 		<counter id="email" name="E-mail" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>

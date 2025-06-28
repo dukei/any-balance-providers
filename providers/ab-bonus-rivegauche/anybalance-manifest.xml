@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="3.0" version="6">ab-bonus-rivegauche</id>
+	<id major_version="4.0" version="9">ab-bonus-rivegauche</id>
 	<api flags="no_browser"/>
 	<name>Рив Гош</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о сумме накоплений, бонусах ко Дню рождения и другие данные по клубным картам сети магазинов Рив Гош (https://rivegauche.ru/).</p>
-	<p>Информация берется из личного кабинета Рив Гош на сайте <a href="https://rivegauche.ru/my-account">https://rivegauche.ru/my-account</a>.</p>
+	<p>Предоставляет информацию о бонусном балансе и другие данные по клубным картам сети магазинов <a href="https://rivegauche.ru/">Рив Гош</a>.</p>
+	<p>Информация берется из личного кабинета Рив Гош на сайте https://rivegauche.ru/my-account.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Рив Гош.</p>
+	<p>Для работы провайдера требуется ввести номер телефона, к которому привязана карта, для входа в личный кабинет Рив Гош.</p>
 	<p>Сайт Рив Гош обладает защитой от роботов (reCAPTCHA), поэтому для входа может потребоваться пройти проверку с помощью приложения Anybalance ReCaptcha или с помощью одного из сервисов автоматического распознавания.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
@@ -22,19 +22,29 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс"/>
+		<counter id="balance" name="Баланс" units=" Б"/>
 		<counter id="fullCardNumber" name="Номер карты" type="text"/>
-
-		<counter id="orders" name="Заказы" type="text"/>
-		<counter id="favoritesProductsCount" name="Избранное"/>
-		<counter id="awaitingProductsCount" name="Жду поступления"/>
-
-		<counter id="db_balance" name="Сумма накоплений"/>
-		<counter id="db_bonus" name="Сумма бонусов" />
+		<counter id="orders" name="Мои заказы" units=" шт"/>
+		<counter id="orders_total" name="Всего заказов" units=" шт"/>
+		<counter id="favoritesProductsCount" name="Избранное" units=" шт"/>
+		<counter id="awaitingProductsCount" name="Жду поступления" units=" шт"/>
+		<counter id="coupons" name="Мои купоны" units=" шт"/>
+<!--
+		<counter id="db_balance" name="Сумма накоплений" units=" {@currency}"/>
+		<counter id="db_bonus" name="Сумма бонусов" units=" Б"/>
 		<counter id="db_date" name="Последняя операция по карте" type="time" format="dd.MM.yyyy" />
+-->
+		<counter id="db_last_sale_date" name="Дата последней покупки" type="time" format="dd.MM.yyyy" />
+		<counter id="db_type" name="Тип карты" type="text"/>
 		<counter id="db_status" name="Статус карты" type="text"/>
+		<counter id="db_level" name="Уровень клиента" type="text"/>
+		<counter id="db_discount" name="Уровень скидки" units="%"/>
+		<counter id="db_level_privileges" name="Привилегии уровня" type="text"/>
+		<counter id="db_favorite_category" name="Любимая категория" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+        <counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords>бонус, ривгош, bonus, rivegauche</keywords>
 	<type>bonus</type>
-	<country>ru</country>
+	<country>ru, by, kz</country>
 </provider>

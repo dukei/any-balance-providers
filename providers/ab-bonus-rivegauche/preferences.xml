@@ -7,19 +7,17 @@
 		summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n"
 		inputType="text"
 		dialogTitle="Логин"
-		dialogMessage="Введите логин, используемый для входа в личный кабинет"
+		dialogMessage="Введите номер телефона в международном формате без пробелов и разделителей, например: +79061234567 (для России и Казахстана) или +375441234567 (для Беларуси)"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена">
 	</EditTextPreference>
-	<EditTextPreference
-		key="password"
-		title="Пароль"
-		summary="Пароль для входа в личный кабинет|Введите пароль\n|**********\n"
-		dialogTitle="Пароль"
-		negativeButtonText="Отмена"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет"
-		positiveButtonText="ОК"
-		inputType="textPassword">
-	</EditTextPreference>
-
+	<ListPreference 
+        key="country"
+        title="Страна" 
+        summary="Страна для просмотра информации|Выберите страну\n|{@s}\n" 
+	    entries="Россия|Беларусь|Казахстан"
+	    entryValues="RU|BY|KZ"
+        defaultValue="RU"
+        dialogTitle="Выберите страну">
+    </ListPreference>
 </PreferenceScreen>

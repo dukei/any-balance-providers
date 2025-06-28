@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change major_version="1.2" version="867" date="2025-02-15">
+	- Поддержка изменений в процедуре входа
+	- Улучшена обработка ошибок
+	</change>
     <change major_version="1.2" version="866" date="2024-11-20">
 	- Исправлена обработка штрафов за парковку и нарушение ПДД
 	</change>

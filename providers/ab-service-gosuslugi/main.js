@@ -7,8 +7,7 @@ var g_headers = {
 	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
     'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
-	'Upgrade-Insecure-Requests': '1',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
+	'User-Agent': 'Mozilla/5.0 (Linux; arm_64; Android 15; SM-G965F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.6943.49 YaBrowser/25.2.0.241 Mobile Safari/537.36'
 };
 
 var g_baseurl = 'https://www.gosuslugi.ru/';
@@ -19,6 +18,9 @@ function main() {
 	var prefs = AnyBalance.getPreferences();
     
 	AnyBalance.setDefaultCharset('utf-8');
+	
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(prefs.password, 'Введите пароль!');
 
     if(!g_savedData)
 		g_savedData = new SavedData('gosuslugi', prefs.login);
@@ -27,7 +29,7 @@ function main() {
 
     AnyBalance.trace ('Пробуем войти в личный кабинет...');
 	
-	var html = AnyBalance.requestGet(g_baseurl, g_headers);
+	var html = AnyBalance.requestGet('https://esia.gosuslugi.ru/profile/user/', g_headers);
 	
 	if (!html || AnyBalance.getLastStatusCode() >= 500 || /shadow-block|dot-flashing/i.test(html)){
         AnyBalance.trace(html);
@@ -66,11 +68,7 @@ function main() {
 
 	    checkEmpty(prefs.password, 'Введите пароль!');
 		
-		var html = AnyBalance.requestGet(g_baseurl, g_headers);
-		
-		html = AnyBalance.requestGet('https://esia.gosuslugi.ru/aas/oauth2/config', g_headers); // Требуется для установки куки "strelets"
-		
-		html = AnyBalance.requestGet(g_baseurl + 'node-api/login/?redirectPage=/', g_headers); // Получаем куки сессии
+		var html = AnyBalance.requestGet('https://esia.gosuslugi.ru/profile/login/', g_headers); // Получаем куки сессии
 		
 		html = AnyBalance.requestPost('https://esia.gosuslugi.ru/aas/oauth2/api/login', JSON.stringify({
 			'login': formattedLogin,
@@ -203,11 +201,11 @@ function main() {
 	            AnyBalance.trace(JSON.stringify(json));
 			}
 			
-	        if (json.action != 'DONE') {
-				var error = json.error || json.failed;
+	        if ((json.is_verified && json.is_verified !== true) || (json.action && json.action == 'SOLVE_ANOMALY_REACTION')) {
+				var error = json.error || json.failed || (json.is_verified ? JSON.stringify(json.is_verified) : undefined) || json.action;
     	        if (error) {
 		            AnyBalance.trace(html);
-			    	throw new AnyBalance.Error('Вы не прошли проверку. Пожалуйста, попробуйте ещё раз', null, /answer|invalid/i.test(error));
+			    	throw new AnyBalance.Error('Вы не прошли проверку. Пожалуйста, попробуйте ещё раз', null, /answer|invalid|false/i.test(error));
     	        }
 
     	        AnyBalance.trace(html);
@@ -285,6 +283,7 @@ function main() {
         }
 		
 		var redirectUrl = json.redirect_url;
+		
 		if (redirectUrl) {
 			if (/^http/i.test(redirectUrl)){
 				url = redirectUrl;
@@ -294,7 +293,9 @@ function main() {
 		
             html = AnyBalance.requestGet(url, addHeaders({Referer: 'https://esia.gosuslugi.ru/'}), g_headers);
 	    } else {
-		    html = AnyBalance.requestGet('https://lk.gosuslugi.ru/settings/account?_=' + new Date().getTime(), addHeaders({Referer: 'https://esia.gosuslugi.ru/'}), g_headers);
+		    html = AnyBalance.requestGet('https://lk.gosuslugi.ru/settings/account?_=' + new Date().getTime(), addHeaders({
+				Referer: 'https://esia.gosuslugi.ru/'
+			}), g_headers);
 		}
 		
 		if (/setCookieAndReloadPage/i.test(html)) {
@@ -305,7 +306,15 @@ function main() {
 			html = AnyBalance.requestGet(AnyBalance.getLastUrl(), addHeaders({Referer: 'https://esia.gosuslugi.ru/'}), g_headers);
 	    }
 	    
-	    if (isLoggedIn()) {
+	    if (!isLoggedIn()) {
+			AnyBalance.trace('Требуется дологиниться');
+			
+			html = AnyBalance.requestGet('https://lk.gosuslugi.ru/node-api/login?redirectUrl=https://lk.gosuslugi.ru/settings/account', addHeaders({
+				Referer: AnyBalance.getLastUrl()
+			}), g_headers);
+	    }
+        	
+		if (isLoggedIn()) {
 			AnyBalance.trace('Успешно вошли в личный кабинет');
 	    } else {
 			AnyBalance.trace(html);
@@ -478,6 +487,7 @@ function callAPI(verb, params){
 function isLoggedIn(){
     var prefs = AnyBalance.getPreferences();
 	var html = AnyBalance.requestPost('https://www.gosuslugi.ru/auth-provider/check-session', null, addHeaders({'Referer': 'https://esia.gosuslugi.ru/',}));	
+	
 	var json = getJson(html);
 	AnyBalance.trace(JSON.stringify(json));
     return json.auth;

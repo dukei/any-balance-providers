@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id major_version="2.3" version="37">ab-weather-openmeteo</id>
+    <api flags="no_browser"/>
+    <name>Open-Meteo</name>
+    <description html="true"><![CDATA[
+    <p>Предоставляет информацию о текущей погоде, прогнозе, температуре, влажности, давлении, ветре, осадках и других параметрах для выбранного города.</p>
+    ]]></description>
+    <instruction html="true"><![CDATA[
+    <p>Настройки подключения:</p>
+    <ul>
+        <li>Введите координаты (широту и долготу) вашего местоположения.</li>
+        <li>Если координаты не указаны, по умолчанию используется Москва.</li>
+    </ul>
+    ]]></instruction>
+    <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+        <module id="library"/>
+    </depends>
+    <files>
+        <icon>icon.png</icon>
+        <preferences>preferences.xml</preferences>
+        <js>main.js</js>
+        <history>history.xml</history>
+    </files>
+    <counters>
+        <counter id="temperature" name="Температура воздуха" units=" °C"/>
+        <counter id="heat" name="По ощущению" units=" °C"/>
+        <counter id="atmosphericConditions" name="Атмосферные явления" type="text"/>
+        <counter id="wind" name="Ветер" units="м/с"/>
+        <counter id="windGust" name="Порывы ветра" units=" м/с"/>
+        <counter id="pressure" name="Атмосферное давление" units=" мм рт. ст."/>
+        <counter id="humidity" name="Влажность" units="%"/>
+        <counter id="cloudiness" name="Облачность" units="%"/>
+        <counter id="dewPoint" name="Точка росы" units=" °C"/>
+        <counter id="precipitation" name="Осадки" units=" мм"/>
+        <counter id="waterTemperature" name="Температура воды" units=" °C"/>
+        <counter id="time" name="Время прогноза" type="time" format="dd.MM.yyyy HH:mm"/>
+        <counter id="rising" name="Восход Солнца" type="time"/>
+        <counter id="setting" name="Закат Солнца" type="time"/>
+        <counter id="dayLength" name="Долгота дня" type="text"/>
+        <counter id="moonPhase" name="Фаза Луны" type="text"/>
+        <counter id="uvIndex" name="УФ-индекс" units="UV"/>
+        <counter id="visibility" name="Видимость" units=" м"/>
+        <counter id="precipitationSum" name="Сумма осадков за день" units=" мм"/>
+        <counter id="precipitationHours" name="Часы с осадками" units=" ч"/>
+    </counters>
+    <keywords>прогноз, погода, температура, ветер, давление, осадки, облачность, видимость, УФ-индекс, восход, закат</keywords>
+    <type>weather</type>
+    <country>ru</country>
+</provider>

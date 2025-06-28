@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+        obligatory="true"
+        key="latitude"
+        title="Широта"
+        summary="Введите широту вашего местоположения"
+        dialogTitle="Широта"
+        dialogMessage="Пример: 55.7558 (Москва)"
+        defaultValue="55.7558"
+        positiveButtonText="ОК"
+        negativeButtonText="Отмена" />
+    <EditTextPreference
+        obligatory="true"
+        key="longitude"
+        title="Долгота"
+        summary="Введите долготу вашего местоположения"
+        dialogTitle="Долгота"
+        dialogMessage="Пример: 37.6173 (Москва)"
+        defaultValue="37.6173"
+        positiveButtonText="ОК"
+        negativeButtonText="Отмена" />
+    <EditTextPreference
+        obligatory="true"
+        key="city"
+        title="Город"
+        summary="Город для информации о погоде"
+        dialogTitle="Город"
+        dialogMessage="Введите название города. По умолчанию: Москва"
+        defaultValue="Москва"
+        positiveButtonText="ОК"
+        negativeButtonText="Отмена" />
+</PreferenceScreen>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<history>
+    <change major_version="2.3" version="1" date="2024-03-22">
+        - Первая версия провайдера для Open-Meteo.
+        - Добавлены все основные параметры погоды.
+        - Установлены координаты Москвы по умолчанию.
+        - Все счетчики имеют тип `text` для совместимости с AnyBalance.
+    </change>
+    <change major_version="2.3" version="37" date="2025-06-28">
+        - Добавлен в каталог
+    </change>
+</history>

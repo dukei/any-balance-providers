@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id major_version="2.3" version="37">ab-weather-openmeteo</id>
+    <id version="1">ab-weather-openmeteo</id>
     <api flags="no_browser"/>
     <name>Open-Meteo</name>
     <description html="true"><![CDATA[

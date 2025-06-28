@@ -1,15 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="14">ab-education-dnevnik</id>
+	<id version="17">ab-education-dnevnik</id>
 	<api flags="no_browser"/>
 	<name>Дневник.ру</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию об оценках с сайта Дневник.ру (http://dnevnik.ru/)</p>
-	<p>Внимание! Если у вас в систему внесено несколько детей (в главном меню есть пункт "Дети"), то необходимо указать идентификатор ребенка. Для этого перейдите по адресу http://children.dnevnik.ru/ и под интересеющим вас ребенком нажмите пункт меню "Дневник". Идентификатор можно посмотреть в адресе открывшейся страницы, например http://children.dnevnik.ru/marks.aspx?child=2222222_22222, где 2222222_22222 - искомая часть.</p>
+	<p>Предоставляет информацию о расписании занятий и оценках успеваемости учащихся по образовательной платформе <a href="https://dnevnik.ru/">Дневник.ру</a>.</p>
+	<p>Информация берется из личного кабинета Дневник.ру на сайте https://dnevnik.ru/.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Дневник.ру.</p>  
+	<p><b>ВНИМАНИЕ!</b></p> 
+	<p>Если в вашем кабинете зарегистрировано несколько детей, вы можете выбрать, для какого из них показывать информацию, указав идентификатор ребенка в настройках провайдера.</p>
+	<p>Чтобы узнать идентификатор, перейдите на вкладку "Дети" -> "Обзор" по адресу https://schools.dnevnik.ru/v2/children/ и под интересующим вас ребенком нажмите пункт меню "Успеваемость".</p>
+	<p>Идентификатор можно посмотреть в адресе открывшейся страницы, например https://schools.dnevnik.ru/v2/children/marks?child=1000022222222_1000044444444, где 1000022222222 - искомая часть.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
     <depends>
         <module id="library"/>
+        <module id="misc/saved-data"/>
     </depends>
 	<files>
 		<icon>icon.png</icon>
@@ -18,15 +26,19 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
+	    <counter id="totalNow" name="Оценки за сегодня" type="html"/>
 		<counter id="total0" name="Оценки в понедельник" type="html"/>
 		<counter id="total1" name="Оценки во вторник" type="html"/>
 		<counter id="total2" name="Оценки в среду" type="html"/>
 		<counter id="total3" name="Оценки в четверг" type="html"/>
 		<counter id="total4" name="Оценки в пятницу" type="html"/>
 		<counter id="total5" name="Оценки в субботу" type="html"/>
-		<counter id="fio" name="Пользователь" type="text"/>
+		<counter id="school" name="Учреждение" type="text"/>
+		<counter id="child_id" name="Идентификатор ребенка" type="text"/>
+		<counter id="child_fio" name="ФИО ребенка" type="text"/>
+		<counter id="user_fio" name="Пользователь" type="text"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>Система, платформа, расписание, дневник, оценки, образование, школа</keywords>
 	<type>education</type>
 	<country>ru</country>
 </provider>

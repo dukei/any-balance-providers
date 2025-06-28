@@ -3,31 +3,67 @@
 	<EditTextPreference
 		title="Логин"
 		key="login"
-		summary="||{@s}"
+		summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n"
 		obligatory="true"
 		dialogTitle="Логин"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите логин, используемый для входа в личный кабинет.">
+		dialogMessage="Введите логин, используемый для входа в личный кабинет">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Пароль"
 		key="password"
-		summary="||***********"
+		summary="Пароль для входа в личный кабинет|Введите пароль\n|**********\n"
 		obligatory="true"
 		dialogTitle="Пароль"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите пароль, используемый для входа в личный кабинет."
+		dialogMessage="Введите пароль, используемый для входа в личный кабинет"
 		inputType="textPassword">
 	</EditTextPreference>
-	<!--<EditTextPreference
+	<CheckBoxPreference
+        title="Показывать дату"
+        defaultValue="true"
+        summaryOn="Вывод даты на счетчиках оценок"
+        summaryOff="Дата на счетчиках оценок скрыта"
+        key="show_date" />
+	<CheckBoxPreference
+        title="Показывать день"
+        defaultValue="true"
+        summaryOn="Вывод дня на счетчиках оценок"
+        summaryOff="День на счетчиках оценок скрыт"
+        key="show_day" />
+	<CheckBoxPreference
+        title="Показывать предмет"
+        defaultValue="true"
+        summaryOn="Вывод предмета на счетчиках оценок"
+        summaryOff="Предмет на счетчиках оценок скрыт"
+        key="show_subject" />
+	<CheckBoxPreference
+        title="Показывать расписание"
+        defaultValue="false"
+        summaryOn="Вывод всех занятий по расписанию"
+        summaryOff="Вывод только занятий с оценками"
+        key="show_shedule" />
+	<CheckBoxPreference
+        title="Показывать номер"
+        defaultValue="false"
+        summaryOn="Вывод номера занятия в расписании"
+        summaryOff="Номер занятия в расписании скрыт"
+        key="show_num" />
+	<CheckBoxPreference
+        title="Показывать время"
+        defaultValue="false"
+        summaryOn="Вывод времени занятия в расписании"
+        summaryOff="Время занятия в расписании скрыто"
+        key="show_time" />
+	<EditTextPreference
 		title="Идентификатор"
 		key="id"
-		summary="||{@s}"
+		summary="Идентификатор для получения данных|Автоматически\n|{@s}\n"
 		dialogTitle="Идентификатор"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите идентификатор ребенка, если он требуется.">
-	</EditTextPreference>-->
+		dialogMessage="Введите последние 4 цифры идентификатора ребенка, по которому вы хотите получать информацию. Если оставить поле пустым, будет показана информация по первому идентификатору">
+	</EditTextPreference>
 </PreferenceScreen>

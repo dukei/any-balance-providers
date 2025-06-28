@@ -6,7 +6,6 @@ function main() {
     var prefs = AnyBalance.getPreferences();
 	
 	AnyBalance.setOptions({
-		CLIENT: 'okhttp', 
 		PER_DOMAIN: {
 			'ihelper.mts.ru': {
 				SSL_ENABLED_PROTOCOLS: ['TLSv1', 'TLSv1.1', 'TLSv1.2']
@@ -40,6 +39,8 @@ var g_countersTable = {
 	common: {
 		"balance": "balance",
 		"bonus": "bonus",
+		"cashback": "cashback",
+		"credit": "credit",
 		"tariff_abon": "tariff_abon",
 		"min_local": "remainders.min_local",
 		"min_left": "remainders.min_left",
@@ -73,19 +74,17 @@ var g_countersTable = {
 		"traffic_used_mb": "remainders.traffic_used_mb",
 		"traffic_total_mb": "remainders.traffic_total_mb",
 		"traffic_used_by_acceptors_mb": "remainders.traffic_used_by_acceptors_mb",
-		"cashback": "remainders.cashback",
-		"cashback_mts": "remainders.cashback_mts",
-		"cashback_mts_pending": "remainders.cashback_mts_pending",
-		"cashback_mts_burning": "remainders.cashback_mts_burning",
-		"cashback_mts_burning_date": "remainders.cashback_mts_burning_date",
-		"premium_state": "remainders.premium_state",
-		"statuslock": "remainders.statuslock",
-		"credit": "remainders.credit",
-		"services": "remainders.services",
-		"services_paid": "remainders.services_paid",
-		"services_free": "remainders.services_free",
-		"services_abon": "remainders.services_abon",
-		"services_abon_day": "remainders.services_abon_day",
+		"cashback_mts": "loyalty.cashback_mts",
+		"cashback_mts_pending": "loyalty.cashback_mts_pending",
+		"cashback_mts_burning": "loyalty.cashback_mts_burning",
+		"cashback_mts_burning_date": "loyalty.cashback_mts_burning_date",
+		"premium_state": "loyalty.premium_state",
+		"statuslock": "services.statuslock",
+		"services": "services.services",
+		"services_paid": "services.services_paid",
+		"services_free": "services.services_free",
+		"services_abon": "services.services_abon",
+		"services_abon_day": "services.services_abon_day",
 		"usedinthismonth": "expenses.usedinthismonth",
 		"usedinprevmonth": "expenses.usedinprevmonth",
 		"license": "info.licschet",

@@ -133,16 +133,17 @@ function loadProtectedPage(fromUrl, headers){
     var html = AnyBalance.requestGet(url, headers);
     
 	if(/__qrator/.test(html)) {
-        	AnyBalance.trace("Требуется обойти QRATOR");
-	if(!AnyBalance.getCapabilities().clientOkHttp && !AnyBalance.getCapabilities().clientDebugger)
+        AnyBalance.trace("Требуется обойти QRATOR");
+		if(!AnyBalance.getCapabilities().clientOkHttp && !AnyBalance.getCapabilities().clientDebugger)
         	throw new AnyBalance.Error('Для работы провайдера требуется обновить приложение. Новая версия AnyBalance доступна на RuStore');
-        clearAllCookies();
+        AnyBalance.setOptions({CLIENT: 'okhttp'});
+		clearAllCookies();
 
         const bro = new BrowserAPI({
             provider: 'mts-login-q4',
             userAgent: headers["User-Agent"],
             headful: true,
-            //noInterception: true,
+			//noInterception: true,
             userInteraction: true,
             singlePage: true,
             rules: [{
@@ -162,20 +163,17 @@ function loadProtectedPage(fromUrl, headers){
                 url: /\.(png|jpg|ico|svg)/.toString(),
                 action: 'abort',
             }, {
-                url: /\.mts\.ru/.toString(),
+				url: /\.mts\.ru/.toString(),
                 action: 'request',
-            }, {
+			}, {
                 url: /.*/.toString(),
                 action: 'abort',
             }],
-            additionalRequestHeaders: [
-		{
-                    headers: {
-			'User-Agent': headers["User-Agent"]
-
-		    }
-		}
-            ],
+            additionalRequestHeaders: [{
+                headers: {
+			        'User-Agent': headers["User-Agent"]
+                }
+		    }],
             debug: AnyBalance.getPreferences().debug
         });
 
@@ -400,22 +398,24 @@ function enterMTS(options){
     var form;
     if(form = getOrdinaryLoginForm(html)){  //Обычная форма входа
     	html = loginOrdinaryForm(html, options);
-    }else if(form = getElement(html, /<form[^>]+class="section__form form -loginForm"/i)){       
-    	AnyBalance.trace('Найдена корп. форма входа');
-        var params = createFormParams(form, function (params, input, name, value) {
-            if (name == 'login'){
-				value = loginFormatted;
-			}else if (name == 'IDToken1'){
-                value = options.login;
-			}
-			
-            return value;
-        });
-        
-		loginUrl = AnyBalance.getLastUrl();
-        
-        html = AnyBalance.requestPost(loginUrl, params, addHeaders({Origin: g_baseurlLogin, Referer: loginUrl}));
-        fixCookies();
+    }else if(form = (getElement(html, /<form[^>]+class="section__form form -loginForm"/i) || getElement(html, /<form[^>]+class="section__passwordForm passwordForm "/i))){       
+		AnyBalance.trace('Найдена корп. форма входа');
+        loginUrl = AnyBalance.getLastUrl();
+		
+		if(form = getElement(html, /<form[^>]+class="section__form form -loginForm"/i)){ // Может сразу выкатить форму ввода пароля, проверяем на наличие формы логина
+		    var params = createFormParams(form, function (params, input, name, value) {
+                if (name == 'login'){
+				    value = loginFormatted;
+			    }else if (name == 'IDToken1'){
+                    value = options.login;
+			    }
+			    
+                return value;
+            });
+            
+            html = AnyBalance.requestPost(loginUrl, params, addHeaders({Origin: g_baseurlLogin, Referer: loginUrl}));
+            fixCookies();
+		}
     	
     	form = getElement(html, /<form[^>]+class="section__passwordForm passwordForm "/i);
 		if(!form){
@@ -694,8 +694,8 @@ function enterLKNUI(options){
 	
 	var headers = addHeaders({
 		'Accept': '*/*',
-        'Accept-API-Version': 'resource=4.0, protocol=1.0',
-		'Content-Type': 'application/json',
+        'Accept-Api-Version': 'resource=4.0, protocol=1.0',
+		'Content-Type': 'application/json;charset=UTF-8',
 		'Origin': 'https://login.mts.ru',
 		'Referer': loginRef
 	});
@@ -719,7 +719,10 @@ function enterLKNUI(options){
 	
 	if (json.header == "device-match-hold") {
 		var params = json;
-		params.callbacks[0].input[0].value = '{"screen":{"screenWidth":1600,"screenHeight":900,"screenColourDepth":24},"userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36","platform":"Win32","language":"ru","timezone":{"timezone":-180},"plugins":{"installedPlugins":"internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;"},"fonts":{"installedFonts":"cursive;monospace;serif;sans-serif;fantasy;default;Arial;Arial Black;Arial Narrow;Bookman Old Style;Bradley Hand ITC;Century;Century Gothic;Comic Sans MS;Courier;Courier New;Georgia;Impact;Lucida Console;Monotype Corsiva;Papyrus;Tahoma;Times;Times New Roman;Trebuchet MS;Verdana;"},"appName":"Netscape","appCodeName":"Mozilla","appVersion":"5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36","product":"Gecko","productSub":"20030107","vendor":"Google Inc."}';
+		params.callbacks[0].input[0].value = '{"screen":{"screenWidth":1600,"screenHeight":900,"screenColourDepth":24},"userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36","platform":"Win32","language":"ru","timezone":{"timezone":-180},"plugins":{"installedPlugins":"internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;"},"fonts":{"installedFonts":"cursive;monospace;serif;sans-serif;fantasy;default;Arial;Arial Black;Arial Narrow;Bookman Old Style;Bradley Hand ITC;Century;Century Gothic;Comic Sans MS;Courier;Courier New;Georgia;Impact;Lucida Console;Monotype Corsiva;Papyrus;Tahoma;Times;Times New Roman;Trebuchet MS;Verdana;"},"appName":"Netscape","appCodeName":"Mozilla","appVersion":"5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36","product":"Gecko","productSub":"20030107","vendor":"Google Inc."}';
+		params.callbacks[2].input[0].value = "true";
+		params.callbacks[3].input[0].value = "windows";
+		params.callbacks[4].input[0].value = "Ключ на Windows в Chrome";
 		
 		html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
 	
@@ -756,7 +759,8 @@ function enterLKNUI(options){
 	
 	if (json.header == "radius-frontend-request") {
 		var params = json;
-		params.callbacks[0].input[0].value = "1";
+		params.callbacks[0].input[0].value = "0";
+		params.callbacks[2].input[0].value = "1";
 		
 		html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
 	
@@ -767,27 +771,39 @@ function enterLKNUI(options){
 		    AnyBalance.trace('Progress header: ' + json.header);
 	}
 	
-	if (json.header == "network-header-resource") {
+	if (json.header == "confirm-network-phone") {
+		var params = json;
+		
+		html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
+	
+	    var json = getJson(html);
+//	    AnyBalance.trace('Подтверждение сети: ' + JSON.stringify(json));
+	    
+		if (json.header)
+		    AnyBalance.trace('Progress header: ' + json.header);
+	}
+	
+	if (json.header == "network-header-resource" || json.header == "network-header-resource-v1") {
 		var params = json;
 		params.callbacks[0].input[0].value = "1";
 		
 		html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
 	
 	    var json = getJson(html);
-//	    AnyBalance.trace('Проверка сети: ' + JSON.stringify(json));
+//	    AnyBalance.trace('Проверка хедеров сети: ' + JSON.stringify(json));
 	    
 		if (json.header)
 		    AnyBalance.trace('Progress header: ' + json.header);
 	}
 			
-	if (json.header == "network-header") {
+	if (json.header == "network-header" || json.header == "network-header-v1") {
 		var params = json;
 		params.callbacks[1].input[0].value = "1";
 		
 		html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
 	
 	    var json = getJson(html);
-//      AnyBalance.trace('Проверка сети МТС: ' + JSON.stringify(json));
+//		AnyBalance.trace('Проверка сети МТС: ' + JSON.stringify(json));
         
 		if (json.header)
 		    AnyBalance.trace('Progress header: ' + json.header);
@@ -814,6 +830,20 @@ function enterLKNUI(options){
 		if (json.header == "lock-change-owner") {
 	    	AnyBalance.trace(html);
             throw new AnyBalance.Error('Номер заблокирован!', allowRetry);
+	    }
+		
+		if (json.header == "passkey-start-registration") {
+			AnyBalance.trace('МТС предложил установить ключ доступа. Отказываемся...');
+		    var params = json;
+            params.callbacks[0].input[0].value = "0";
+		    
+		   html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
+	        
+	        var json = getJson(html);
+//	        AnyBalance.trace('Отказ от ключа доступа: ' + JSON.stringify(json));
+	        
+		    if (json.header)
+		        AnyBalance.trace('Progress header: ' + json.header);
 	    }
 	}
 		

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="178">ab-cell-beeline-new</id>
+	<id version="182">ab-cell-beeline-new</id>
 	<name>Билайн (новый кабинет)</name>
 	<api flags="no_browser" min_level="5"/>
 	<description html="true"><![CDATA[
@@ -34,9 +34,9 @@
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
+		<module id="extract/abe-cell-beeline"/>
 		<module id="library"/>
 		<module id="nadapter"/>
-		<module id="extract/abe-cell-beeline"/>
 	</depends>
 	<files>
 	    <icon>icon.png</icon>
@@ -50,6 +50,7 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
 		<counter id="unified_balance" name="Общий баланс" units=" {@currency}"/>
+		<counter id="addon_balance" name="Баланс для доп. услуг" units=" {@currency}"/>
 		<counter id="prebal" name="Предварительная сумма по договору" units=" {@currency}"/>
 		<counter id="overpay" name="Переплата" units=" {@currency}"/>
 		<counter id="sms_left" name="Остаток SMS" units=" sms"/>
@@ -66,6 +67,7 @@
 		<counter id="traffic_rouming" name="Остаток трафика в роуминге" units=" Mb"/>
 		<counter id="min_left_1" name="Остаток минут 1" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_left_2" name="Остаток минут 2" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="min_left_3" name="Остаток минут 3" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="credit" name="Кредит" units=" {@currency}"/>
 		<counter id="fio" name="ФИО" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
@@ -75,6 +77,7 @@
 		<counter id="last_pay_sum" name="Сумма последнего платежа" units=" {@currency}"/>
 		<counter id="last_pay_date" name="Дата последнего платежа" type="time" format="dd.MM.yyyy"/>
 		<counter id="last_pay_place" name="Место последнего платежа" type="text"/> <!-- Только для предоплатных абонентов -->
+		<counter id="next_billing_date" name="Дата следующего списания" type="time" format="dd.MM.yyyy"/> <!-- Только для предоплатных абонентов -->
 		<counter id="statuslock" name="Статус блокировки" type="text"/>
 		<counter id="total_balance" name="Сумма по всем номерам" units=" {@currency}"/>
 		<counter id="traffic_used" name="Использовано трафика" units=" Mb"/>
@@ -82,6 +85,7 @@
 		<counter id="traffic_used_total" name="Общий расход трафика" units=" Мб"/>
 		<counter id="traffic_total" name="Всего трафика" units=" Mb"/>
 		<counter id="min_local_till" name="Срок действия пакета минут" type="time" format="dd.MM.yyyy"/>
+		<counter id="honeycomb" name="Накопленные соты" prefix="🐝 " units=" шт"/>
 		<counter id="services_count" name="Подключенные услуги" prefix="💼 " units=" шт"/>
 		<counter id="services_paid" name="Платные услуги" prefix="💵 " units=" шт"/>
 		<counter id="services_free" name="Бесплатные услуги" prefix="🎁 " units=" шт"/>
@@ -90,7 +94,6 @@
 		<counter id="debet" name="Начислено за услуги" units=" {@currency}"/>
 		<counter id="abon_tariff" name="Абонплата по тарифу" units=" {@currency}"/>
 		<counter id="bills" name="Выставленные счета" units=" шт"/>
-		<counter id="addon_balance" name="Баланс для доп. услуг" units=" {@currency}"/>
 	</counters>
 	<keywords>Сотовый телефон, мобильный, мобильник, билайн, beeline, интернет, Россия</keywords>
 	<type>cell</type>

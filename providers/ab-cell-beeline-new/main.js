@@ -33,15 +33,16 @@ function main() {
 		if(prefs.country == 'kz')
 			proceedWithSiteKz(baseurl);
 		else
-			mainRu(baseurl);
+//			mainRu(baseurl); // Закрываем код сайта до лучших времён, чтобы зря не тратить трафик и время
+		    proceedWithMobileAppAPI(baseurl);
 	} catch(e){
-		if(e.fatal)
+//		if(e.fatal)
 			throw e;
 		//Обломался сайт. Если можно мобильное приложение, давайте его попробуем
-		AnyBalance.trace('Не получается зайти в личный кабинет: ' + e.message + ', ' + e.stack + '. Попробуем мобильное приложение');
-		clearAllCookies();
-		proceedWithMobileAppAPI(baseurl);
-		return;
+//		AnyBalance.trace('Не получается зайти в личный кабинет: ' + e.message + ', ' + e.stack + '. Попробуем мобильное приложение');
+//		clearAllCookies();
+//		proceedWithMobileAppAPI(baseurl);
+//		return;
 	}
 }
 
@@ -77,6 +78,7 @@ var g_countersTable = {
 		"traffic_bonus": "remainders.traffic_bonus",
 		"min_left_1": "remainders.min_left_1",
 		"min_left_2": "remainders.min_left_2",
+		"min_left_3": "remainders.min_left_3",
 		"fio": "info.fio",
 		"phone": "info.phone",
 		"agreement": "agreement",
@@ -89,6 +91,7 @@ var g_countersTable = {
 		"min_local_till": "remainders.min_local_till",
 		"services_abon": "services_abon",
 		"services_abon_day": "services_abon_day",
+		"honeycomb": "honeycomb",
 		"services_count": "services_count",
 		"services_paid": "services_paid",
 		"services_free": "services_free",
@@ -96,6 +99,7 @@ var g_countersTable = {
 		"last_pay_date": "payments.date",
 		"last_pay_sum": "payments.sum",
 		"last_pay_place": "payments.place",
+		"next_billing_date": "next_billing_date",
 		"statuslock": "statuslock",
 		"debet": "debet",
 		"abon_tariff": "abon_tariff",

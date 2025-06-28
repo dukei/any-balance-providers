@@ -80,7 +80,7 @@ function loginBySMS() {
 
 	var json = callApi('validation/number/7' + prefs.login, {sender: 'Tele2'});
 
-	var code = AnyBalance.retrieveCode('Пожалуйста, введите код из SMS для входа в личный кабинет Tele2', null, {inputType: 'number', time: 180000});
+	var code = AnyBalance.retrieveCode('Пожалуйста, введите код из SMS, отправленного на ваш номер T2', null, {inputType: 'number', time: 180000});
 	
 	json = callApi('https://sso.tele2.ru/auth/realms/tele2-b2c/protocol/openid-connect/token?msisdn=7' + prefs.login + '&action=auth&authType=sms', {
 		__post: true,
@@ -92,7 +92,7 @@ function loginBySMS() {
 	});
 	
 	if(json.error && /Security code[\s\S]*?empty/i.test(json.error_description)){
-		AnyBalance.trace('Теле2 затребовал код подтверждения из письма');
+		AnyBalance.trace('T2 затребовал код подтверждения из письма');
 	    
 	    json = callApi('https://sso.tele2.ru/auth/realms/tele2-b2c/credential-management/security-codes', {
 		    username: '7' + prefs.login
@@ -210,14 +210,14 @@ function processBalance(result){
 
     var subsid = getSubscriberId();
 
-    AnyBalance.trace('Получаем баланс и тариф');
+    AnyBalance.trace('Пробуем получить баланс и тариф');
 
     var maxTries = 3;
 
     if(AnyBalance.isAvailable('balance')){
         for(var i = 0; i < maxTries; i++) {
             try {
-                AnyBalance.trace('Пытаемся получить баланс, попытка: ' + (i+1));
+                AnyBalance.trace('Получаем баланс, попытка: ' + (i+1));
                 var html = AnyBalance.requestGet(baseurl + 'api/subscribers/' + subsid + '/balance', addHeaders({
                 	Accept: '*/*',
                 	'X-Requested-With': 'XMLHttpRequest',
@@ -228,7 +228,7 @@ function processBalance(result){
         
                 getParam(json.data.value, result, 'balance');
         
-                AnyBalance.trace('Успешно получили баланс');
+                AnyBalance.trace('Успешно получили баланс: ' + html);
                 break;
             }
             catch(e) {
@@ -240,7 +240,7 @@ function processBalance(result){
     if(AnyBalance.isAvailable('tariff')){
         for(var i = 0; i < maxTries; i++) {
             try {
-                AnyBalance.trace('Пытаемся получить тариф, попытка: ' + (i+1));
+                AnyBalance.trace('Получаем тариф, попытка: ' + (i+1));
                 html = AnyBalance.requestGet(baseurl + 'api/subscribers/' + subsid + '/tariff', addHeaders({
                 	Accept: '*/*',
                 	'X-Requested-With': 'XMLHttpRequest',
@@ -251,7 +251,7 @@ function processBalance(result){
         
                 getParam(json.data.frontName, result, 'tariff');
         
-                AnyBalance.trace('Успешно получили тариф');
+                AnyBalance.trace('Успешно получили тариф: ' + html);
                 break;
             }
             catch(e) {
@@ -259,14 +259,13 @@ function processBalance(result){
             }
         }
     }
-
 }
 
 function processRemainders(result){
-    if (!AnyBalance.isAvailable('remainders'))
+    if (!AnyBalance.isAvailable('remainders', 'tariff_abon', 'tariff_till', 'statuslock'))
         return;
 
-    AnyBalance.trace('Получаем остатки по услугам');
+    AnyBalance.trace('Пробуем получить дискаунты');
 
     try {
         if(!result.remainders)
@@ -274,22 +273,36 @@ function processRemainders(result){
 
         var subsid = getSubscriberId();
 		
-		AnyBalance.trace('Пытаемся получить остатки по услугам');
         var html = AnyBalance.requestGet(baseurl + "api/subscribers/" + subsid + '/rests', addHeaders({
         	Accept: '*/*',
         	'X-Requested-With': 'XMLHttpRequest',
         	Referer: baseurl
         }));
 
-        AnyBalance.trace('Успешно получили дискаунты: ' + html);
         json = JSON.parse(html);
-        for (var i = 0; i<json.data.rests.length; ++i) {
-            var discount = json.data.rests[i];
-            getDiscount(result.remainders, discount);
-        }
-        
+		AnyBalance.trace('Успешно получили дискаунты: ' + html);
+		
+		var status = {active: 'Номер не блокирован', blocked: 'Номер заблокирован'};
+		
+		if (json.data) {
+		    if (json.data.tariffCost && json.data.tariffCost.amount) 
+			    getParam(json.data.tariffCost.amount, result, 'tariff_abon', null, null, parseBalance);
+	        if (json.data.abonentDate) 
+			    getParam(json.data.abonentDate, result, 'tariff_till', null, null, parseDateISO);
+		    if (json.data.tariffStatus) 
+			    getParam(status[json.data.tariffStatus]||json.data.tariffStatus, result, 'statuslock');
+		}
+		
+        if (json.data && json.data.rests && json.data.rests.length && json.data.rests.length > 0) {
+		    for (var i = 0; i<json.data.rests.length; ++i) {
+                var discount = json.data.rests[i];
+                getDiscount(result.remainders, discount);
+            }
+        } else {
+			AnyBalance.trace("Дискаунты не найдены. Возможно, тариф не предоставляет пакеты");
+		}	
     } catch(e) {
-        AnyBalance.trace("Не удалось получить данные об остатках пакетов и услуг, попробуйте позже " + e);
+        AnyBalance.trace("Не удалось получить данные о дискаунтах: " + e.message);
     }
 }
 
@@ -300,34 +313,42 @@ function getDiscount(result, discount) {
 
     if(discount.limit === 0)
     	return; //Empty discount
-
-	var status = {
-		active: 'Номер не блокирован',
-		blocked: 'Номер заблокирован'
-	};
-	getParam(status[discount.status]||discount.status, result, 'remainders.statuslock');
-	getParam(discount.endDay, result, 'remainders.endDate', null, null, parseDateISO);
 	
     if (/min/i.test(units)) {
         //Минуты
-        sumParam(Math.round(discount.remain*100)/100, result, 'remainders.min_left', null, null, null, aggregate_sum);
-		sumParam(Math.round((discount.limit)*100/100), result, 'remainders.min_total', null, null, null, aggregate_sum);
-        sumParam(Math.round((discount.limit - discount.remain)*100/100), result, 'remainders.min_used', null, null, null, aggregate_sum);
-        sumParam(discount.endDay || undefined, result, 'remainders.min_till', null, null, parseDateISO, aggregate_min);
+        if (discount.roamingPackage === true) { // Это минуты в роуминге
+			sumParam(Math.round(discount.remain*100)/100, result, 'remainders.min_roaming', null, null, null, aggregate_sum);
+			sumParam(discount.endDay || undefined, result, 'remainders.min_roaming_till', null, null, parseDateISO, aggregate_min);
+		} else {
+		    sumParam(Math.round(discount.remain*100)/100, result, 'remainders.min_left', null, null, null, aggregate_sum);
+		    sumParam(Math.round((discount.limit)*100/100), result, 'remainders.min_total', null, null, null, aggregate_sum);
+            sumParam(Math.round((discount.limit - discount.remain)*100/100), result, 'remainders.min_used', null, null, null, aggregate_sum);
+            sumParam(discount.endDay || undefined, result, 'remainders.min_till', null, null, parseDateISO, aggregate_min);
+		}
     } else if (/[кмгkmg][bб]/i.test(units)) {
         //трафик
         var left = parseTraffic(discount.remain + discount.uom);
         var total = parseTraffic(discount.limit + discount.uom);
-        sumParam(left, result, 'remainders.traffic_left', null, null, null, aggregate_sum);
-		sumParam(total, result, 'remainders.traffic_total', null, null, null, aggregate_sum);
-        sumParam(total - left, result, 'remainders.traffic_used', null, null, null, aggregate_sum);
-        sumParam(discount.endDay || undefined, result, 'remainders.traffic_till', null, null, parseDateISO, aggregate_min);
+		if (discount.roamingPackage === true) { // Это трафик в роуминге
+			sumParam(left, result, 'remainders.traffic_roaming', null, null, null, aggregate_sum);
+			sumParam(discount.endDay || undefined, result, 'remainders.traffic_roaming_till', null, null, parseDateISO, aggregate_min);
+		} else {
+            sumParam(left, result, 'remainders.traffic_left', null, null, null, aggregate_sum);
+		    sumParam(total, result, 'remainders.traffic_total', null, null, null, aggregate_sum);
+            sumParam(total - left, result, 'remainders.traffic_used', null, null, null, aggregate_sum);
+            sumParam(discount.endDay || undefined, result, 'remainders.traffic_till', null, null, parseDateISO, aggregate_min);
+		}
     } else if (/pcs/i.test(units)) {
         //СМС/ММС
-        sumParam(discount.remain, result, 'remainders.sms_left', null, null, null, aggregate_sum);
-		sumParam(discount.limit, result, 'remainders.sms_total', null, null, null, aggregate_sum);
-        sumParam(discount.limit - discount.remain, result, 'remainders.sms_used', null, null, null, aggregate_sum);
-        sumParam(discount.endDay || undefined, result, 'remainders.sms_till', null, null, parseDateISO, aggregate_min);
+		if (discount.roamingPackage === true) { // Это СМС/ММС в роуминге
+			sumParam(discount.remain, result, 'remainders.sms_roaming', null, null, null, aggregate_sum);
+			sumParam(discount.endDay || undefined, result, 'remainders.sms_roaming_till', null, null, parseDateISO, aggregate_min);
+		} else {
+            sumParam(discount.remain, result, 'remainders.sms_left', null, null, null, aggregate_sum);
+		    sumParam(discount.limit, result, 'remainders.sms_total', null, null, null, aggregate_sum);
+            sumParam(discount.limit - discount.remain, result, 'remainders.sms_used', null, null, null, aggregate_sum);
+            sumParam(discount.endDay || undefined, result, 'remainders.sms_till', null, null, parseDateISO, aggregate_min);
+		}
     } else {
         AnyBalance.trace("Неизвестный дискаунт: " + JSON.stringify(discount));
     }
@@ -337,7 +358,7 @@ function processPayments(result){
     if (!AnyBalance.isAvailable('month_refill', 'payments'))
         return;
 
-    AnyBalance.trace("Searching for current month payments");
+    AnyBalance.trace("Пробуем получить платежи за текущий месяц");
 
     var subsid = getSubscriberId();
 	
@@ -359,7 +380,7 @@ function processPayments(result){
 		return;
 	}
 	
-	AnyBalance.trace('Current month payments json: ' + JSON.stringify(json));
+	AnyBalance.trace('Платежи за текущий месяц: ' + JSON.stringify(json));
 	
 	for (var i = 0; i < json.data.length; ++i) {
         var ref = json.data[i];
@@ -367,7 +388,7 @@ function processPayments(result){
 		sumParam(ref.sum.amount, result, 'month_refill', null, null, parseBalanceSilent, aggregate_sum);
     }
 	
-	AnyBalance.trace("Searching for last 3 months payments");
+	AnyBalance.trace("Пробуем получить платежи за последние 3 месяца");
 	
 	try {
 		var html = AnyBalance.requestGet(baseurl + "api/subscribers/" + subsid + "/payments?fromDate=" 
@@ -383,7 +404,7 @@ function processPayments(result){
 		return;
 	}
 	
-	AnyBalance.trace('Last 3 months payments json: ' + JSON.stringify(json));
+	AnyBalance.trace('Платежи за последние 3 месяца: ' + JSON.stringify(json));
     result.payments = [];
 	
     for (var i = 0; i < json.data.length; ++i) {
@@ -402,7 +423,7 @@ function processExpenses(result){
     if (!AnyBalance.isAvailable('expenses_curr_month', 'expenses_prev_month'))
         return;
 
-    AnyBalance.trace("Searching for current month expenses");
+    AnyBalance.trace("Пробуем получить расходы за текущий месяц");
 
     var subsid = getSubscriberId();
 	
@@ -423,7 +444,7 @@ function processExpenses(result){
 		return;
 	}
 	
-	AnyBalance.trace('Current month expenses json: ' + JSON.stringify(json));
+	AnyBalance.trace('Расходы за текущий месяц: ' + JSON.stringify(json));
 	
 	for (var i = 0; i < json.data.length; ++i) {
         var exp = json.data[i];
@@ -431,7 +452,7 @@ function processExpenses(result){
 		sumParam(exp.amount.amount, result, 'expenses_curr_month', null, null, parseBalanceSilent, aggregate_sum);
     }
 	
-	AnyBalance.trace("Searching for previous month expenses");
+	AnyBalance.trace("Пробуем получить расходы за прошлый месяц");
 	
     var dt = new Date();
 	var dtPrev = new Date(dt.getFullYear(), dt.getMonth()-1, dt.getDate());
@@ -451,7 +472,7 @@ function processExpenses(result){
 		return;
 	}
 	
-	AnyBalance.trace('Previous month expenses json: ' + JSON.stringify(json));
+	AnyBalance.trace('Расходы за прошлый месяц: ' + JSON.stringify(json));
 	
 	for (var i = 0; i < json.data.length; ++i) {
         var exp = json.data[i];
@@ -464,7 +485,7 @@ function processServices(result){
     if (!AnyBalance.isAvailable('services'))
         return;
 
-    AnyBalance.trace("Searching for services");
+    AnyBalance.trace("Пробуем получить список услуг");
 
     var subsid = getSubscriberId();
 	
@@ -522,19 +543,40 @@ function processInfo(result){
     if(!AnyBalance.isAvailable('info'))
         return;
 
-    var subsid = getSubscriberId();
+    AnyBalance.trace('Пробуем получить профиль');
+	
+	try {
+	    var subsid = getSubscriberId();
 
-    var info = result.info = {};
+        var info = result.info = {};
 
-    var html = AnyBalance.requestGet(baseurl + "api/subscribers/" + subsid + '/profile', addHeaders({
-    	Accept: '*/*',
-    	'X-Requested-With': 'XMLHttpRequest',
-    	Referer: baseurl
-    }));
+        var html = AnyBalance.requestGet(baseurl + "api/subscribers/" + subsid + '/profile', addHeaders({
+    	    Accept: '*/*',
+    	    'X-Requested-With': 'XMLHttpRequest',
+    	    Referer: baseurl
+        }));
+	
+	    var json = JSON.parse(html);
+	    AnyBalance.trace('Успешно получили профиль: ' + html);
 
-    var json = getJson(html);
-    getParam(json.data.fullName, info, "info.fio");
-    getParam(subsid.replace(/.*(\d{3})(\d{3})(\d{2})(\d{2})$/i, '+7 $1 $2-$3-$4'), info, "info.mphone");
-    getParam(json.data.address.city + ', ' + json.data.address.street + ', ' + json.data.address.house, info, "info.address");
-    getParam(json.data.email || 'Не указан', info, "info.email");
+        if (json.data) {
+		    if (json.data.fullName) 
+			    getParam(json.data.fullName, info, "info.fio");
+            if (subsid) 
+			    getParam(subsid.replace(/.*(\d{3})(\d{3})(\d{2})(\d{2})$/i, '+7 $1 $2-$3-$4'), info, "info.mphone");
+            var address = '';
+		    if (json.data.address) {
+				if (json.data.address.city) 
+				    address += json.data.address.city;
+			    if (json.data.address.street) 
+				    address += (address ? ', ' : '') + json.data.address.street;
+			    if (json.data.address.house) 
+				    address += (address ? ', ' : '') + json.data.address.house;
+			}
+			getParam(address || 'Не указан', info, "info.address");
+            getParam(json.data.email || 'Не указан', info, "info.email");
+		}
+	} catch(e) {
+        AnyBalance.trace("Не удалось получить данные о профиле: " + e.message);
+    }
 }

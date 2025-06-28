@@ -1,5 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+    <change version="6" date="2025-04-06">
+	- Добавлены дополнительные счетчики
+	</change>
+    <change version="5" date="2025-04-05">
+	- Добавлены дополнительные счетчики
+	</change>
+    <change version="4" date="2022-01-10">
+	- Добавлен расчет жетонов до следующего уровня
+	</change>
+    <change version="3" date="2021-12-28">
+	- Поддержка изменений в процедуре входа
+	</change>
     <change version="2" date="2021-11-16">
 	- Исправлено обновление авторизации
 	</change>

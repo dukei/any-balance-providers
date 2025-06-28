@@ -2,18 +2,18 @@
 <PreferenceScreen>
     <EditTextPreference
 		obligatory="true"
-		title="Номер телефона"
+		title="Логин"
 		positiveButtonText="ОК"
-		summary="Номер телефона, привязанный к карте||{@s}\n"
-		dialogTitle="Номер телефона"
+		summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n"
+		dialogTitle="Логин"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите 10 цифр номера телефона без пробелов и разделителей. Например, 9261234567"
+		dialogMessage="Введите номер телефона в формате 10 цифр без пробелов и разделителей, например: 9091234567"
 		key="login">
 	</EditTextPreference>
 	<EditTextPreference
 		title="Пароль"
 		key="password"
-		summary="Пароль для входа в личный кабинет||**********\n"
+		summary="Пароль для входа в личный кабинет|Введите пароль\n|**********\n"
 		obligatory="true"
 		dialogTitle="Пароль"
 		positiveButtonText="ОК"

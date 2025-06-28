@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-bonus-gorod-troika</id>
+	<id version="6">ab-bonus-gorod-troika</id>
 	<api flags="no_browser"/>
 	<name>Город Тройка</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию по бонусной коалиционной программе для держателей транспортной карты "Тройка".</p>
-	<p>Информация берется из личного кабинета https://gorodtroika.ru/.</p>
+	<p>Предоставляет информацию по бонусной коалиционной программе для держателей транспортной карты <a href="https://mosmetro.ru/payment/tickets/troyka">"Тройка"</a>.</p>
+	<p>Информация берется из личного кабинета Город Тройка на сайте https://gorodtroika.ru/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Для получения данных с сайта необходимо ввести в настройки провайдера свой номер телефона, на который зарегистрирован личный кабинет, и пароль для входа.</p>
-	<p>Кроме того, для авторизации в личном кабинете потребуется ввести код подтверждения из SMS, высланного на номер телефона, привязанного к личному кабинету.</p>
+	<p>Для работы провайдера требуется ввести номер телефона, привязанного к личному кабинету Город Тройка, и пароль для входа в личный кабинет.</p>
+	<p>Кроме того, для авторизации в личном кабинете потребуется ввести код подтверждения из SMS, высланного на номер телефона, привязанного к личному кабинету Город Тройка.</p>
 	]]></instruction>
-	<author>RamzesZeus &lt;ramzeszeus@gmail.com&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>
@@ -24,12 +24,32 @@
 	<counters>
 		<counter id="balance" name="Доступные бонусы" units=" Б"/>
 		<counter id="expected" name="Ожидаемые бонусы" units=" Б"/>
-		<counter id="experience" name="Собрано жетонов" units=" шт"/>
-		<counter id="notifications" name="Уведомления" units=" шт"/>
-		<counter id="level" name="Текущий уровень" type="text"/>
+		<counter id="experience" name="Собрано жетонов" units=" Ж"/>
+		<counter id="wallet" name="Кошелек" units=" ₽"/>
+		<counter id="tickettype" name="Тип билета" type="text"/>
+		<counter id="tickettype1" name="Тип билета 2" type="text"/>
+		<counter id="tickettype2" name="Тип билета 3" type="text"/>
+		<counter id="ticketdays" name="Срок действия билета" units=" дн"/>
+		<counter id="ticketdays1" name="Срок действия билета 2" units=" дн"/>
+		<counter id="ticketdays2" name="Срок действия билета 3" units=" дн"/>
+		<counter id="level" name="Текущий статус" type="text"/>
+		<counter id="levelnum" name="Текущий уровень" type="text"/>
+		<counter id="nextlevelexp" name="Начало след. уровня" units=" Ж"/>
+		<counter id="tonextlevel" name="Жетонов до след. уровня" units=" Ж"/>
 		<counter id="percent" name="Дополнительный процент" units="%"/>
-		<counter id="nextlevelexp" name="До следующего уровня" units=" шт"/>
 		<counter id="cardnum" name="Номер карты" type="text"/>
+		<counter id="subscription" name="Состояние подписки" type="text"/>
+		<counter id="currmonthvisitscount" name="Поездок в этом месяце" units=" П"/>
+		<counter id="totalvisitscount" name="Всего поездок в метро" units=" П"/>
+		<counter id="totalstationscount" name="Всего посещено станций" units=" ст"/>
+		<counter id="last_trip_date" name="Последняя поездка" type="time" format="dd.MM.yyyy HH:mm"/>
+		<counter id="last_trip_desc" name="Тип посл. поездки" type="text"/>
+		<counter id="last_oper_date" name="Последняя операция" type="time" format="dd.MM.yyyy HH:mm"/>
+		<counter id="last_oper_desc" name="Тип посл. операции" type="text"/>
+		<counter id="last_oper_sum" name="Сумма посл. операции" units=" ₽"/>
+		<counter id="last_oper_bonuses" name="Бонусы посл. операции" units=" Б"/>
+		<counter id="last_oper_experience" name="Жетоны посл. операции" units=" Ж"/>
+		<counter id="notifications" name="Уведомления" units=" шт"/>
 		<counter id="region" name="Регион" type="text"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>

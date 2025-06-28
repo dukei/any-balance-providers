@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="4.0" version="253">ab-megafon</id>
+	<id major_version="4.0" version="254">ab-megafon</id>
 	<api flags="no_browser"/>
 	<name>МегаФон</name>
 	<description html="true"><![CDATA[
@@ -79,6 +79,7 @@
 		<counter id="handygift_total" name="Нужный подарок - всего (Поволжье)" units=" ₽"/>
 		<counter id="available" name="Доступно" units=" ₽"/>
 		<counter id="credit" name="Кредитный лимит" units=" ₽"/>
+		<counter id="cashback" name="Кешбэк" units=" ₽"/>
 		<counter id="sub_scl" name="Начислено за услуги" units=" ₽"/>
 		<counter id="sub_soi" name="Начислено за звонки" units=" ₽"/>
 		<counter id="sub_scr" name="Начислено за роуминг" units=" ₽"/>

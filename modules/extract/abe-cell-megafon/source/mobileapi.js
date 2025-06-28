@@ -192,13 +192,14 @@ function megafonLkAPIDo(options, result) {
         getParam(prefs.login, result, 'phone', null, replaceNumber);
     }
      
-    if (AnyBalance.isAvailable('balance', 'credit', 'available')) {
+    if (AnyBalance.isAvailable('balance', 'credit', 'available', 'cashback')) {
         try{
 		    json = callAPI('get', 'api/main/balance');
             const limit = (json.balanceWithLimit || json.limit || 0);
             getParam(limit + '', result, 'available', null, replaceTagsAndSpaces, parseBalance);
             getParam(json.balance + '', result, 'balance', null, replaceTagsAndSpaces, parseBalance);
             getParam((limit - json.balance) + '', result, 'credit', null, replaceTagsAndSpaces, parseBalance);
+			getParam(json.cashback + '', result, 'cashback', null, replaceTagsAndSpaces, parseBalance);
 		}catch(e){
     	    AnyBalance.trace('Ошибка получения информации о балансе: ' + e.message);
         }

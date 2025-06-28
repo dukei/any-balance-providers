@@ -50,6 +50,7 @@ var g_countersTable = {
 		"sms_total": "remainders.sms_total",
 		"mms_total": "remainders.mms_total",
 		"credit": "credit",
+		"cashback": "cashback",
 		"sub_scl": "sub_scl",
 		"sub_smit": "sub_smit",
 		"month_refill": "month_refill",

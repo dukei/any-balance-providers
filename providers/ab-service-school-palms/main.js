@@ -12,7 +12,7 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'
 };
 
-var baseurl = 'https://pitanie.uecard.ru/';
+var g_baseurl = 'https://pitanie.uecard.ru/';
 var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4'];
 var g_savedData;
 
@@ -30,7 +30,7 @@ function main() {
 
 	g_savedData.restoreCookies();
 	
-	var html = AnyBalance.requestGet(baseurl + 'cabinet/', g_headers);
+	var html = AnyBalance.requestGet(g_baseurl + 'cabinet/', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);
@@ -41,11 +41,11 @@ function main() {
 		AnyBalance.trace('Сессия новая. Будем логиниться заново...');
         clearAllCookies();
 	
-	    var html = AnyBalance.requestGet(baseurl + 'cabinet/', g_headers);
+	    var html = AnyBalance.requestGet(g_baseurl + 'cabinet/', g_headers);
 	
-	    html = AnyBalance.requestGet(baseurl + 'user/login/', g_headers);
+	    html = AnyBalance.requestGet(g_baseurl + 'user/login/', g_headers);
 		
-		var form = getElement(html, /<form[^>]+id="login"[^>]*>/i);
+		var form = getElement(html, /<form[^>]+login[^>]*>/i);
         if(!form){
         	AnyBalance.trace(form);
         	throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
@@ -61,10 +61,10 @@ function main() {
 	    	return value;
 	    });
 		
-		html = AnyBalance.requestPost(baseurl + 'user/login/', params, addHeaders({'Content-Type': 'application/x-www-form-urlencoded', 'Referer': AnyBalance.getLastUrl()}));
+		html = AnyBalance.requestPost(g_baseurl + 'user/login/', params, addHeaders({'Content-Type': 'application/x-www-form-urlencoded', 'Referer': AnyBalance.getLastUrl()}));
 		
 		if(!/logout/.test(html)){
-		    var error = getElement(html, /<div[^>]+box-warning[^>]*>/i, replaceTagsAndSpaces);
+		    var error = getElement(html, /<div[^>]+alert[^>]*>/i, replaceTagsAndSpaces);
 		    if(error)
 			    throw new AnyBalance.Error(error, null, /логин|парол/i.test(error));
 
@@ -72,7 +72,7 @@ function main() {
 		    throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
 	    }
 		
-		html = AnyBalance.requestGet(baseurl + 'cabinet/', g_headers);
+		html = AnyBalance.requestGet(g_baseurl + 'cabinet/', g_headers);
 		
 		g_savedData.setCookies();
 	    g_savedData.save();
@@ -87,16 +87,16 @@ function main() {
 	var monthes = {0: 'Январь', 1: 'Февраль', 2: 'Март', 3: 'Апрель', 4: 'Май', 5: 'Июнь', 6: 'Июль', 7: 'Август', 8: 'Сентябрь', 9: 'Октябрь', 10: 'Ноябрь', 11: 'Декабрь'}
 	getParam(monthes[dt.getMonth()] + ' ' + dt.getFullYear(), result, 'period');
 	
-	getParam(html, result, 'balance', /основной счет:[\s\S]*?<td>([\s\S]*?)<\/td>/, replaceTagsAndSpaces,parseBalance);
-	getParam(html, result, 'blocked', /заблокировано:[\s\S]*?<td>([\s\S]*?)<\/td>/, replaceTagsAndSpaces,parseBalance);
-	getParam(html, result, '__tariff', /<td>Баланс счета([\s\S]*?):?<\/td>/, replaceTagsAndSpaces);
-	getParam(html, result, 'account', /<td>Баланс счета([\s\S]*?):?<\/td>/, replaceTagsAndSpaces);
-	getParam(html, result, 'account_desc', /<span[^>]+class="about__text(?:[\s\S]*?<td[^>]*>){2}([\s\S]*?)<\/td>/, replaceTagsAndSpaces);
-	getParam(html, result, 'account_school', /<span[^>]+class="about__text(?:[\s\S]*?<td[^>]*>){1}([\s\S]*?)<\/td>/, replaceTagsAndSpaces);
-	getParam(html, result, 'fio', /Мой профиль:[\s\S]*?<a[^>]*>([\s\S]*?)<\/a>/, replaceTagsAndSpaces);
+	getParam(html, result, 'balance', /Основной счет:[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'blocked', /Заблокировано:[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, '__tariff', /<div[^>]+class="kk1-container-child-card-flex-name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'account', /<div[^>]+class="kk1-container-child-card-flex-name"[^>]*>(?:[\s\S]*?<label[^>]*>){2}([\s\S]*?)<\/label>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'account_desc', /<div[^>]+class="kk1-container-child-card-flex-name"[^>]*>(?:[\s\S]*?<label[^>]*>){1}([\s\S]*?)<\/label>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'account_school', /<div[^>]+class="kk1-container-child-card-content-address"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(html, result, 'fio', /<a[^>]+class="kk1-a-link kk1-black" href="\/user\/profile"[^>]*>([\s\S]*?)<\/a>/i, replaceTagsAndSpaces);
 	
 	if(AnyBalance.isAvailable('last_oper_date', 'last_oper_sum', 'last_oper_type')) {
-	    var hist = getElement(html, /<div[^>]+class="form\s*?history[^>]*>/i);
+	    var hist = getElement(html, /<form[^>]+id="transactions-form"[^>]*>/i);
 	    
 	    var items = getElements(hist, /<div[^>]+class="history__item[^>]*>/ig);
 	    
@@ -135,6 +135,9 @@ function main() {
 	    	AnyBalance.trace('Не удалось получить список заказов');
 	    }
 	}
+	
+	getParam(html, result, 'total_refill', /Всего пополнено:[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'total_expenses', /Всего потрачено:[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
     
 	AnyBalance.setResult(result);
 }

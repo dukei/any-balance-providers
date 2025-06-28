@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-service-school-palms</id>
+	<id version="2">ab-service-school-palms</id>
 	<api flags="no_browser"/>
 	<name>Школьное питание (Ладошки)</name>
 	<description html="true"><![CDATA[
@@ -36,6 +36,8 @@
 		<counter id="last_order_date" name="Дата посл. заказа" type="time" format="dd.MM.yyyy"/>
 		<counter id="last_order_sum" name="Сумма посл. заказа" units=" ₽"/>
 		<counter id="last_order_type" name="Тип посл. заказа" type="text"/>
+		<counter id="total_refill" name="Общая сумма пополнений" units=" ₽"/>
+		<counter id="total_expenses" name="Общая сумма расходов" units=" ₽"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords>Система, БУП, ладошки, питание, образование, школа</keywords>

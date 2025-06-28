@@ -8,7 +8,7 @@ var g_headers = {
 	'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
 	'Upgrade-Insecure-Requests': '1',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36'
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
 };
 
 var baseurl = 'https://www.reg.ru';
@@ -25,8 +25,8 @@ function main(){
 	var accToken = AnyBalance.getData(prefs.login + 'accToken');
     if(csrfToken){
     	AnyBalance.trace('Токен авторизации сохранен. Пробуем обновить...');
-    	g_headers['content-type'] = 'application/json';
-    	g_headers['x-csrf-token'] = csrfToken;
+    	g_headers['Content-Type'] = 'application/json';
+    	g_headers['X-Csrf-Token'] = csrfToken;
     	AnyBalance.restoreCookies();
     	try{
     		var html = AnyBalance.requestPost('https://login.reg.ru/refresh', null, addHeaders({
@@ -48,10 +48,10 @@ function main(){
 				AnyBalance.trace('Токен авторизации успешно обновлен')
 				html = AnyBalance.requestGet('https://gql-acc.svc.reg.ru/account/issue_csrf_token', g_headers);
 	            AnyBalance.trace(JSON.stringify(AnyBalance.getCookies()));
-				g_headers['x-csrf-token'] = AnyBalance.getCookie('csrftoken');
-	            g_headers['x-acc-csrftoken'] = AnyBalance.getCookie('acc-csrftoken');
-                AnyBalance.setData(prefs.login + 'csrfToken', g_headers['x-csrf-token']);
-	            AnyBalance.setData(prefs.login + 'accToken', g_headers['x-acc-csrftoken']);
+				g_headers['X-Csrf-Token'] = AnyBalance.getCookie('csrftoken');
+	            g_headers['X-Acc-Csrftoken'] = AnyBalance.getCookie('acc-csrftoken');
+                AnyBalance.setData(prefs.login + 'csrfToken', g_headers['X-Csrf-Token']);
+	            AnyBalance.setData(prefs.login + 'accToken', g_headers['X-Acc-Csrftoken']);
 				AnyBalance.saveCookies();
                 AnyBalance.saveData();
 				csrfToken = AnyBalance.getData(prefs.login + 'csrfToken');
@@ -66,61 +66,100 @@ function main(){
     if(!csrfToken || !accToken){
     	AnyBalance.trace('Сессия новая. Будем логиниться заново...');
     	clearAllCookies();
-    	g_headers['content-type'] = 'application/x-www-form-urlencoded';
+    	g_headers['Content-Type'] = 'application/x-www-form-urlencoded';
     	loginSite(prefs);
     }
 
     var result = {success: true};
 	
 	if(AnyBalance.isAvailable('balance', 'currency_rate', '__tariff', 'contract', 'contract_date', 'code', 'user', 'company', 'not_paid_bills_amount', 'not_paid_bills_count', 'next_pay_date')){
-	    html = AnyBalance.requestPost('https://gql-acc.svc.reg.ru/v1', JSON.stringify({
+	    html = AnyBalance.requestPost('https://gql-acc.svc.reg.ru/', JSON.stringify({
             "operationName": "user",
             "variables": {},
             "query": "query user {\n  user {\n    login\n    balance\n    contractNumber\n    contractDate\n    resellerContractNumber\n    resellerContractDate\n    regDate\n    lastLogin\n    ownerType\n    phone\n    pricegroup\n    plan\n    planDate\n    phone\n    isPhoneConfirmed\n    userAgent\n    lastLoginTime\n    lastIP\n    currentIP\n    email\n    isEmailConfirmed\n    isEmailRejected\n    isBaseContactsFilled\n    isOrg\n    isEntrepreneur\n    firstName\n    lastName\n    company\n    initials\n    settings_require_attention_count\n    isHaveBankCard: isHaveCc\n    docs_for_paperless_operations {\n      doc_id\n      activation_date\n      receive_date\n      start_date\n      end_date\n      external_doc_id\n      __typename\n    }\n    notPaidBills {\n      count\n      amount\n      __typename\n    }\n    security {\n      restrict_login_ip {\n        id\n        range\n        __typename\n      }\n      ip_filter_reset_enabled\n      bind_session_to_ip\n      __typename\n    }\n    agreements {\n      type_title\n      title\n      number\n      date\n      link\n      is_downloadable\n      __typename\n    }\n    is_rdh\n    isTest\n    referral_promocode\n    is_budget\n    domainsTurnover\n    currencyRate\n    isMonitorEnabled\n    monitorNextDate\n    host\n    isConnectedEdo: electronic_doc_management\n    isResident: is_resident\n    referralAttentionCount: referral_notices_count\n    __typename\n  }\n}\n"
         }), g_headers);
         
-        var userData = getJson(html).data;
-		getParam(userData.user.balance, result, 'balance', null, null, parseBalance);
+        var json = getJson(html);
+		var userData = json.data;
 		
-        getParam((userData.user.currencyRate).toFixed(2), result, 'currency_rate', null, null, parseBalance);
-        getParam(userData.user.plan, result, '__tariff');
-        getParam(userData.user.contractNumber, result, 'contract');
-	    getParam(userData.user.contractDate, result, 'contract_date', null, null, parseDate);
-        getParam(userData.user.referral_promocode, result, 'code');
-		getParam(userData.user.phone.replace(/.*(\d{3})(\d{3})(\d{2})(\d{2})$/i, '+7 $1 $2-$3-$4'), result, 'phone');
-        getParam(userData.user.firstName + ' ' + userData.user.lastName, result, 'user');
-	    getParam(userData.user.company, result, 'company');
-        getParam(userData.user.notPaidBills.amount, result, 'not_paid_bills_amount', null, null, parseBalance);
-	    getParam(userData.user.notPaidBills.count, result, 'not_paid_bills_count', null, null, parseBalance);
-		getParam(userData.user.monitorNextDate, result, 'next_pay_date', null, null, parseDate);	
-	}	
+		if(userData){
+		    getParam(userData.user.balance, result, 'balance', null, null, parseBalance);
+		    
+            getParam((userData.user.currencyRate).toFixed(2), result, 'currency_rate', null, null, parseBalance);
+            getParam(userData.user.plan, result, '__tariff');
+            getParam(userData.user.contractNumber, result, 'contract');
+	        getParam(userData.user.contractDate, result, 'contract_date', null, null, parseDate);
+            getParam(userData.user.referral_promocode, result, 'code');
+		    getParam(userData.user.phone.replace(/.*(\d{3})(\d{3})(\d{2})(\d{2})$/i, '+7 $1 $2-$3-$4'), result, 'phone');
+            getParam(userData.user.firstName + ' ' + userData.user.lastName, result, 'user');
+	        getParam(userData.user.company, result, 'company');
+            getParam(userData.user.notPaidBills.amount, result, 'not_paid_bills_amount', null, null, parseBalance);
+	        getParam(userData.user.notPaidBills.count, result, 'not_paid_bills_count', null, null, parseBalance);
+		    getParam(userData.user.monitorNextDate, result, 'next_pay_date', null, null, parseDate);
+        }else{
+		    AnyBalance.trace('Не удалось получить данные об аккаунте');
+		}		
+	}
 	
-	if(AnyBalance.isAvailable('debet', 'credit', 'credit_days')){
-	    html = AnyBalance.requestPost('https://gql-acc.svc.reg.ru/v1', JSON.stringify({
-            "operationName": "userBalanceInit",
+	if(AnyBalance.isAvailable('bonuses', 'expected', 'referals')){
+	    html = AnyBalance.requestPost('https://gql-acc.svc.reg.ru/', JSON.stringify({
+            "operationName": "referralInit",
             "variables": {},
-            "query": "query userBalanceInit {\n  userBalanceInit {\n    account_turnover\n    blocked_sum\n    blocked_sum_rub\n    creditlimit\n    creditlimit_rub\n    days_left_for_credit\n    has_autorefill\n    bindings {\n      binding_id\n      user_id\n      state\n      currency\n      enable_autorefill\n      enable_autorenew\n      expiration\n      insert_time\n      notified_about_fail\n      pay_type\n      priority\n      settings {\n        name_id\n        limit\n        is_card\n        __typename\n      }\n      __typename\n    }\n    binding_methods {\n      yamoney {\n        binding_url\n        client_id\n        text\n        redirect_uri\n        response_type\n        scope\n        __typename\n      }\n      __typename\n    }\n    pre_sum\n    pre_sum_rub\n    unpaid_bills_sum\n    user_credit\n    user_is_private_person\n    autorefill_settings {\n      amount\n      threshold\n      default_amount\n      default_threshold\n      max_amount\n      __typename\n    }\n    allowedBindingTypes\n    __typename\n  }\n}\n"
+            "query": "query referralInit {\n  getReferral {\n    bonuses {\n      added\n      expected\n      __typename\n    }\n    servicesCount: services_count\n    promocodes {\n      type\n      promocode\n      count\n      __typename\n    }\n    links {\n      id\n      title\n      href\n      transitionsCount: transitions_count\n      __typename\n    }\n    sites {\n      id\n      title\n      status\n      dname\n      createdDate: created_date\n      transitionsCount: transitions_count\n      reasonOfReject: reason_of_reject\n      __typename\n    }\n    __typename\n  }\n}\n"
         }), g_headers);
 	    
-	    var balanceInit = getJson(html).data.userBalanceInit;
-	    getParam(balanceInit.account_turnover, result, 'debet', null, null, parseBalance);
-        getParam(balanceInit.creditlimit_rub, result, 'credit', null, null, parseBalance);
-	    getParam(balanceInit.days_left_for_credit, result, 'credit_days', null, null, parseBalance);
-	}	
+	    var json = getJson(html);
+		var referralInit = json.data && json.data.getReferral;
+		
+		if(referralInit){
+		    if(referralInit.bonuses){
+			    getParam(referralInit.bonuses.added, result, 'bonuses', null, null, parseBalance);
+                getParam(referralInit.bonuses.expected, result, 'expected', null, null, parseBalance);
+			}
+	        getParam(referralInit.servicesCount, result, 'referals', null, null, parseBalance);
+		}else{
+		    AnyBalance.trace('Не удалось получить данные о бонусах');
+		}
+	}
+	
+	if(AnyBalance.isAvailable('debet', 'credit', 'credit_days')){
+	    html = AnyBalance.requestPost('https://gql-acc.svc.reg.ru/', JSON.stringify({
+            "operationName": "userBalanceInit",
+            "variables": {},
+            "query": "query userBalanceInit {\n  userBalanceInit {\n    account_turnover\n    blocked_sum\n    blocked_sum_rub\n    creditlimit\n    creditlimit_rub\n    days_left_for_credit\n    has_autorefill\n    bindings {\n      binding_id\n      user_id\n      state\n      currency\n      enable_autorefill\n      enable_autorenew\n      expiration\n      insert_time\n      notified_about_fail\n      pay_type\n      priority\n      settings {\n        name_id\n        limit\n        __typename\n      }\n      __typename\n    }\n    binding_methods {\n      yamoney {\n        binding_url\n        client_id\n        text\n        redirect_uri\n        response_type\n        scope\n        __typename\n      }\n      __typename\n    }\n    pre_sum\n    pre_sum_rub\n    unpaid_bills_sum\n    user_credit\n    user_is_private_person\n    autorefill_settings {\n      amount\n      threshold\n      default_amount\n      default_threshold\n      max_amount\n      __typename\n    }\n    allowedBindingTypes\n    __typename\n  }\n}\n"
+        }), g_headers);
+	    
+	    var json = getJson(html);
+		var balanceInit = json.data && json.data.userBalanceInit;
+		
+		if(balanceInit){
+	        getParam(balanceInit.account_turnover, result, 'debet', null, null, parseBalance);
+            getParam(balanceInit.creditlimit_rub, result, 'credit', null, null, parseBalance);
+	        getParam(balanceInit.days_left_for_credit, result, 'credit_days', null, null, parseBalance);
+		}else{
+		    AnyBalance.trace('Не удалось получить данные о балансах');
+		}
+	}
 	
 	if(AnyBalance.isAvailable('messages')){
-	    html = AnyBalance.requestPost('https://gql-acc.svc.reg.ru/v1', JSON.stringify({
+	    html = AnyBalance.requestPost('https://gql-acc.svc.reg.ru/', JSON.stringify({
             "operationName": "getUnreadMessagesCount",
             "variables": {},
             "query": "query getUnreadMessagesCount {\n  unreadMessagesCount: getUnreadMessagesCount\n}\n"
         }), g_headers);
 	    
-	    var messages = getJson(html).data;
-        getParam(messages.unreadMessagesCount, result, 'messages', null, null, parseBalance);
-	}	
+	    var json = getJson(html);
+		var messages = json.data;
+		
+		if(messages){
+            getParam(messages.unreadMessagesCount, result, 'messages', null, null, parseBalance);
+		}else{
+		    AnyBalance.trace('Не удалось получить данные о сообщениях');
+		}
+	}
 
     if(AnyBalance.isAvailable('domain', 'domain_date', 'domain_days', 'domain2', 'domain2_date', 'domain2_days', 'domain3', 'domain3_date', 'domain3_days', 'domain4', 'domain4_date', 'domain4_days', 'domain5', 'domain5_date', 'domain5_days', 'service', 'service_date', 'service_days', 'service2', 'service2_date', 'service2_days', 'service3', 'service3_date', 'service3_days', 'service4', 'service4_date', 'service4_days', 'service5', 'service5_date', 'service5_days', 'service6', 'service6_date', 'service6_days', 'service7', 'service7_date', 'service7_days', 'service8', 'service8_date', 'service8_days', 'service9', 'service9_date', 'service9_days', 'service10', 'service10_date', 'service10_days')){
-        html = AnyBalance.requestPost('https://gql-acc.svc.reg.ru/v1', JSON.stringify({
+        html = AnyBalance.requestPost('https://gql-acc.svc.reg.ru/', JSON.stringify({
             "operationName": "services",
             "variables": {
                 "sort": "created",
@@ -129,44 +168,76 @@ function main(){
                 "limit": 25,
                 "filter": []
             },
-            "query": "query services($offset: Int!, $limit: Int!, $folderId: Int, $filter: [FilterInputItem], $sort: String, $sortOrder: String) {\n  services(\n    offset: $offset\n    limit: $limit\n    folderId: $folderId\n    filter: $filter\n    sort: $sort\n    sortOrder: $sortOrder\n  ) {\n    hasMore\n    totalCount\n    items {\n      ...BaseServicesItem\n      upgradeFromServiceId: upgrade_from_service_id\n      ...ServiceAdditionalStates\n      ...ServiceAdditionalInfo\n      ...ServiceAutorenew\n      ...ServiceLoginPartcontrol\n      ...SslCertificate\n      ...PanelLoginHash\n      ...Hosting\n      ...LinkedDomains\n      ...Nss\n      ...OtherFields\n      ...BackupItem\n      ...Domain\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment BaseServicesItem on Service {\n  dname\n  service_id\n  user_id\n  servtype\n  subtype\n  servgroup\n  state\n  expiration_date\n  creation_date\n  service_title\n  is_dateless\n  is_configured\n  comment\n  folders_count\n  accountState: account_state\n  stateMessage: state_message\n  owner {\n    name\n    email\n    __typename\n  }\n  lot {\n    id: lot_id\n    __typename\n  }\n  recommendedServices: recommended_services {\n    servtype\n    serviceId: service_id\n    isEnable: is_enable\n    isActive: is_active\n    ... on PrivatePersonRecommendedService {\n      isAlwaysHidden: is_always_hidden\n      isInTariff: is_in_tariff\n      __typename\n    }\n    ... on AntiddosRecommendedService {\n      plan\n      __typename\n    }\n    __typename\n  }\n  ...ServiceAutorenew\n  __typename\n}\n\nfragment ServiceAutorenew on Service {\n  autorenew {\n    enabled\n    have_partcontrol\n    is_in_partcontrol_for_auth_user\n    on\n    next_autorenew_date\n    __typename\n  }\n  __typename\n}\n\nfragment ServiceAdditionalStates on Service {\n  additionalStates: additional_states {\n    is_active\n    is_changing_account\n    is_email_not_verified\n    is_docs_not_verified\n    is_in_partcontrol\n    is_send_to_partcontrol\n    renewal_status\n    issueStatus: issue_status\n    renewal_warning_status\n    is_trusted_prolong\n    isSiteConfigured: is_site_configured\n    transfer {\n      status\n      date\n      email\n      __typename\n    }\n    __typename\n  }\n  __typename\n}\n\nfragment ServiceAdditionalInfo on Service {\n  additionalInfo: additional_info {\n    blocked_reason\n    renew_grace_period_before_expdate\n    renew_trusted_prolong_bill {\n      bill_amount\n      bill_date\n      bill_sid\n      bill_id\n      bill_overdue_date\n      __typename\n    }\n    __typename\n  }\n  __typename\n}\n\nfragment ServiceLoginPartcontrol on Service {\n  loginPartcontrol: login_partcontrol {\n    whom\n    who\n    __typename\n  }\n  __typename\n}\n\nfragment SslCertificate on Service {\n  ssl_certificate {\n    is_can_renew\n    __typename\n  }\n  __typename\n}\n\nfragment PanelLoginHash on Service {\n  panel_login_hash {\n    uri\n    params\n    __typename\n  }\n  __typename\n}\n\nfragment Hosting on Service {\n  hosting {\n    login\n    __typename\n  }\n  __typename\n}\n\nfragment LinkedDomains on Service {\n  linked_domains {\n    service_id\n    service_title\n    __typename\n  }\n  __typename\n}\n\nfragment Nss on Service {\n  nss {\n    ns\n    __typename\n  }\n  __typename\n}\n\nfragment OtherFields on Service {\n  rswordpress {\n    login\n    access_info {\n      cmses {\n        uri: url\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n  rsjoomla {\n    login\n    access_info {\n      cmses {\n        uri: url\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n  seowizard {\n    balance\n    __typename\n  }\n  jelastic {\n    balance\n    __typename\n  }\n  __typename\n}\n\nfragment BackupItem on Service {\n  backup_item {\n    link\n    last_date\n    __typename\n  }\n  __typename\n}\n\nfragment Domain on Service {\n  domain {\n    isRusurfDomain: is_rusurf_domain\n    __typename\n  }\n  __typename\n}\n"
+            "query": "query services($offset: Int!, $limit: Int!, $folderId: Int, $filter: [FilterInputItem], $sort: String, $sortOrder: String) {\n  services(\n    offset: $offset\n    limit: $limit\n    folderId: $folderId\n    filter: $filter\n    sort: $sort\n    sortOrder: $sortOrder\n  ) {\n    hasMore\n    totalCount\n    items {\n      ...BaseServicesItem\n      upgradeFromServiceId: upgrade_from_service_id\n      ...ServiceAdditionalStates\n      ...ServiceAdditionalInfo\n      ...ServiceAutorenew\n      ...ServiceLoginPartcontrol\n      ...SslCertificate\n      ...PanelLoginHash\n      ...Hosting\n      ...LinkedDomains\n      ...Nss\n      ...OtherFields\n      ...BackupItem\n      ...Domain\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment BaseServicesItem on Service {\n  dname\n  service_id\n  user_id\n  servtype\n  subtype\n  servgroup\n  state\n  expiration_date\n  creation_date\n  service_title\n  is_dateless\n  is_configured\n  comment\n  folders_count\n  accountState: account_state\n  stateMessage: state_message\n  owner {\n    name\n    email\n    __typename\n  }\n  lot {\n    id: lot_id\n    __typename\n  }\n  recommendedServices: recommended_services {\n    servtype\n    serviceId: service_id\n    isEnable: is_enable\n    isActive: is_active\n    ... on PrivatePersonRecommendedService {\n      isAlwaysHidden: is_always_hidden\n      isInTariff: is_in_tariff\n      __typename\n    }\n    ... on AntiddosRecommendedService {\n      plan\n      __typename\n    }\n    __typename\n  }\n  ...ServiceAutorenew\n  __typename\n}\n\nfragment ServiceAutorenew on Service {\n  autorenew {\n    enabled\n    have_partcontrol\n    is_in_partcontrol_for_auth_user\n    on\n    next_autorenew_date\n    __typename\n  }\n  __typename\n}\n\nfragment ServiceAdditionalStates on Service {\n  additionalStates: additional_states {\n    is_active\n    is_changing_account\n    is_email_not_verified\n    is_docs_not_verified\n    is_in_partcontrol\n    is_send_to_partcontrol\n    renewal_status\n    issueStatus: issue_status\n    renewal_warning_status\n    isSiteConfigured: is_site_configured\n    isPaidUpdateNssTld: is_paid_update_nss_tld\n    transfer {\n      status\n      date\n      email\n      __typename\n    }\n    __typename\n  }\n  __typename\n}\n\nfragment ServiceAdditionalInfo on Service {\n  additionalInfo: additional_info {\n    blocked_reason\n    renew_grace_period_before_expdate\n    renew_trusted_prolong_bill {\n      bill_amount\n      bill_date\n      bill_sid\n      bill_id\n      bill_overdue_date\n      __typename\n    }\n    __typename\n  }\n  __typename\n}\n\nfragment ServiceLoginPartcontrol on Service {\n  loginPartcontrol: login_partcontrol {\n    whom\n    who\n    __typename\n  }\n  __typename\n}\n\nfragment SslCertificate on Service {\n  ssl_certificate {\n    is_can_renew\n    __typename\n  }\n  __typename\n}\n\nfragment PanelLoginHash on Service {\n  panel_login_hash {\n    uri\n    params\n    __typename\n  }\n  __typename\n}\n\nfragment Hosting on Service {\n  hosting {\n    login\n    __typename\n  }\n  __typename\n}\n\nfragment LinkedDomains on Service {\n  linked_domains {\n    service_id\n    service_title\n    __typename\n  }\n  __typename\n}\n\nfragment Nss on Service {\n  nss {\n    ns\n    __typename\n  }\n  __typename\n}\n\nfragment OtherFields on Service {\n  rswordpress {\n    login\n    access_info {\n      cmses {\n        uri: url\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n  rsjoomla {\n    login\n    access_info {\n      cmses {\n        uri: url\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n  seowizard {\n    balance\n    __typename\n  }\n  jelastic {\n    balance\n    __typename\n  }\n  __typename\n}\n\nfragment BackupItem on Service {\n  backup_item {\n    link\n    last_date\n    __typename\n  }\n  __typename\n}\n\nfragment Domain on Service {\n  domain {\n    isRusurfDomain: is_rusurf_domain\n    __typename\n  }\n  __typename\n}\n"
         }), g_headers);
 	    
-        var services = getJson(html).data.services.items;
+        var json = getJson(html);
+		var services = json.data && json.data.services && json.data.services.items;
     	var serviceCounterNumber = 0;
     	var domainCounterNumber = 0;
-    	for(var i=0; i<services.length; i++){
-    		if(services[i].servtype == 'domain' && domainCounterNumber <= 5){
-				var countername = (domainCounterNumber >= 1 ? 'domain' + (domainCounterNumber + 1) : 'domain');
-				var tracename = 'домена';
-    			domainCounterNumber += 1;
-    		}else{
-				var countername = (serviceCounterNumber >= 1 ? 'service' + (serviceCounterNumber + 1) : 'service');
-				var tracename = 'услуги';
-                serviceCounterNumber += 1;
-    		}
-    		var title = getParam(services[i].service_title, result, countername);
-    		var date = getParam(services[i].expiration_date, null, null, null, null, parseDate);
-			if(date){
-			    result[countername + '_date'] = date;
-				if (AnyBalance.isAvailable('domain_days', 'domain2_days', 'domain3_days', 'domain4_days', 'domain5_days', 'service_days', 'service2_days', 'service3_days', 'service4_days', 'service5_days', 'service6_days', 'service7_days', 'service8_days', 'service9_days', 'service10_days')) {
-			        var days = Math.ceil((date - (new Date().getTime())) / 86400 / 1000);
-			        if(days >= 0){
-			            result[countername + '_days'] = days;
-			        }else{
-			            AnyBalance.trace('Дата окончания ' + tracename + ' ' + title + ' уже наступила');
-			        	result[countername + '_days'] = 0;
-			        }
-				}	
-		    }else{
- 		    	AnyBalance.trace('Не удалось получить дату окончания ' + tracename + ' ' + title);
- 		    }
-    	}
+    	
+		if(services && services.length > 0){
+			AnyBalance.trace('Найдено услуг: ' + services.length);
+    	    for(var i=0; i<services.length; i++){
+    		    if(services[i].servtype == 'domain' && domainCounterNumber <= 5){
+				    var countername = (domainCounterNumber >= 1 ? 'domain' + (domainCounterNumber + 1) : 'domain');
+				    var tracename = 'домена';
+    			    domainCounterNumber += 1;
+    		    }else{
+				    var countername = (serviceCounterNumber >= 1 ? 'service' + (serviceCounterNumber + 1) : 'service');
+				    var tracename = 'услуги';
+                    serviceCounterNumber += 1;
+    		    }
+    		    var title = getParam(services[i].service_title, result, countername);
+    		    var date = getParam(services[i].expiration_date, null, null, null, null, parseDate);
+			    if(date){
+			        result[countername + '_date'] = date;
+				    if (AnyBalance.isAvailable('domain_days', 'domain2_days', 'domain3_days', 'domain4_days', 'domain5_days', 'service_days', 'service2_days', 'service3_days', 'service4_days', 'service5_days', 'service6_days', 'service7_days', 'service8_days', 'service9_days', 'service10_days')) {
+			            var days = Math.ceil((date - (new Date().getTime())) / 86400 / 1000);
+			            if(days >= 0){
+			                result[countername + '_days'] = days;
+			            }else{
+			                AnyBalance.trace('Дата окончания ' + tracename + ' ' + title + ' уже наступила');
+			        	    result[countername + '_days'] = 0;
+			            }
+				    }	
+		        }else{
+ 		    	    AnyBalance.trace('Не удалось получить дату окончания ' + tracename + ' ' + title);
+ 		        }
+    	    }
+		}else{
+		    AnyBalance.trace('Не удалось получить данные об услугах');
+		}
+	}
+	
+	if(AnyBalance.isAvailable('last_oper_desc', 'last_oper_date', 'last_oper_sum')){
+		html = AnyBalance.requestPost('https://gql-acc.svc.reg.ru/', JSON.stringify({
+            "operationName": "userBalanceHistory",
+            "variables": {},
+            "query": "query userBalanceHistory {\n  userBalanceHistory {\n    items {\n      billid\n      transid\n      amount\n      action\n      amount\n      balance_a\n      bill_title\n      comment\n      extra_data\n      opdate\n      opdate_formatted\n      optype\n      payed_service_id\n      payout_order_id\n      pos_id\n      service_id\n      sort_priority\n      final_title\n      __typename\n    }\n    __typename\n  }\n}\n"
+        }), g_headers);
+	    
+        var json = getJson(html);
+		var items = json.data && json.data.userBalanceHistory && json.data.userBalanceHistory.items;
+		
+		if(items && items.length > 0){
+		    AnyBalance.trace('Найдено операций: ' + items.length);
+		    for(var i=0; i<items.length; i++) {
+                var item = items[i];
+                getParam(item.final_title, result, 'last_oper_desc', null, replaceTagsAndSpaces);
+				getParam(item.opdate_formatted, result, 'last_oper_date', null, null, parseDate);
+                getParam(item.amount, result, 'last_oper_sum', null, null, parseBalance);
+		        		
+		    	break;
+            }
+		}else{
+		    AnyBalance.trace('Не удалось получить данные по операциям');
+		}
 	}
 	
 	if(AnyBalance.isAvailable('expenses')){
-		delete g_headers['x-csrf-token'];
-		delete g_headers['x-acc-csrftoken'];
+		delete g_headers['X-Csrf-Token'];
+		delete g_headers['X-Acc-Csrftoken'];
 		var tries = 0;
 		do{
 	    	html = AnyBalance.requestGet('https://b2b.reg.ru/user/balance/get_next_month_expenses', g_headers);
@@ -195,12 +266,13 @@ function loginSite(prefs){
 	
 	html = AnyBalance.requestGet('https://login.reg.ru/authenticate', g_headers); // Надо, чтобы кука csrftoken установилась
 	
-	g_headers['x-csrf-token'] = AnyBalance.getCookie('csrftoken');
+	g_headers['X-Csrf-Token'] = AnyBalance.getCookie('csrftoken');
 	
     html = AnyBalance.requestPost('https://login.reg.ru/authenticate', JSON.stringify({
         'login': prefs.login,
         'password': prefs.password
     }), addHeaders({
+		'Content-Type': 'application/json',
         'Origin': baseurl,
         'Referer': baseurl + '/'
     }));
@@ -217,6 +289,7 @@ function loginSite(prefs){
 	        'password': prefs.password,
             'captcha_response': recaptcha
 	    }), addHeaders({
+			'Content-Type': 'application/json',
 	        'Origin': baseurl,
 	        'Referer': baseurl + '/'
 	    }));
@@ -250,11 +323,11 @@ function loginSite(prefs){
 
     html = AnyBalance.requestGet('https://gql-acc.svc.reg.ru/account/issue_csrf_token', g_headers);
 	AnyBalance.trace(JSON.stringify(AnyBalance.getCookies()));
-    g_headers['content-type'] = 'application/json';
-    g_headers['x-csrf-token'] = AnyBalance.getCookie('csrftoken');
-	g_headers['x-acc-csrftoken'] = AnyBalance.getCookie('acc-csrftoken');
-    AnyBalance.setData(prefs.login + 'csrfToken', g_headers['x-csrf-token']);
-	AnyBalance.setData(prefs.login + 'accToken', g_headers['x-acc-csrftoken']);
+    g_headers['Content-Type'] = 'application/json';
+    g_headers['X-Csrf-Token'] = AnyBalance.getCookie('csrftoken');
+	g_headers['X-Acc-Csrftoken'] = AnyBalance.getCookie('acc-csrftoken');
+    AnyBalance.setData(prefs.login + 'csrfToken', g_headers['X-Csrf-Token']);
+	AnyBalance.setData(prefs.login + 'accToken', g_headers['X-Acc-Csrftoken']);
     AnyBalance.saveCookies();
     AnyBalance.saveData();
 }

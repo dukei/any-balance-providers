@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-    <id version="2">ab-internet-flex</id>
+    <id version="3">ab-internet-flex</id>
     <name>Flex (Ногинск)</name>
 	<api flags="no_browser"/>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе и тарифных опциях для ногинского интернет-провайдера Flex. ООО "ФЛЕКС" осуществляет подключение клиентов к домовым сетям в населенных пунктах: Ногинск, Электросталь, Бахчиванджи, Электроугли, Орехово-Зуево, Ликино-Дулево, Давыдово, Демехово, Куровское, Селятино.</p>
-	<p>Информация берется с сервера статистики https://flex.ru/stats. Логин и пароль для доступа на сервер статистике прописаны в договоре на услуги интернет.</p>	
+	<p>Предоставляет информацию о балансе и состоянии счета для пользователей услуг интернет-провайдера <a href="https://flex.ru/">Flex</a> (Ногинск).</p>
+	<p>Информация берется из личного кабинета Flex на сайте https://lk.flex.ru/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет.</p>
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Flex.</p>
 	]]></instruction>
     <author>Dmitry Kochin &lt;dco@mail.ru&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>
     <files>
-        <icon>icon.png</icon>
+	    <icon>icon.png</icon>
         <preferences>preferences.xml</preferences>
         <js>main.js</js>
     </files>
@@ -28,11 +28,17 @@
 		<counter id="limit" name="Лимит трафика" units=" Mb"/>
 		<counter id="exceeding" name="Превышение лимита" units=" Mb"/>
 		<counter id="remains" name="Остаток трафика" units=" Mb"/>
-        <counter id="licschet" name="Код пользователя" type="text"/>
-		<counter id="ip_address" name="Привязка по IP адресу" type="text"/>
+        <counter id="licschet" name="Лицевой счет" type="text"/>
+		<counter id="ip_address" name="Статический IP адрес" type="text"/>
+		<counter id="last_pay_date" name="Дата посл. платежа" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_pay_sum" name="Сумма посл. платежа" units=" {@currency}"/>
+		<counter id="last_pay_desc" name="Описание посл. платежа" type="text"/>
+		<counter id="last_write_date" name="Дата посл. списания" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_write_sum" name="Сумма посл. списания" units=" {@currency}"/>
+		<counter id="last_write_desc" name="Описание посл. списания" type="text"/>
 		<counter id="username" name="Имя пользователя" type="text"/>
     </counters>
-    <keywords>интернет, флекс, flex</keywords>
+    <keywords>интернет, флекс, flex, ногинск</keywords>
     <type>internet</type>
     <country>ru</country>
 </provider>

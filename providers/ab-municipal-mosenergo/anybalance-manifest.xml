@@ -1,14 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="30">ab-municipal-mosenergo</id>
+	<id version="31">ab-municipal-mosenergo</id>
 	<name>Мосэнергосбыт</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе, последнем платеже и последних показаниях счетчиков для абонентов АО "Мосэнергосбыт" (https://www.mosenergosbyt.ru/).</p> 
 	<p>Информация берется из личного кабинета абонента АО "Мосэнергосбыт" на сайте https://my.mosenergosbyt.ru/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Если у вас привязано несколько счетов к одному аккаунту, то укажите номер нужного счета в настройках провайдера.</p>
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет абонента АО "Мосэнергосбыт".</p>
+	<p>Если к одному аккаунту привязано несколько счетов, укажите номер нужного счета в настройках провайдера.</p>
 	]]></instruction>	
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -22,14 +23,24 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="balance_insurance" name="Баланс со страховкой" units=" ₽"/>
+		<counter id="insurance" name="Сумма страховки" units=" ₽"/>
 		<counter id="agreement" name="Лицевой счет" type="text"/>
+		<counter id="lastcounterdate" name="Дата последних показаний" type="time" format="dd.MM.yyyy"/>
+		<counter id="lastcounter" name="Последние показания счетчика" units="{@units}"/>
+		<counter id="lastcounter1" name="Последние показания счетчика 2" units="{@units1}"/>
+		<counter id="lastcounter2" name="Последние показания счетчика 3" units="{@units2}"/>
+		<counter id="lastcounter3" name="Последние показания счетчика 4" units="{@units3}"/>
+		<counter id="lastcounter4" name="Последние показания счетчика 5" units="{@units4}"/>
 		<counter id="lastdate" name="Дата последнего платежа" type="time" format="dd.MM.yyyy"/>
-		<counter id="lastcounterdate" name="Дата последнего показания счетчика" type="time" format="dd.MM.yyyy"/>
-		<counter id="lastcounter" name="Последние показания счетчика"/>
-		<counter id="lastcounter1" name="Последние показания другого счетчика"/>
-		<counter id="lastcounter2" name="Последние показания третьего счетчика"/>
-		<counter id="lastsum" name="Последний платеж" units=" ₽"/>
-		<counter id="all" name="Список счетов" type="text"/>
+		<counter id="lastsum" name="Сумма последнего платежа" units=" ₽"/>
+		<counter id="lasttype" name="Тип последнего платежа" type="text"/>
+		<counter id="laststatus" name="Статус последнего платежа" type="text"/>
+<!--	<counter id="all" name="Список счетов" type="text"/> -->
+		<counter id="address" name="Адрес" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords>мосэнерго, москва, электричество</keywords>
 	<type>municipal</type>

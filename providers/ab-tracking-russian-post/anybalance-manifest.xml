@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="30">ab-tracking-russian-post</id>
+	<id version="31">ab-tracking-russian-post</id>
 	<api flags="no_browser|captcha"/>
 	<name>EMS Почты России</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о состоянии, дате и времени изменения, местонахождении и другую информацию для пользователей услуг доставки EMS Почты России (https://www.pochta.ru/).</p>
-	<p>Информация берется со страницы отслеживания отправлений на сайте https://www.pochta.ru/tracking.</p>
+	<p>Информация берется со страницы отслеживания отправлений на сайте <a href="https://www.pochta.ru/tracking">Почта России</a> или на сайте <a href="https://maintransport.ru/transportnye-kompanii/pochta-rossii/tracking">Main Transport</a>.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Для работы провайдера требуется ввести трек-номер отправления.</p>

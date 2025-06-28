@@ -3,11 +3,11 @@
 */
 
 var g_headers = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
 	'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.7,en;q=0.4',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'
 };
 
 function main() {
@@ -15,7 +15,27 @@ function main() {
 	
 	checkEmpty(prefs.code, 'Введите код отправления!');
 	
-	mainRussianPost();
+	if(!prefs.source)
+		prefs.source = 'auto';
+	
+	switch(prefs.source){
+    case 'rp':
+        mainRussianPost();
+        break;
+	case 'mt':
+        mainMainTransport();
+        break;
+    case 'auto':
+    default:
+        try{
+			mainRussianPost();
+        }catch(e){
+			AnyBalance.trace('Не удалось получить данные с сайта Почты России: ' + e.message);
+		    clearAllCookies();
+			mainMainTransport();
+        }
+        break;
+	}
 }
 
 function mainRussianPost() {
@@ -23,7 +43,7 @@ function mainRussianPost() {
 	
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	AnyBalance.trace('Connecting to russianpost...');
+	AnyBalance.trace('Пробуем получить данные с сайта Почты России...');
 	var baseurl = 'https://www.pochta.ru/';
 	
 	var info = AnyBalance.requestGet(baseurl + 'tracking', g_headers);
@@ -102,6 +122,77 @@ function mainRussianPost() {
 	    getParam('Почта России', result, ['operator', 'fulltext']);
 //	    getParam(item.Payment+'', result, 'addcost', null, replaceTagsAndSpaces, parseBalance);
 	    getParam(getFormattedDate(null, new Date(result.time)) + ': ' + result.operation + ',<br/>' + result.location + ',<br/>' + result.attribute + (result.addcost ? ', Н/п ' + result.addcost + ' ₽' : ''), result, 'fulltext');
+	}
+	
+	AnyBalance.setResult(result);
+}
+
+function mainMainTransport() {
+	var prefs = AnyBalance.getPreferences();
+	
+	AnyBalance.setDefaultCharset('utf-8');
+	
+	AnyBalance.trace('Пробуем получить данные с сайта Main Transport...');
+	var baseurl = 'https://maintransport.ru';
+	
+	var info = AnyBalance.requestGet(baseurl + '/transportnye-kompanii/pochta-rossii/tracking', g_headers);
+	
+	if(!info || AnyBalance.getLastStatusCode() >= 400){
+        AnyBalance.trace(info);
+        throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
+    }
+	
+	info = AnyBalance.requestPost('https://neva-service.spb.ru/pt.php', {
+		'track': prefs.code,
+        'dom': 'mt'
+	}, addHeaders({
+		'Content-Type': 'application/x-www-form-urlencoded',
+		'Origin': baseurl,
+		'Referer': baseurl + '/'
+	}));
+	
+	if(!/tracking-main-param/i.test(info)){
+		var error = getParam(info, null, null, /<div[^>]+common-postal-info[^>]*><h2[^>]*>([\s\S]*?)<\/h2><\/div>/i, replaceTagsAndSpaces);
+		if(error)
+			throw new AnyBalance.Error(error, null, /не найден/i.test(error));
+		AnyBalance.trace(info);
+		throw new AnyBalance.Error('Информация о почтовом отправлении не найдена! Проверьте правильность ввода трек-номера: ' + prefs.code);
+	}
+	
+	var result = {success: true};
+	
+	result.__tariff = prefs.code;
+	
+	getParam(info, result, 'operation', /Текущий статус[\s\S]*?<div[^>]+class[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(info, result, 'location', /Текущее местоположение[\s\S]*?<div[^>]+class[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(info, result, 'attribute', /Адрес назначения[\s\S]*?<div[^>]+class[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam('Почта России', result, 'operator', null, null);
+	getParam(info, result, 'type', /Вид почтового отправления[\s\S]*?<div[^>]+class[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(info, result, 'rank', /Разряд почтового отправления[\s\S]*?<div[^>]+class[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(info, result, 'weight', /Вес[\s\S]*?<div[^>]+class[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+    getParam(info, result, 'to', /Адрес назначения[\s\S]*?<div[^>]+class[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(info, result, 'sender', /Отправитель[\s\S]*?<div[^>]+class[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	getParam(info, result, 'recipient', /Получатель[\s\S]*?<div[^>]+class[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+	
+	var hist = getElement(info, /<div[^>]+class="detailed-postal-info[^>]*>/i);
+	var items = getElements(hist, /<div[^>]+class="tracking-history-row[^>]*>/ig);
+	
+	if(items && items.length && items.length > 0){
+		AnyBalance.trace('Найдено статусов отправления: ' + items.length);
+		for(var i=items.length-1; i>=0; i--){ // Статус ищем с конца
+			var item = items[i];
+			
+			getParam(item, result, 'time', /Время:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseDateISO);
+		    getParam(item, result, 'operation', /Статус:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+			getParam(item, result, 'location', /Местоположение:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
+			getParam(item, result, 'weight', /Вес:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, parseBalance);
+			
+			break;
+	    }
+		getParam(items[0], result, 'from', /Местоположение:([\s\S]*?)<\/div>/i, replaceTagsAndSpaces); // Место отправления получаем из первой записи
+		getParam(getFormattedDate(null, new Date(result.time)) + ': ' + result.operation + ',<br/>' + result.location + ',<br/>' + (result.weight ? ' Вес ' + result.weight + ' г' : ''), result, 'fulltext');
+	}else{
+		AnyBalance.trace('Не удалось получить информацию по статусам отправления');
 	}
 	
 	AnyBalance.setResult(result);

@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="31" date="2025-03-24">
+	- Получение информации с сервиса Main Transport.
+	- Добавлена возможность выбора источника информации.
+	</change>
     <change version="30" date="2024-10-25">
 	- Добавлена обработка архивных отправлений.
 	</change>

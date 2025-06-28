@@ -7,15 +7,17 @@
 		summary="Трек-номер отправления|Введите номер\n|{@s}\n"
 		dialogTitle="Номер отправления"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите трек-номер отправления. Трек-номер находится в чеке, выдаваемом при приеме почтового отправления. Вид номера: 115127(80)15138 4. Следует вводить: 11512780151384 (весь номер, цифры и латинские буквы без скобок и пробелов)"
+		dialogMessage="Введите трек-номер отправления. Трек-номер находится в чеке, выдаваемом при приеме почтового отправления. Вид номера: 115127(80)15138 4. 
+		Следует вводить: 11512780151384 (весь номер, цифры и латинские буквы без скобок и пробелов)"
 		key="code">
 	</EditTextPreference>
-	<!--<ListPreference
-		key="type"
-		title="Используемый сайт"
-		summary="Через какой сайт получать статус отправления||{@s}\n"
-		entries="emspost.ru|russianpost.ru"
-		entryValues="ems|rp"
-		defaultValue="ems">
-	</ListPreference> -->
+	<ListPreference
+		key="source"
+		title="Источник данных"
+		summary="Источник для получения информации||{@s}\n"
+		dialogTitle="Источник данных"
+		entries="Автоматически|Почта России|Main Transport"
+		entryValues="auto|rp|mt"
+		defaultValue="auto">
+	</ListPreference>
 </PreferenceScreen>

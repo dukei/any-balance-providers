@@ -7,7 +7,6 @@
 	<p>Предоставляет информацию о балансе бонусных баллов Кино https://kinoteatr.ru</p>
 	<p>В число кинотеатров, поддерживающих данную бонусную программу входят Синема парк и Формула кино</p>
 	]]></description>
-	<author>DimaZ &lt;DIMAZ.KHUA@gmail.com&gt;</author>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>

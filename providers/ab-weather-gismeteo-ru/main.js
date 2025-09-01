@@ -10,7 +10,7 @@ var g_headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
 };
 
-var replaceWind = {N: 'С', NE: 'СВ', S: 'Ю', SE: 'ЮВ', W: 'З', NW: 'СВ', E: 'В', SW: 'ЮЗ', 'Calm': 'Ш', 'calm': 'Ш', 'Штиль': 'Ш', 'штиль': 'Ш', null: 'Ш'};
+var replaceWind = {N: 'С', NE: 'СВ', S: 'Ю', SE: 'ЮВ', W: 'З', NW: 'СЗ', E: 'В', SW: 'ЮЗ', 'Calm': 'Ш', 'calm': 'Ш', 'Штиль': 'Ш', 'штиль': 'Ш', null: 'Ш'};
 
 function main() {
     var prefs = AnyBalance.getPreferences();
@@ -48,9 +48,10 @@ function main() {
 		checkEmpty(url, 'Не удалось определить город по IP-адресу. Введите название города в настройках провайдера', true);
     } else {
         AnyBalance.trace('Ищем ссылку для города ' + prefs.city);
-        html = AnyBalance.requestGet(baseurl + 'mq/city/q/' + encodeURIComponent(prefs.city) + '/?limit=9', addHeaders({Referer: baseurl}));
+        html = AnyBalance.requestGet(baseurl + 'mq/city/q/?q=' + encodeURIComponent(prefs.city) + '&limit=10', addHeaders({Referer: baseurl}));
         var json = getJson(html);
         AnyBalance.trace(JSON.stringify(json));
+		json = json.data;
 
         if (prefs.country) {
 		    AnyBalance.trace('Регион указан в настройках (' + prefs.country + '). Ищем ссылку для города ' + prefs.city + ' по указанным данным');
@@ -290,28 +291,21 @@ function getWeatherForecast(html, result, prefs) {
 	
 	getParam(widgetWeatherPressureItem, result, 'pressure', /<pressure-value value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
 	
-	// Направление ветра
-	var widgetWeatherWindDirection = getElement(widgetItems, /<div[^>]+data-row="wind-direction"[^>]*>/i);
-	var widgetWeatherWindDirectionItem = getElements(widgetWeatherWindDirection, /<div[^>]+class="row-item"[^>]*>/ig)[time];
-	AnyBalance.trace('widgetWeatherWindDirectionItem: ' + widgetWeatherWindDirectionItem);
+	// Ветер
+	var widgetWeatherWind = getElement(widgetItems, /<div[^>]+data-row="wind"[^>]*>/i);
+	var widgetWeatherWindItem = getElements(widgetWeatherWind, /<div[^>]+class="row-item"[^>]*>/ig)[time];
+	AnyBalance.trace('widgetWeatherWindItem: ' + widgetWeatherWindItem);
 	
-	var windDirection = getParam(widgetWeatherWindDirectionItem, null, null, /<div[^>]+class="direction"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
+	// Направление ветра
+	var windDirection = getParam(widgetWeatherWindItem, null, null, /<div[^>]+class="wind-direction"[^>]*>[\s\S]*?<\/div>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces, html_entity_decode);
 	
 	// Скорость ветра
-	var widgetWeatherWindSpeed = getElement(widgetItems, /<div[^>]+data-row="wind-speed"[^>]*>/i);
-	var widgetWeatherWindSpeedItem = getElements(widgetWeatherWindSpeed, /<div[^>]+class="row-item"[^>]*>/ig)[time];
-	AnyBalance.trace('widgetWeatherWindSpeedItem: ' + widgetWeatherWindSpeedItem);
-	
-	var windSpeed = getParam(widgetWeatherWindSpeedItem, null, null, /<speed-value value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
+	var windSpeed = getParam(widgetWeatherWindItem, null, null, /<div[^>]+class="wind-value wind-speed[^>]*><speed-value value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
 	
 	result.wind = (replaceWind[windDirection]||windDirection) + ', ' + windSpeed + ' м/с';
 	
 	// Порывы ветра
-	var widgetWeatherWindGust = getElement(widgetItems, /<div[^>]+data-row="wind-gust"[^>]*>/i);
-	var widgetWeatherWindGustItem = getElements(widgetWeatherWindGust, /<div[^>]+class="row-item"[^>]*>/ig)[time];
-	AnyBalance.trace('widgetWeatherWindGustItem: ' + widgetWeatherWindGustItem);
-	
-	getParam(widgetWeatherWindGustItem, result, 'windGust', /<speed-value value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(widgetWeatherWindItem, result, 'windGust', /<div[^>]+class="wind-value wind-gust[^>]*><speed-value value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
 	
 	// Осадки
 	var widgetWeatherPrecipitation = getElement(widgetItems, /<div[^>]+data-row="precipitation-bars"[^>]*>/i);

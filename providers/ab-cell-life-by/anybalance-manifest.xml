@@ -1,18 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="4.0" version="44">ab-cell-life-by</id>
+	<id major_version="4.1" version="45">ab-cell-life-by</id>
 	<api flags="no_browser" />
-	<name>Life:) (Беларусь)</name>
+	<name>life:) (Беларусь)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе и тарифном плане для пользователей белорусского оператора сотовой связи Life:) (https://life.com.by/).</p>
-	<p>Информация берется из мобильного приложения Мой Life:) или из личного кабинета Life:) на сайте https://life.com.by/id.</p>  
+	<p>Предоставляет информацию о балансе и тарифном плане для пользователей белорусского оператора сотовой связи <a href="https://life.com.by/">life:)</a>.</p>
+	<p>Информация берется из мобильного приложения <a href="https://play.google.com/store/apps/details?id=by.com.life.lifego&hl=ru">Мой life:)</a>.</p>  
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Life:).</p>
-	<p>Как получить доступ к личному кабинету:</p>
-	<ul>
-	<li>Нажмите "Получить пароль" на странице https://life.com.by/?popupType=auth&showPopup=true</li>
-	</ul>
+	<p>Для работы провайдера требуется ввести номер телефона и код подтверждения из SMS, высланного на этот номер.</p>
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
@@ -37,10 +33,19 @@
 		<counter id="sms_left" name="SMS внутри сети" suffix=" sms"/>
 		<counter id="paid_to" name="Срок действия пакета" type="time" format="dd.MM.yyyy"/>
 		<counter id="status" name="Статус" type="text"/>
+		<counter id="services_total" name="Подключенные услуги" prefix="💼 " units=" шт"/>
+		<counter id="services_paid" name="Платные услуги" prefix="💵 " units=" шт"/>
+		<counter id="services_free" name="Бесплатные услуги" prefix="🎁 " units=" шт"/>
+		<counter id="services_abon" name="Абонплата за услуги" units=" р"/>
+		<counter id="month_expenses" name="Расходы за текущий месяц" units=" р"/>
+		<counter id="month_refill" name="Пополнения за текущий месяц" units=" р"/>
+		<counter id="last_payment_sum" name="Сумма последнего платежа" units=" р"/>
+		<counter id="last_payment_date" name="Дата последнего платежа" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_payment_descr" name="Место последнего платежа" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords>мобильный оператор лайф беларусь проверка баланса</keywords>
+	<keywords>мобильный оператор лайф белоруссия проверка баланса</keywords>
 	<type>cell</type>
 	<country>by</country>
 </provider>

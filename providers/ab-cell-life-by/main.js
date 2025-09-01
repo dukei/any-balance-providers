@@ -30,13 +30,14 @@ function saveTokens(json){
 	AnyBalance.setData('refreshToken', json.refresh_token);
     AnyBalance.setData('expiresIn', json.expires_in);
 	AnyBalance.setData('tokenType', json.token_type);
+	AnyBalance.setData('sessionState', json.session_state);
 	AnyBalance.saveData();
 }
 
 function main(){
 	var prefs = AnyBalance.getPreferences();
 	
-	switch(prefs.source){
+/*	switch(prefs.source){
     case 'site':
         mainWeb();
 		break;
@@ -45,9 +46,9 @@ function main(){
 		break;
     case 'auto':
     default:
-        try{
+        try{*/
 		    mainApi();
-	    }catch(e){
+/*	    }catch(e){
 		    AnyBalance.trace('Ошибка при получении данных через API');
 		    if(/номер|парол/.test(e.message))
 			    throw new AnyBalance.Error(e.message, false, true);
@@ -57,15 +58,16 @@ function main(){
             mainWeb();
 	    }
         break;
-	}
+	}*/
 }
 
 function callApi(verb, params){
 	var headers = {
         'Accept-Language': 'ru',
-        'Version': 'Android App 1.0.213',
+		'Connection': 'Keep-Alive',
+        'Version': 'Android App 1.0.251',
         'Accept-Encoding': 'gzip',
-        'User-Agent': 'okhttp/4.4.0'
+        'User-Agent': 'okhttp/4.12.0'
     };
 	
 	var accessToken = AnyBalance.getData('accessToken');
@@ -78,27 +80,24 @@ function callApi(verb, params){
 		headers['Content-Type'] = 'application/json';
 	}
 	
-	if(accessToken)
-		headers['Authorization'] = 'Bearer ' + accessToken;
-	
-	if(/oauth\/token/i.test(verb)){
+	if(/otp\/send|oauth\/token/i.test(verb)){
 		var baseurl = 'https://oauth.life.com.by/';
 		headers['Connection'] = 'Keep-Alive';
-		delete headers['Accept-Language'];
-		delete headers['Version'];
 	}else{
 		var baseurl = 'https://lifegoapi.life.com.by/';
-		headers['Authorization'] = 'Bearer ' + accessToken;
+		if(accessToken)
+		    headers['Authorization'] = 'Bearer ' + accessToken;
 		headers['Connection'] = 'close';
 	}
 	
 	AnyBalance.trace('Запрос: ' + baseurl + verb);
 	var html = AnyBalance.requestPost(baseurl + verb, params, headers, {HTTP_METHOD: method});
-	
+	if(AnyBalance.getLastStatusCode() >= 500)
+        throw new AnyBalance.Error('Сервер мобильного API временно недоступен. Попробуйте еще раз позже');
 	var json = getJson(html);
 	AnyBalance.trace('Ответ: ' + JSON.stringify(json));
-	if(json.error || json.message){
-		var error = json.error_description || json.message;
+	if(json.error){
+		var error = json.message || json.error_description || json.error;
 		if(error)
 			throw new AnyBalance.Error(error, null, /номер|парол/i.test(error));
 		AnyBalance.trace(html);
@@ -118,11 +117,17 @@ function loginPure(verb, params){
 	    AnyBalance.saveData();
 	}
 	
-	var json = callApi('oauth/token', 'username=375' + prefs.login + '&password=' + prefs.password + '&Authorization-id=' + deviceId + '&grant_type=password&client_id=lifego_android&client_secret=hummed-Z%24rSiDf958z*%40VA');
-
-    if(!json || !json.access_token){
+	var json = callApi('api/v1/otp/send', {'user': '375' + prefs.login, 'channel': 'sms', 'app': 'lifego_andr', 'lang': 'ru'});
+	
+	var formattedLogin = prefs.login.replace(/.*(\d\d)(\d{3})(\d\d)(\d\d)$/, '+375 ($1) $2-$3-$4');
+	
+	var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения из SMS, высланного на номер ' + formattedLogin, null, {inputType: 'number', time: 300000});
+    
+	var json = callApi('oauth/token', {'username': '375' + prefs.login, 'password': code, 'Authorization-id': deviceId, 'grant_type': 'password', 'client_id': 'lifego_android', 'client_secret': 'hummed-Z$rSiDf958z*@VA'});
+	
+    if(!json.access_token){
     	AnyBalance.trace(JSON.stringify(json));
-    	throw new AnyBalance.Error('Не удалось получить токен авторизации. Сайт изменен?');
+    	throw new AnyBalance.Error('Не удалось получить токен авторизации');
     }else{
 		AnyBalance.trace('Токен авторизации получен');
 	}
@@ -142,28 +147,31 @@ function loginAccessToken(){
 		return true;
 	}catch(e){
 		AnyBalance.trace('Не удалось войти по accessToken: ' + e.message);
-		saveTokens({});
 		return false;
 	}
 }
-/*
+
 function loginRefreshToken(){
 	var prefs = AnyBalance.getPreferences();
 	var deviceId = AnyBalance.getData('deviceId');
 	var refreshToken = AnyBalance.getData('refreshToken');
 	try{
 		AnyBalance.trace('Токен устарел. Пробуем обновить...');
-		var json = callApi('oauth/token', 'username=375' + prefs.login + '&refresh_token=' + refreshToken + '&Authorization-id=' + deviceId + '&grant_type=refresh_token&client_id=lifego_android&client_secret=hummed-Z%24rSiDf958z*%40VA');
+		var json = callApi('oauth/token', {'refresh_token': refreshToken, 'Authorization-id': deviceId, 'grant_type': 'refresh_token', 'client_id': 'lifego_android', 'client_secret': 'hummed-Z$rSiDf958z*@VA', 'device-name': 'HONOR AUM-L29', 'version': 'Мой life:) Android 1.1.53'});
 		AnyBalance.trace('Успешно вошли по refreshToken');
 		saveTokens(json);
 		return true;
 	}catch(e){
 		AnyBalance.trace('Не удалось войти по refreshToken: ' + e.message);
-		saveTokens({});
-		return false;
+		if(/Token.*?expired|Invalid/i.test(e.message)){
+    		saveTokens({});
+		    return false;
+    	}else{
+    		throw e;
+    	}
 	}
 }
-*/
+
 function loginToken(){
 	var prefs = AnyBalance.getPreferences();
 	
@@ -180,7 +188,7 @@ function loginToken(){
 	if(loginAccessToken())
 		return true;
 	
-//	return loginRefreshToken();
+	return loginRefreshToken();
 }
 
 function login(){
@@ -193,7 +201,7 @@ function mainApi() {
     var prefs = AnyBalance.getPreferences();
 
     checkEmpty(prefs.login, 'Введите номер телефона!');
-    checkEmpty(prefs.password, 'Введите пароль!');
+//    checkEmpty(prefs.password, 'Введите пароль!');
 	
 	var matches = prefs.login.match(/^(\d{2})(\d{7})$/);
     if (!matches)
@@ -261,6 +269,107 @@ function mainApi() {
   			    AnyBalance.trace('Неизвестный остаток: ' + JSON.stringify(item));
   		    }
   	    }
+    }
+	
+	if(AnyBalance.isAvailable('services_total', 'services_paid', 'services_free', 'services_abon')){
+  	    json = callApi('service/groups');
+		getParam(0, result, 'services_total');
+	    getParam(0, result, 'services_paid');
+		getParam(0, result, 'services_free');
+		getParam(0, result, 'services_abon');
+		if(json.content.service_items && json.content.service_items && json.content.service_items.length > 0){
+            AnyBalance.trace('Найдено услуг: ' + json.content.service_items.length);
+			for(var i=0; i<json.content.service_items.length; ++i){
+				var service = json.content.service_items[i];
+                sumParam(1, result, 'services_total', null, null, parseBalanceSilent, aggregate_sum);
+		        if(service.s_cost_value == 0 || service.s_cost_value == 'Бесплатно' || service.s_cost_value == null){
+					AnyBalance.trace('Бесплатная услуга ' + service.s_name);
+			        sumParam(1, result, 'services_free', null, null, parseBalanceSilent, aggregate_sum);
+		        }else{
+					AnyBalance.trace('Платная услуга ' + service.s_name + ': ' + service.s_cost_value + ' ' + service.s_cost_label);
+			        var dt = new Date();
+			        sumParam(1, result, 'services_paid', null, null, parseBalanceSilent, aggregate_sum);
+                    
+		            if(/\/сут[ки]*|\/день/i.test(service.s_cost_label)){
+                        var cp = new Date(dt.getFullYear(), dt.getMonth()+1, 0).getDate(); // Дней в этом месяце
+                    }else{
+                        var cp = 1;
+                    }
+		            sumParam(service.s_cost_value*cp, result, 'services_abon', null, null, parseBalanceSilent, aggregate_sum);
+		        }
+		    }
+	    }else{
+		    AnyBalance.trace('Не удалось получить информацию по подключенным услугам');
+	    }
+    }
+	
+	if(AnyBalance.isAvailable('month_expenses')){
+  	    var dt = new Date();
+		var endDate = n2(dt.getMonth()+1) + '.' + dt.getFullYear();
+		var dtPrev = new Date(dt.getFullYear(), dt.getMonth()-1, dt.getDate());
+        var startDate = n2(dtPrev.getMonth()+1) + '.' + dtPrev.getFullYear();
+		json = callApi('balance/paymentCosts?startDate=' + startDate + '&endDate=' + endDate);
+		if(json.content && json.content.length && json.content.length > 0){
+            AnyBalance.trace('Найдено расходов в текущем месяце: ' + json.content.length);
+			for(var i=0; i<json.content.length; ++i){
+				var expense = json.content[i];
+				sumParam(expense.sum, result, 'month_expenses', null, null, parseBalanceSilent, aggregate_sum);
+		    }
+	    }else{
+			AnyBalance.trace('Не удалось получить информацию по расходам в текущем месяце');
+		}
+    }
+	
+	if(AnyBalance.isAvailable('month_refill', 'last_payment_sum', 'last_payment_date', 'last_payment_descr')){
+  	    var dt = new Date();
+		var endDate = n2(dt.getMonth()+1) + '.' + dt.getFullYear();
+		
+		var dtPrev = new Date(dt.getFullYear(), dt.getMonth()-1, dt.getDate());
+        var startDate = n2(dtPrev.getMonth()+1) + '.' + dtPrev.getFullYear();
+		json = callApi('balance/paymentHistory?startDate=' + startDate + '&endDate=' + endDate);
+		var content = json.content && json.content[0];
+		if(content && content.items && content.items.length && content.items.length > 0){
+            AnyBalance.trace('Найдено платежей в текущем месяце: ' + content.items.length);
+			getParam(content.items[0].count, result, 'last_payment_sum', null, null, parseBalance);
+		    getParam(content.items[0].date, result, 'last_payment_date', null, null, parseDate);
+			getParam(content.items[0].name, result, 'last_payment_descr');
+			for(var i=0; i<content.items.length; ++i){
+				var payment = content.items[i];
+				sumParam(payment.count, result, 'month_refill', null, null, parseBalanceSilent, aggregate_sum);
+		    }
+	    }else{
+		    AnyBalance.trace('Не удалось получить информацию по платежам в текущем месяце. Пробуем получить платежи за последние 3 месяца');
+		    var dtPrev = new Date(dt.getFullYear(), dt.getMonth()-3, dt.getDate());
+		    var startDate = n2(dtPrev.getMonth()+1) + '.' + dtPrev.getFullYear();
+		    
+		    json = callApi('balance/paymentHistory?startDate=' + startDate + '&endDate=' + endDate);
+		    var allContent = [];
+	        
+	        if(AnyBalance.isAvailable('month_refill')) result.month_refill = 0;
+			if(json.content && json.content.length && json.content.length > 0){
+				for(var i=0; i<json.content.length; ++i){
+					var content = json.content[i];
+					if(content && content.items && content.items.length && content.items.length > 0){
+				        for(var j=0; j<content.items.length; ++j){
+							allContent = allContent.concat(content.items[j]);
+				        }
+					}
+				}
+			}
+			AnyBalance.trace('allContent: ' + JSON.stringify(allContent));
+		    if(allContent && allContent.length && allContent.length > 0){
+                AnyBalance.trace('Найдено платежей за последние 3 месяца: ' + allContent.length);
+			    for(var i=0; i<allContent.length; ++i){
+				    var payment = allContent[i];
+					getParam(payment.count, result, 'last_payment_sum', null, null, parseBalance);
+		            getParam(payment.date, result, 'last_payment_date', null, null, parseDate);
+			        getParam(payment.name, result, 'last_payment_descr');
+					break;
+		        }
+	        }else{
+		        AnyBalance.trace('Не удалось получить информацию по платежам за последние 3 месяца');
+	        }
+		}
     }
 	
 	if(AnyBalance.isAvailable('fio', 'status')){

@@ -10,7 +10,7 @@
 		dialogMessage="Введите номер телефона в формате 9 цифр (без префикса +375) без пробелов и разделителей, например: 251234567"
 		key="login">
 	</EditTextPreference>
-	<EditTextPreference
+<!--<EditTextPreference
 		positiveButtonText="ОК"
 		key="password"
 		dialogTitle="Пароль"
@@ -29,5 +29,5 @@
 		entries="Автоматически|Мобильное приложение|Официальный сайт"
 		entryValues="auto|app|site"
 		defaultValue="auto">
-	</ListPreference>
+	</ListPreference>-->
 </PreferenceScreen>

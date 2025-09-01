@@ -58,9 +58,9 @@ function callAPIProc(url, getParams, postParams, method) {
 		
 		if(/Too Many Requests/i.test(html) || AnyBalance.getLastStatusCode() == 429){
 			if(tries < 5){
-				AnyBalance.trace('Превышено количество одновременных запросов к серверу. Ждем 2 секунды и пробуем повторить запрос...');
+//				AnyBalance.trace('Превышено количество одновременных запросов к серверу. Ждем 2 секунды и пробуем повторить запрос...');
 				++tries;
-				AnyBalance.sleep(2000);
+				AnyBalance.sleep(1000);
 			}else{
 				AnyBalance.trace('Достигнуто максимальное количество одновременных запросов к серверу');
 				break;
@@ -297,14 +297,14 @@ function processApiTariff(result){
 	    }
 	}
     
-//	if(!result.tariff){ // На случай, если не удалось получить тариф первым способом
+	if(!result.tariff){ // На случай, если не удалось получить тариф первым способом
 	    var json = callAPIProc('1.0/info/pricePlan', {ctn: prefs.phone});
         
 	    getParam(json.pricePlanInfo.entityName, result, 'tariff');
 	    
 	    if(json.pricePlanInfo.rcRate)
 	        getParam(json.pricePlanInfo.rcRate, result, 'abon_tariff', null, null, apiParseBalanceRound);
-//    }
+    }
 }
 
 function processApiStatus(result){
@@ -312,12 +312,23 @@ function processApiStatus(result){
 		return;
 	
 	var prefs = AnyBalance.getPreferences();
-	var json = callAPIProc('1.0/info/status', {ctn: prefs.phone});
 	
-	if(json.statusDesc){
+	var json = callAPIProc('mobile/api/v1/profile/userInfo');
+	
+	if(json.blocking){
 		result.statuslock = 'Номер заблокирован';
 	}else{
 		result.statuslock = 'Номер не блокирован';
+	}
+	
+	if(!result.statuslock){ // На случай, если не удалось получить статус первым способом
+	    var json = callAPIProc('1.0/info/status', {ctn: prefs.phone});
+	    
+	    if(json.statusDesc){
+		    result.statuslock = 'Номер заблокирован';
+	    }else{
+		    result.statuslock = 'Номер не блокирован';
+	    }
 	}
 }
 
@@ -383,10 +394,22 @@ function processApiInfo(result){
 
 function processApiPrepaid(result){
 	var prefs = AnyBalance.getPreferences();
+	
+	var json = callAPIProc('mobile/api/v1/profile/balance');
+	
+	if(json.data){
+		if(json.data.balance){
+	        getParam(json.data.balance.value, result, 'balance', null, null, apiParseBalanceRound);
+			getParam(json.data.balance.currency, result, ['currency_code', 'balance']);
+	        getParam(g_currencys[json.data.balance.currency], result, ['currency', 'balance']);
+		}
+	    if(AnyBalance.isAvailable('next_billing_date'))
+	        getParam(json.data.nextBillingDate, result, 'next_billing_date', null, null, parseDateISO);
+	}
 
-	if(AnyBalance.isAvailable('balance', 'currency', 'currency_code', 'next_billing_date')){
+	if(!result.balance || !result.currency || (AnyBalance.isAvailable('next_billing_date' && !result.next_billing_date))){
 		var json = callAPIProc('1.0/info/prepaidBalance', {ctn: prefs.phone});
-	    
+		
 		getParam(json.balance, result, 'balance', null, null, apiParseBalanceRound);
 		getParam(json.currency, result, ['currency_code', 'balance']);
 		getParam(g_currencys[json.currency], result, ['currency', 'balance']);
@@ -652,6 +675,8 @@ function processApiServices(result){
 	var prefs = AnyBalance.getPreferences();
 	var json = callAPIProc('1.0/info/serviceList', {ctn: prefs.phone});
     
+	getParam(0, result, 'services_paid');
+	getParam(0, result, 'services_free');
 	getParam(0, result, 'services_count');
 	getParam(0, result, 'services_abon');
 	getParam(0, result, 'services_abon_day');

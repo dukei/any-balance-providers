@@ -614,7 +614,7 @@ function loadProtectedPage(url, headers){
                         url: /.*/.toString(),
                         action: 'abort',
                     }],
-                    debug: true //AnyBalance.getPreferences().debug
+                    debug: false //AnyBalance.getPreferences().debug
                 });
                 
                 const r = bro.open(url);

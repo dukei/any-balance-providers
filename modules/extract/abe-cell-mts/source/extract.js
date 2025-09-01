@@ -29,7 +29,7 @@ var g_headers = {
 	'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
 	'Upgrade-Insecure-Requests': '1',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36',
 	'If-Modified-Since': null, //Иначе МТС глючит с кешированием...
 };
 
@@ -384,27 +384,34 @@ function isLoggedIn(html) {
 
 function getLKJson(html, allowExceptions) {
     try {
-    	return getLKJsonNew(html);
+    	return getLKJson1(html);
     } catch (e) {
         AnyBalance.trace(e.message);
-        AnyBalance.trace('Не удалось найти Json с описанием пользователя первым способом, сайт изменен?');
+        AnyBalance.trace('Не удалось найти Json с описанием пользователя первым способом. Сайт изменен?');
     }
 
     try {
     	return getLKJson2(html);
     } catch (e) {
         AnyBalance.trace(e.message);
-        AnyBalance.trace('Не удалось найти Json с описанием пользователя вторым способом, сайт изменен?');
+        AnyBalance.trace('Не удалось найти Json с описанием пользователя вторым способом. Сайт изменен?');
+    }
+	
+	try {
+    	return getLKJson3(html);
+    } catch (e) {
+        AnyBalance.trace(e.message);
+        AnyBalance.trace('Не удалось найти Json с описанием пользователя третьим способом. Сайт изменен?');
     }
 
     try {
-    	return getLKJson1(html);
+    	return getLKJson4(html);
     } catch (e) {
         if (allowExceptions) {
             throw e;
         } else {
             AnyBalance.trace(e.message);
-            AnyBalance.trace('Не удалось найти Json с описанием пользователя тремя способами, сайт изменен?');
+            AnyBalance.trace('Не удалось найти Json с описанием пользователя ни одним способом. Сайт изменен?');
         }
         json = {};
     }
@@ -412,35 +419,39 @@ function getLKJson(html, allowExceptions) {
     return {};
 }
 
-function getLKJsonNew(html) {
+function getLKJson1(html) {
 	var prefs = AnyBalance.getPreferences();
 	
 	var html = AnyBalance.requestGet('https://lk.mts.ru/api/login/user-info', addHeaders({
-		Accept: 'application/json, text/plain, */*',
+		Referer: g_baseurl + '/',
 		'X-Login': fetchNumber(),
 		'X-Requested-With': 'XMLHttpRequest'
 	}));
 	
 	var json = getJson(html);
-	var out = {};
+	var out = {fio: null, phone_formatted: null, phone: null, license: null, region: null, balance: null, tariff: null};
 	var account = json.userProfile;
 	out.fio = account.displayName;
-    out.phone_formatted = ('' + account.login).replace(/(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7($1)$2-$3-$4');
+    out.phone_formatted = ('' + account.login).replace(/(.*)(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7($2)$3-$4-$5');
     out.phone = '' + account.login;
 	out.license = '' + account.accountNumber;
 	out.region = '' + account.regionTitle;
-//    out.balance = Math.round(account.balance*100)/100; // Здесь баланс неоперативно обновляется
-    out.tariff = getParam('' + account.tariff, null, null, /(?:[\s\S]*?-\s)([\s\S]*?)(?:\s\([\s\S]*?)?$/i, replaceTagsAndSpaces);
+//	out.balance = Math.round(account.balance*100)/100; // Здесь баланс неоперативно обновляется
+    out.tariff = getParam('' + account.tariff, null, null, /(?:[\s\S]*?-\s)([\s\S]*?)(?:\s\([\s\S]*?)?$/i, replaceTagsAndSpaces); // Москва - НЕТАРИФ 052022 (МАСС) (SCP)
 	
 	if(!out.balance){
-	    var token = callNewLKApiToken('accountInfo/mscpBalance');
+	    var token = callNewLKApiToken('accountInfo/balance');
 	    var data = callNewLKApiResult(token);
 	    
 	    out.balance = getParam(Math.round(data.amount*100)/100);
 	}
-
+	
+	if(!out.balance){
+	    out.balance = Math.round(account.balance*100)/100;
+	}
+    
     if(!out.balance){
-    	AnyBalance.trace('Нулевой баланс! Возможно, что-то не так! ' + JSON.stringify(data));
+    	AnyBalance.trace('Нулевой баланс! Возможно, что-то не так! \n' + (data ? JSON.stringify(data) : html));
     }
 
     if(!out.phone){
@@ -457,25 +468,39 @@ function getLKJson2(html) {
     }));
 
     var json = getJson(html);
-    var out = {};
+    var out = {fio: null, phone_formatted: null, phone: null, license: null, region: null, balance: null, tariff: null};
 	var account = json.account;
     out.fio = json.name;
-    out.phone_formatted = ('' + account.phone).replace(/(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7($1)$2-$3-$4');
+    out.phone_formatted = ('' + account.phone).replace(/(.*)(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7($2)$3-$4-$5');
     out.phone = '' + account.phone;
 	out.license = '' + account.number;
-	out.region = getParam('' + account.tariff.system, null, null, /([\s\S]*?)(?:\s-\s[\s\S]*?)?$/i, replaceTagsAndSpaces);
-//    out.balance = Math.round(json['mobile:balance']*100)/100; // Здесь вообще нет баланса
-    out.tariff = '' + account['tariff']["name"];
+	out.region = getParam('' + account.tariff.system, null, null, /([\s\S]*?)(?:\s-\s[\s\S]*?)?$/i, replaceTagsAndSpaces); // Москва - НЕТАРИФ 052022 (МАСС) (SCP)
+//	out.balance = Math.round(json['mobile:balance']*100)/100; // Здесь вообще нет баланса
+    out.tariff = '' + account['tariff']['name'];
 	
 	if(!out.balance){
-	    var token = callNewLKApiToken('accountInfo/mscpBalance');
-	    var data = callNewLKApiResult(token);
-	    
-	    out.balance = getParam(Math.round(data.amount*100)/100);
+	    var data = callNewLKApiGraphql({
+            "operationName": "GetBalanceBaseQueryInput",
+            "variables": {},
+            "query": "query GetBalanceBaseQueryInput {\n  balances {\n    nodes {\n      ... on BalanceInfo {\n        industry {\n          code\n          name\n          industryId\n          __typename\n        }\n        account {\n          idValue\n          idType\n          __typename\n        }\n        name\n        code\n        status\n        source\n        effectiveDate\n        cashbackBalanceText\n        cashbackHintText\n        remainingValue {\n          amount\n          currency\n          __typename\n        }\n        limits {\n          ... on LimitInfo {\n            bannerText\n            className\n            source\n            type\n            remainingValue {\n              amount\n              currency\n              __typename\n            }\n            __typename\n          }\n          ... on LimitError {\n            className\n            type\n            error {\n              message\n              code\n              __typename\n            }\n            __typename\n          }\n          __typename\n        }\n        __typename\n      }\n      ... on BalanceError {\n        industry {\n          code\n          name\n          industryId\n          __typename\n        }\n        account {\n          idValue\n          idType\n          __typename\n        }\n        error {\n          message\n          code\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n}"
+        }, 'GetBalanceBaseQueryInput');
+		
+		if(data && data.balances && data.balances.nodes && data.balances.nodes.length){
+			for(var i=0; i<data.balances.nodes.length; ++i){
+		        var n = data.balances.nodes[i];
+//		        AnyBalance.trace('Найден ' + n.name);
+                
+		        if(n.account.idValue === fetchNumber()){
+				    out.balance = getParam(Math.round(n.remainingValue.amount*100)/100);
+				    
+				    break;
+		        }
+			}
+	    }
 	}
 	
     if(!out.balance){
-    	AnyBalance.trace('Нулевой баланс! Возможно, что-то не так! ' + JSON.stringify(data));
+    	AnyBalance.trace('Нулевой баланс! Возможно, что-то не так! \n' + (data ? JSON.stringify(data) : html));
     }
 
     if(!out.phone){
@@ -485,19 +510,42 @@ function getLKJson2(html) {
     return out;
 }
 
-function getLKJson1(html) {
-    var html = AnyBalance.requestGet('https://login.mts.ru/profile/header?ref=https%3A//lk.mts.ru/&scheme=https&style=2015v2', addHeaders({
-    	Referer: g_baseurl + '/',
-		'X-Login': fetchNumber()
+function getLKJson3(html) {
+    var html = AnyBalance.requestGet('https://login.mts.ru/amserver/rest/widget', addHeaders({
+		'Content-Type': 'application/json',
+    	Referer: g_baseurl + '/'
     }));
 
-    var json = {};
+    var json = getJson(html);
+    var out = {fio: null, phone_formatted: null, phone: null, license: null, region: null, balance: null, tariff: null};
+    out.fio = json['profile:name'];
+    out.phone_formatted = ('' + json['mobile:phone']).replace(/(.*)(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7($2)$3-$4-$5');
+    out.phone = '' + json['mobile:phone'];
+    out.balance = Math.round(json['mobile:balance']*100)/100;
+//	out.tariff = ('' + json['mobile:tariff']}; // Тарифа здесь нет
+	
+    if(!out.balance){
+    	AnyBalance.trace('Нулевой баланс! Возможно, что-то не так! \n' + html);
+    }
+
+    if(!out.phone){
+    	AnyBalance.trace('Не удаётся получить информацию о текущем пользователе. Сайт изменен?\n' + html);
+    }
+
+    return out;
+}
+
+function getLKJson4(html) {
+    var html = AnyBalance.requestGet('https://login.mts.ru/profile/header?ref=https%3A//lk.mts.ru/&scheme=https&style=2015v2', g_headers);
+
+    var json = {fio: null, phone_formatted: null, phone: null, license: null, region: null, balance: null, tariff: null};
     json.fio = getElement(html, /<div[^>]+b-header_lk__name[^>]*>/i, replaceTagsAndSpaces);
     json.phone_formatted = getElement(html, /<div[^>]+b-header_lk__phone[^>]*>/i, replaceTagsAndSpaces);
     json.phone = replaceAll(json.phone_formatted, [/\+7/, '', /\D/g, '']);
     json.balance = getElement(html, /<div[^>]+b-header_balance[^>]*>/i, replaceTagsAndSpaces, parseBalance);	
+	
 	if(!json.balance){
-    	AnyBalance.trace('Нулевой баланс! Возможно, что-то не так! ' + html);
+    	AnyBalance.trace('Нулевой баланс! Возможно, что-то не так! \n' + html);
     }
 	
 	if(!json.phone){
@@ -763,7 +811,8 @@ function processInfoLK(html, result){
             getParam(info.fio, result.info, 'info.fio');
         }
     } catch (e) {
-        AnyBalance.trace('Не удалось получить данные о пользователе, скорее всего, виджет временно недоступен... ' + e.message + '\n' + e.stack);
+        AnyBalance.trace('Не удалось получить данные о пользователе, возможно, виджет временно недоступен... \n' + e.message + '\n' + e.stack);
+		result.were_errors = true;
     }
 }
 /*
@@ -934,6 +983,26 @@ function fetchNumber() {
 	}
 	
 	return number;
+}
+
+function callNewLKApiGraphql(params, operation){ // Для graphql запросов по params
+	var method = 'GET', params_str = '', headers = g_headers;
+	
+	try{
+	    html = AnyBalance.requestPost('https://federation.mts.ru/graphql', JSON.stringify(params), addHeaders({
+		    'Content-Type': 'application/json',
+            'Referer': g_baseurl + '/',
+			'X-Apollo-Operation-Name': operation,
+		    'X-Client-Id': 'LK',
+		    'X-Login': fetchNumber()
+	    }));
+	    
+	    var json = getJson(html);
+		return json.data || json;
+	}catch(e){
+        AnyBalance.trace('Ошибка запроса ' + operation + ': ' + e.message);
+		return {};
+    }
 }
 
 function callNewLKApiToken(verb, params){
@@ -1230,14 +1299,25 @@ function processExpensesLK(result){
 		} while (true && (++ pageIndex < (pageTotal +1)));
 		
 		if(transactions && transactions.length > 0){
-			AnyBalance.trace('Найдено записей по общему расходу трафика: ' + transactions.length);
+			__transactions = [];
 			for(var i=0; i<transactions.length; ++i){
 		        var t = transactions[i];
-			    
-				if(t.type !== 'Network' || /Бесплатные интернет-ресурсы МТС/i.test(t.name)) // Пропускаем сервисные пометки
+				if(t.type !== 'Network' || /Бесплатные интернет-ресурсы МТС/i.test(t.name)){ // Пропускаем сервисные пометки
 					continue;
-				
-			    sumParam(t.value + ' ' + t.unitValue, result.expenses, 'expenses.traffic_used_total_mb', null, null, parseTraffic, aggregate_sum);
+				}else{
+					__transactions.push(t);
+				}
+			}
+			
+			if(__transactions && __transactions.length > 0){
+			    AnyBalance.trace('Найдено записей по общему расходу трафика: ' + __transactions.length);
+			    result.expenses.traffic_used_total_mb = 0;
+			    for(var i=0; i<__transactions.length; ++i){
+		            var t = __transactions[i];
+			        sumParam(t.value + ' ' + t.unitValue, result.expenses, 'expenses.traffic_used_total_mb', null, null, parseTraffic, aggregate_sum);
+			    }
+			}else{
+				AnyBalance.trace('Записей по общему расходу трафика не найдено');
 			}
 		}else{
 		    AnyBalance.trace('Не удалось получить данные по общему расходу трафика');
@@ -1764,14 +1844,15 @@ function turnOffLoginSMSNotify(){
 		return;
 	}
 	
-	html = AnyBalance.requestGet('https://profile.mts.ru/_next/data/' + _next + '/account/safety.json', addHeaders({Accept: '*/*', Referer: 'https://profile.mts.ru/account'}));
-	var safetyJson = getJson(html);
-	if(!safetyJson || !safetyJson.pageProps){
-		AnyBalance.trace('Не удалось получить страницу настроек безопасности. Пропускаем проверку способа входа и оповещения о входе');
+	try{
+	    html = AnyBalance.requestGet('https://profile.mts.ru/_next/data/' + _next + '/account/safety.json', addHeaders({Accept: '*/*', Referer: 'https://profile.mts.ru/account'}));
+	    var safetyJson = getJson(html);
+	}catch(e){
+	    AnyBalance.trace('Не удалось получить страницу настроек безопасности. Пропускаем проверку способа входа и оповещения о входе');
 		return;
 	}
-/*	
-	if(safetyJson.pageProps.initialState && safetyJson.pageProps.initialState.settings && safetyJson.pageProps.initialState.settings.authuserlevel){
+/*	Переключить способ входа без кучи подтверждений больше нельзя, поэтому исключаем
+	if(safetyJson.pageProps && safetyJson.pageProps.initialState && safetyJson.pageProps.initialState.settings && safetyJson.pageProps.initialState.settings.authuserlevel){
 	    var authLevel = safetyJson.pageProps.initialState.settings.authuserlevel;
 	    if(authLevel !== '1'){
 		    AnyBalance.trace('SMS подтверждение для входа в кабинет включено. Выключаем...');
@@ -1795,7 +1876,7 @@ function turnOffLoginSMSNotify(){
 		AnyBalance.trace('Не удалось получить настройки способа входа');
 	}
 */	
-	if(safetyJson.pageProps.initialState && safetyJson.pageProps.initialState.smsNotification && safetyJson.pageProps.initialState.smsNotification.notifications){
+	if(safetyJson.pageProps && safetyJson.pageProps.initialState && safetyJson.pageProps.initialState.smsNotification && safetyJson.pageProps.initialState.smsNotification.notifications){
 	    var notifyArgs = safetyJson.pageProps.initialState.smsNotification.notifications;
 		
 	    if(notifyArgs && (notifyArgs.lg_sms !== false)){

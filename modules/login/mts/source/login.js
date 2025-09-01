@@ -719,10 +719,12 @@ function enterLKNUI(options){
 	
 	if (json.header == "device-match-hold") {
 		var params = json;
-		params.callbacks[0].input[0].value = '{"screen":{"screenWidth":1600,"screenHeight":900,"screenColourDepth":24},"userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36","platform":"Win32","language":"ru","timezone":{"timezone":-180},"plugins":{"installedPlugins":"internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;"},"fonts":{"installedFonts":"cursive;monospace;serif;sans-serif;fantasy;default;Arial;Arial Black;Arial Narrow;Bookman Old Style;Bradley Hand ITC;Century;Century Gothic;Comic Sans MS;Courier;Courier New;Georgia;Impact;Lucida Console;Monotype Corsiva;Papyrus;Tahoma;Times;Times New Roman;Trebuchet MS;Verdana;"},"appName":"Netscape","appCodeName":"Mozilla","appVersion":"5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36","product":"Gecko","productSub":"20030107","vendor":"Google Inc."}';
+		params.callbacks[0].input[0].value = '{"screen":{"screenWidth":1600,"screenHeight":900,"screenColourDepth":24},"userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","platform":"Win32","language":"ru","timezone":{"timezone":-180},"plugins":{"installedPlugins":"internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;"},"fonts":{"installedFonts":"cursive;monospace;serif;sans-serif;fantasy;default;Arial;Arial Black;Arial Narrow;Bookman Old Style;Bradley Hand ITC;Century;Century Gothic;Comic Sans MS;Courier;Courier New;Georgia;Impact;Lucida Console;Monotype Corsiva;Papyrus;Tahoma;Times;Times New Roman;Trebuchet MS;Verdana;"},"appName":"Netscape","appCodeName":"Mozilla","appVersion":"5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","product":"Gecko","productSub":"20030107","vendor":"Google Inc."}';
 		params.callbacks[2].input[0].value = "true";
 		params.callbacks[3].input[0].value = "windows";
 		params.callbacks[4].input[0].value = "Ключ на Windows в Chrome";
+		params.callbacks[5].input[0].value = generateUUID();
+		params.callbacks[10].input[0].value = "mts-w-payment";
 		
 		html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
 	
@@ -760,7 +762,7 @@ function enterLKNUI(options){
 	if (json.header == "radius-frontend-request") {
 		var params = json;
 		params.callbacks[0].input[0].value = "0";
-		params.callbacks[2].input[0].value = "1";
+		params.callbacks[3].input[0].value = "mts-w-payment";
 		
 		html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
 	
@@ -774,6 +776,9 @@ function enterLKNUI(options){
 	if (json.header == "confirm-network-phone") {
 		var params = json;
 		
+		params.callbacks[0].input[0].value = "1";
+		params.callbacks[1].input[0].value = "mts-w-payment";
+		
 		html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
 	
 	    var json = getJson(html);
@@ -786,6 +791,7 @@ function enterLKNUI(options){
 	if (json.header == "network-header-resource" || json.header == "network-header-resource-v1") {
 		var params = json;
 		params.callbacks[0].input[0].value = "1";
+        params.callbacks[1].input[0].value = "mts-w-payment";
 		
 		html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
 	
@@ -798,7 +804,8 @@ function enterLKNUI(options){
 			
 	if (json.header == "network-header" || json.header == "network-header-v1") {
 		var params = json;
-		params.callbacks[1].input[0].value = "1";
+//		params.callbacks[1].input[0].value = "1"; // Оставить по умолчанию, иначе мтс не пропускает запрос
+		params.callbacks[2].input[0].value = "mts-w-payment";
 		
 		html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
 	
@@ -813,6 +820,7 @@ function enterLKNUI(options){
 		var params = json;
 		params.callbacks[0].input[0].value = "7" + options.login;
 		params.callbacks[1].input[0].value = "1";
+		params.callbacks[2].input[0].value = "mts-w-payment";
 		
 		html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
 	
@@ -832,26 +840,15 @@ function enterLKNUI(options){
             throw new AnyBalance.Error('Номер заблокирован!', allowRetry);
 	    }
 		
-		if (json.header == "passkey-start-registration") {
-			AnyBalance.trace('МТС предложил установить ключ доступа. Отказываемся...');
-		    var params = json;
-            params.callbacks[0].input[0].value = "0";
-		    
-		   html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
-	        
-	        var json = getJson(html);
-//	        AnyBalance.trace('Отказ от ключа доступа: ' + JSON.stringify(json));
-	        
-		    if (json.header)
-		        AnyBalance.trace('Progress header: ' + json.header);
-	    }
+		json = checkPasskeyOffer(json, loginUrl, headers);
 	}
 		
 	if (json.header == "verify-password") {
 	    var params = json;
 		params.callbacks[0].input[0].value = options.password;
-		params.callbacks[1].input[0].value = "1";
-		params.callbacks[3].input[0].value = "true"; // Для установки куки persistent ("Запомнить")
+		params.callbacks[1].input[0].value = "true"; // Для установки куки persistent ("Запомнить")
+		params.callbacks[2].input[0].value = "1";
+		params.callbacks[3].input[0].value = "mts-w-payment";
 		
 		html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
 	
@@ -862,12 +859,14 @@ function enterLKNUI(options){
 		    AnyBalance.trace('Progress header: ' + json.header);
 		
 		if (json.header == "verify-password") {
-	    	var retryCount = json.callbacks[2].output[0].value.lockoutCount;
-	    	var invalidCount = json.callbacks[2].output[0].value.invalidCount;
+	    	var retryCount = json.callbacks[3].output[0].value.lockoutCount;
+	    	var invalidCount = json.callbacks[3].output[0].value.invalidCount;
 	    	var restCount = retryCount - invalidCount;
 	    	AnyBalance.trace(html);
             throw new AnyBalance.Error('Неверный пароль! Осталось попыток: ' + restCount, allowRetry);
 	    }
+		
+		json = checkPasskeyOffer(json, loginUrl, headers);
 	}
 	
 	if (json.header == "verify-otp") {
@@ -876,8 +875,9 @@ function enterLKNUI(options){
 		
 		var params = json;
 		params.callbacks[0].input[0].value = code;
-		params.callbacks[1].input[0].value = "1";
-		params.callbacks[3].input[0].value = "true"; // Для установки куки persistent ("Запомнить")
+		params.callbacks[1].input[0].value = "true"; // Для установки куки persistent ("Запомнить")
+		params.callbacks[2].input[0].value = "1";
+		params.callbacks[3].input[0].value = "mts-w-payment";
 		
 		html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
 	
@@ -888,12 +888,14 @@ function enterLKNUI(options){
 		    AnyBalance.trace('Progress header: ' + json.header);
 		
 		if (json.header == "verify-otp") {
-	    	var retryCount = json.callbacks[2].output[0].value.retryCount;
-	    	var invalidCount = json.callbacks[2].output[0].value.invalidCount;
+	    	var retryCount = json.callbacks[3].output[0].value.retryCount;
+	    	var invalidCount = json.callbacks[3].output[0].value.invalidCount;
 	    	var restCount = retryCount - invalidCount;
 	    	AnyBalance.trace(html);
             throw new AnyBalance.Error('Неверный код! Осталось попыток: ' + restCount, allowRetry);
 	    }
+		
+		json = checkPasskeyOffer(json, loginUrl, headers);
 	}
 	
 	if (json.tokenId && json.successUrl) {
@@ -909,6 +911,25 @@ function enterLKNUI(options){
 	}
 
     return html;
+}
+
+function checkPasskeyOffer(json, loginUrl, headers){
+	if (json.header == "passkey-start-registration") {
+		AnyBalance.trace('МТС предложил установить ключ доступа. Отказываемся...');
+		var params = json;
+        params.callbacks[0].input[0].value = "0";
+		params.callbacks[1].input[0].value = "mts-w-payment";
+		
+		var html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
+	    
+	    var json = getJson(html);
+//	    AnyBalance.trace('Отказ от ключа доступа: ' + JSON.stringify(json));
+	    
+		if (json.header)
+		    AnyBalance.trace('Progress header: ' + json.header);
+	}
+	
+	return json;
 }
 
 function clearAllCookiesExceptProtection(){

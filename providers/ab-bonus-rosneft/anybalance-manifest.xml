@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="20">ab-bonus-rosneft</id>
+	<id version="22">ab-bonus-rosneft</id>
 	<api flags="no_browser"/>
 	<name>Семейная команда (Бонусы)</name>
 	<description html="true"><![CDATA[
@@ -24,8 +24,11 @@
 	<counters>
 		<counter id="balance" name="Баланс" units=" Б"/>
 		<counter id="available" name="Доступно" units=" Б"/>
+		<counter id="burn_sum" name="Сгораемые баллы" units=" Б"/>
+		<counter id="burn_date" name="Дата сгорания баллов" type="time" format="dd.MM.yyyy"/>
 		<counter id="curr_level" name="Текущий уровень" type="text"/>
 		<counter id="accumulated_liters" name="Накоплено литров" units=" л"/>
+		<counter id="accumulated_purchases" name="Накоплено покупок" units=" ₽"/>
 		<counter id="next_level" name="Следующий уровень" type="text"/>
 		<counter id="to_next_level_liters" name="Литров до след. уровня" units=" л"/>
 		<counter id="to_next_level_days" name="Дней до смены уровня" units=" дн"/>

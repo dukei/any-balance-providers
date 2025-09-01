@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
 	<api flags="no_browser" />
-	<id version="40">ab-bonus-ozon</id>
+	<id version="424">ab-bonus-ozon</id>
 	<name>OZON</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о баланcе, активном заказе и количестве баллов в интернет магазине OZON (<a href="https://www.ozon.ru/">https://www.ozon.ru/</a>).</p>
@@ -14,6 +14,8 @@
 	<depends>
 		<module id="library"/>
 		<module id="crypt/md5"/>
+		<module id="framework/browser"/>
+		<module id="misc/saved-data"/>
 	</depends>
 	<files>
 		<icon>icon.png</icon>

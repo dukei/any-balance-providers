@@ -13,11 +13,22 @@ var g_headers = {
 };
 
 var g_webHeaders = {
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-    'Accept-Language': 'ru-RU,ru;q=0.9',
-	'Upgrade-Insecure-Requests': '1',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36'
+'connection': 'keep-alive',
+'accept-language': 'en-US,en;q=0.9',
+'upgrade-insecure-requests': '1',
+'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36',
+//'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36',
+'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+'sec-ch-ua': '"Not;A=Brand";v="99", "Google Chrome";v="139", "Chromium";v="139"',
+'sec-ch-ua-mobile': '?0',
+'sec-ch-ua-platform': '"Windows"',
+//'sec-ch-ua-platform': '"Linux"',
+'sec-fetch-site': 'none',
+'sec-fetch-mode': 'navigate',
+'sec-fetch-user': '?1',
+'sec-fetch-dest': 'document',
 };
+var g_savedData;
 
 var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4'];
 
@@ -127,6 +138,8 @@ function getDefaultPropName(obj, str){
 
 function loginPure(){
 	var prefs = AnyBalance.getPreferences(), json;
+
+    loadProtectedPage("https://www.ozon.ru/", g_webHeaders);
 	
     if(/@/.test(prefs.login)){
     	AnyBalance.trace('Входить будем по email');
@@ -255,6 +268,7 @@ function login(){
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.setDefaultCharset('utf-8');
+        AnyBalance.setOptions({CLIENT: 'okhttp'});
 
 	checkEmpty(prefs.login, 'Введите логин!');
 	checkEmpty(/@|^\d{10}$/.test(prefs.login), 'Введите e-mail или телефон (10 цифр без пробелов и разделителей)!');
@@ -570,3 +584,64 @@ function parseWeightEx(text, thousand, order, defaultUnits) {
     AnyBalance.trace('Parsing weight (' + val + dbg_units[order] + ') from: ' + text);
     return val;
 }
+
+
+function loadProtectedPage(url, headers){
+        var html = AnyBalance.requestGet(url, headers);
+    
+	if(/<input[^>]+id="challenge"/i.test(html)) {
+        	AnyBalance.trace("Требуется обойти защиту от роботов");
+		clearAllCookies();
+
+                const bro = new BrowserAPI({
+                    provider: 'ozon-v1',
+                    userAgent: headers["user-agent"],
+                    win: true,
+                    headful: false,
+                    userInteraction: false,
+                    singlePage: true,
+                    rules: [{
+                        resType: /^(image|stylesheet|font)$/.toString(),
+                        action: 'abort',
+                    }, {
+                        url: /www.ozon.ru\/($|\?|abt)/.toString(),
+                        action: 'request',
+                    }, {
+                        url: /abt-challenge.*\.js/.toString(),
+                        action: 'cache',
+                	valid: 360*1000
+                    }, {
+                        url: /.*/.toString(),
+                        action: 'abort',
+                    }],
+                    debug: true //AnyBalance.getPreferences().debug
+                });
+                
+                const r = bro.open(url);
+                try {
+                    bro.waitForLoad(r.page);
+                    html = bro.content(r.page).content;
+                    const cookies = bro.cookies(r.page, url);
+                    BrowserAPI.useCookies(cookies);
+                } finally {
+                    bro.close(r.page);
+                }
+                
+                if(!/<title[^>]*>[^<]*OZON/i.test(html))
+                    throw new AnyBalance.Error('Не удалось обойти защиту. Сайт изменен?');
+                
+                AnyBalance.trace("Защита OZON успешно пройдена");
+                
+                if(!g_savedData) {
+                    const prefs = AnyBalance.getPreferences();
+                    g_savedData = new SavedData('ozon', prefs.login);
+                }
+                
+                g_savedData.setCookies();
+                g_savedData.save();
+
+    }
+
+    return html;
+}
+

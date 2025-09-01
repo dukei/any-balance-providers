@@ -31,7 +31,7 @@ function main() {
 	if(!html || AnyBalance.getLastStatusCode() > 400)
 		throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
 	
-	if(/"myKasperskyId":\s*?""/i.test(html)){
+	if(!/"myKasperskyId"/i.test(html) || /"myKasperskyId":\s*?""/i.test(html)){
         html = AnyBalance.requestGet(g_baseurl + 'api/config/common', addHeaders({
 	    	'Content-Type': 'application/json',
 	    	'Referer': g_baseurl,
@@ -85,25 +85,45 @@ function main() {
             };
 	        
 	        if(json.CaptchaRequired && json.CaptchaRequired == true){
-                AnyBalance.trace('Сайт затребовал проверку reCaptcha');
 	    	    html = AnyBalance.requestGet(g_baseurl + 'api/config/reCaptcha', g_headers);
 	            
 	            var json = getJson(html);
 	            AnyBalance.trace('Captcha: ' + JSON.stringify(json));
-	    	    
-	    	    if(!json.siteKey || !json.uisSiteKey || !json.uisTextCaptchaUrl){
-	        	    AnyBalance.trace(html);
-            	    throw new AnyBalance.Error('Не удалось получить параметры капчи. Сайт изменен?');
-	            }
 		        
 	            var siteKey = json.siteKey; // Для рекапчи
 	            var uisSiteKey = json.uisSiteKey; // Для скрытой рекапчи
 	            var uisTextCaptchaUrl = json.uisTextCaptchaUrl; // Для текстовой капчи
-		        
-			    var captcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', g_baseurl, uisSiteKey, {USERAGENT: g_headers['User-Agent']});
-	    	    params["captchaAnswer"] = captcha;
-	    	    params["captchaType"] = "invisible_recaptcha";
-	        }
+				
+				if(uisTextCaptchaUrl){ // Обнаружена текстовая капча
+				    AnyBalance.trace('Сайт затребовал проверку капчи');
+				    html = AnyBalance.requestPost(uisTextCaptchaUrl, JSON.stringify({'clientId': null}), addHeaders({
+	    	            'Content-Type': 'application/json',
+	    	            'Referer': g_baseurl,
+	                }));
+					
+					var json = getJson(html);
+					
+					if(!json.captchaId){
+	        	        AnyBalance.trace(html);
+            	        throw new AnyBalance.Error('Не удалось получить параметры текстовой капчи. Сайт изменен?');
+	                }
+					
+					var img = AnyBalance.requestGet(uisTextCaptchaUrl + '/' + json.captchaId + '/content', addHeaders({'Referer': g_baseurl}));
+					
+					var captcha = AnyBalance.retrieveCode('Пожалуйста, введите символы с картинки', img, {time: 180000});
+					params["captchaAnswer"] = captcha;
+					params["captchaId"] = json.captchaId;
+	    	        params["captchaType"] = "textImage";
+				}else if(uisSiteKey){ // Обнаружена скрытая рекапча
+				    AnyBalance.trace('Сайт затребовал проверку reCaptcha');
+					var captcha = solveRecaptcha('Пожалуйста, докажите, что вы не робот', g_baseurl, uisSiteKey, {USERAGENT: g_headers['User-Agent']});
+	    	        params["captchaAnswer"] = captcha;
+	    	        params["captchaType"] = "invisible_recaptcha";
+	            }else{
+	        	    AnyBalance.trace(html);
+            	    throw new AnyBalance.Error('Не удалось получить параметры капчи. Сайт изменен?');
+				}
+			}
 	        
 	        html = AnyBalance.requestPost('https://eu.uis.kaspersky.com/v3/logon/proceed', JSON.stringify(params), addHeaders({
 	    	    'Content-Type': 'application/json',
@@ -115,8 +135,15 @@ function main() {
 	        
 	        if(json.Status !== 'Success'){
 	    	    var error = json.Status;
-	    	    if(error)
-	    		    throw new AnyBalance.Error('Неверные логин или пароль!', null, /InvalidRegistrationData/i.test(error));
+	    	    if(error){
+					if(/InvalidCaptchaAnswer/i.test(error)){
+						throw new AnyBalance.Error('Неверный код!', null, false);
+					}else if(/InvalidRegistrationData/i.test(error)){
+	    		        throw new AnyBalance.Error('Неверные логин или пароль!', null, true);
+					}else{
+						throw new AnyBalance.Error(error, null, false);
+					}
+				}
 	    	    
 	    	    AnyBalance.trace(html);
         	    throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
@@ -193,62 +220,93 @@ function main() {
 	}));
 	
 	var json = getJson(html);
-	AnyBalance.trace('Лицензии: ' + JSON.stringify(json));
+//	AnyBalance.trace('Подписки: ' + JSON.stringify(json));
 	var returnUrl = json.returnUrl;
 	var userId = json.userId;
 	
 	if(!json){
     	AnyBalance.trace(html);
-    	throw new AnyBalance.Error('Информация о лицензиях не найдена!');
+    	throw new AnyBalance.Error('Информация о подписках не найдена!');
     }
 	
-	if(!json.productUsages || !json.productUsages.length)
-    	throw new AnyBalance.Error('У вас нет ни одной лицензии!');
+	var allProducts = [];
+	
+	if(json.productUsages && json.productUsages.length && json.productUsages.length > 0)
+	    allProducts = allProducts.concat(json.productUsages);
+	
+	if(json.unusedProductUsages && json.unusedProductUsages.length && json.unusedProductUsages.length > 0)
+	    allProducts = allProducts.concat(json.unusedProductUsages);
+	
+	if(!allProducts.length || allProducts.length < 1)
+    	throw new AnyBalance.Error('У вас нет ни одной подписки!');
 	
 	var result = {success: true};
 	
-	AnyBalance.trace('Найдено лицензий: ' + json.productUsages.length);
+	AnyBalance.trace('Найдено подписок: ' + allProducts.length);
 	
 	var svcSelected, svcDefault;
-    for(var i=0; i<json.productUsages.length; ++i){
-    	var svc = json.productUsages[i];
+    for(var i=0; i<allProducts.length; ++i){
+    	var svc = allProducts[i];
+		AnyBalance.trace('Найдена подписка ' + svc.brandedNameModel.value + ' (' + (!svc.isExpired ? 'активна' : 'срок действия истек') + ')');
 
-    	if(!prefs.lic_id && !svcDefault)
-    		svcDefault = svc;
+    	if(!prefs.lic_id && !svcDefault) // Первую сразу делаем дефолтной
+    		svcDefault = allProducts[0];
 
     	if(!svcSelected && prefs.lic_id && new RegExp(prefs.lic_id, 'i').test(svc.brandedNameModel.value)){
     		svcSelected = svc;
     		break;
     	}
 
-    	if(!prefs.lic_id){ //Хотим найти неустаревшую лицензию в первую очередь
-    		var till = getParam(svc.expirationDate|| undefined, null, null, null, null, parseDateISO);
-    		if(till > new Date().getTime()){
-    			svcSelected = svc;
-    			break;
-    		}
+    	if(!prefs.lic_id && !svc.isExpired){ // Ищем активную подписку в первую очередь
+    		svcSelected = svc;
+    		break;
     	}
     }
-
-    if(i >= json.productUsages.length)
-    	throw new AnyBalance.Error('Не удалось найти ' + (prefs.lic_id ? 'лицензию с названием ' + prefs.lic_id : 'ни одной лицензии!'));
+	
+	if(!svcSelected){
+		if(prefs.lic_id){
+    	    throw new AnyBalance.Error('Не удалось найти подписку с названием ' + prefs.lic_id);
+		}else{
+			AnyBalance.trace('Не удалось найти ни одной активной подписки. Пробуем получить информацию по первой устаревшей подписке...');
+		}
+	}
 
     var svc = svcSelected || svcDefault;
+	AnyBalance.trace('Выбрана подписка ' + svc.brandedNameModel.value);
+	
 	var productId = svc.licenseId;
+	var svc_status = {true: 'Срок действия истек', false: 'Активна', undefined: ''};
 
 	getParam(json.productUsages && json.productUsages.length, result, 'total', null, null, parseBalance);
 	getParam(json.unusedProductUsages && json.unusedProductUsages.length, result, 'unusages', null, null, parseBalance);
 	
-	getParam(svc.licenseUsagesCount, result, 'devices', null, null, parseBalance);
+	if(svc.activationCode){
+		if(svc.isActivationCodeMasked){
+	        getParam(svc.activationCode, result, '__tariff');
+	    }else{
+		    getParam(svc.activationCode.replace(/^(.*)-(.*)-(.*)-(.*)$/i, '$1-*****-*****-$4'), result, '__tariff');
+	    }
+	}else{
+		result.__tariff = svc.brandedNameModel.value;
+	}
+	
+	if(svc.isActivated){
+	    getParam(svc_status[svc.isExpired]||svc.isExpired, result, 'status');
+	}else{
+		result.status = 'Не активирована';
+	}
+	
+	getParam(svc.licenseUsagesCount||0, result, 'devices', null, null, parseBalance);
 	getParam(svc.brandedNameModel.name, result, 'products');
-	getParam(svc.activationCode, result, '__tariff');
-	getParam(svc.activationCode, result, 'activation_code');
-	getParam(svc.activationDate, result, 'active_date', null, null, parseDateISO);
-	getParam(svc.expirationDate, result, 'expires_date', null, null, parseDateISO);
-	getParam(svc.termInDays, result, 'product_term', null, null, parseBalance);
-	getParam(svc.daysRemainder, result, 'expires_days', null, null, parseBalance);
+	getParam(svc.activationCode||(svc.isFreeLicense ? 'Бесплатная' : 'Нет данных'), result, 'activation_code');
+	if(svc.activationDate)
+	    getParam(svc.activationDate, result, 'active_date', null, null, parseDateISO);
+	if(svc.expirationDate)
+	    getParam(svc.expirationDate, result, 'expires_date', null, null, parseDateISO);
+	getParam(svc.termInDays||0, result, 'product_term', null, null, parseBalance);
+	getParam(svc.daysRemainder||0, result, 'expires_days', null, null, parseBalance);
 	getParam(svc.brandedNameModel.value, result, 'product_desc');
-	getParam(svc.totalSlotsCount, result, 'slots_count', null, null, parseBalance);
+	getParam(svc.totalSlotsCount||0, result, 'slots_count', null, null, parseBalance);
 
     if (AnyBalance.isAvailable('all_devices')) {
         html = AnyBalance.requestGet(g_baseurl + 'MyDevices/api/DeviceList', addHeaders({
@@ -269,21 +327,40 @@ function main() {
 	    	}
 	    }else{
 	    	AnyBalance.trace('Не удалось найти информацию об устройствах');
+			result.all_devices = 'Нет устройств';
 	    }
 	}
 	
 	if (AnyBalance.isAvailable('country', 'email', 'fio')) {
-	    html = AnyBalance.requestGet(g_baseurl + 'MyAccountApi', addHeaders({
-	    	'Referer': AnyBalance.getLastUrl(),
-	    	'X-Requested-With': 'XMLHttpRequest'
-	    }));
-	
-	    var json = getJson(html);
-		AnyBalance.trace('Профиль: ' + JSON.stringify(json));
-	
-	    getParam(json.CountryName, result, 'country');
-	    getParam(json.CurrentEmail, result, 'email');
-	    getParam(json.CurrentAlias, result, 'fio');
+		var info = g_savedData.get('info'); // Иногда запрос профиля требует подтверждения по e-mail, поэтому сохраняем данные для вывода
+	    if(!info) info = {};
+		
+		try{
+	        html = AnyBalance.requestGet(g_baseurl + 'MyAccountApi', addHeaders({
+	    	    'Referer': AnyBalance.getLastUrl(),
+	    	    'X-Requested-With': 'XMLHttpRequest'
+	        }));
+	        
+	        var json = getJson(html);
+		    AnyBalance.trace('Профиль: ' + JSON.stringify(json));
+	        
+	        info.country = getParam(json.CountryName, result, 'country');
+	        info.email = getParam(json.CurrentEmail, result, 'email');
+	        info.fio = getParam(json.CurrentAlias, result, 'fio');
+			
+			AnyBalance.trace('Данные профиля получены. Сохраняем...');
+		    g_savedData.set('info', info);
+		    g_savedData.save();
+		}catch(e){
+		    if(info && JSON.stringify(info) !== '{}'){
+		        AnyBalance.trace('Данные профиля сохранены. Восстанавливаем значения...');
+		        result.country = info.country||null;
+			    result.email = info.email||null;
+			    result.fio = info.fio||null;
+		    }else{
+			    AnyBalance.trace('Не удалось получить данные по профилю: ' + e.message);
+		    }
+	    }
 	}
     
 	AnyBalance.setResult(result);

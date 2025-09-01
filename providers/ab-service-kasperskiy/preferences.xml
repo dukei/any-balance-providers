@@ -22,12 +22,12 @@
 		inputType="textPassword">
 	</EditTextPreference>
 	<EditTextPreference
-		title="Лицензия"
+		title="Подписка"
 		key="lic_id"
-		summary="Лицензия для просмотра информации|Автоматически\n|{@s}\n"
-		dialogTitle="Лицензия"
+		summary="Подписка для просмотра информации|Автоматически\n|{@s}\n"
+		dialogTitle="Подписка"
 		positiveButtonText="ОК"
 		negativeButtonText="Отмена"
-		dialogMessage="Введите часть имени лицензии, по которой вы хотите получать информацию. Если оставить поле пустым, будет показана информация по первой действующей лицензии">
+		dialogMessage="Введите часть названия подписки, по которой вы хотите получать информацию. Если оставить поле пустым, будет показана информация по первой действующей подписке">
 	</EditTextPreference>    
 </PreferenceScreen>

@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-service-kasperskiy</id>
+	<id version="7">ab-service-kasperskiy</id>
 	<api flags="no_browser"/>
 	<name>My Kaspersky</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о действующих лицензиях для пользователей продуктов Лаборатории Касперского (https://www.kaspersky.ru/).</p>
+	<p>Предоставляет информацию о действующих подписках для пользователей продуктов Лаборатории Касперского (https://www.kaspersky.ru/).</p>
 	<p>Информация берется из личного кабинета My Kaspersky на сайте https://my.kaspersky.com/.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
@@ -22,17 +22,18 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="products" name="Лицензия" type="text"/>
+		<counter id="products" name="Подписка" type="text"/>
 		<counter id="devices" name="Количество устройств" units=" шт"/>
-		<counter id="active_date" name="Дата активации лицензии" type="time" format="dd.MM.yyyy"/>
-		<counter id="expires_date" name="Дата окончания лицензии" type="time" format="dd.MM.yyyy"/>
-		<counter id="product_term" name="Срок действия лицензии" units=" дн"/>
+		<counter id="active_date" name="Дата активации подписки" type="time" format="dd.MM.yyyy"/>
+		<counter id="expires_date" name="Дата окончания подписки" type="time" format="dd.MM.yyyy"/>
+		<counter id="product_term" name="Срок действия подписки" units=" дн"/>
 		<counter id="expires_days" name="Осталось до деактивации" units=" дн"/>
-		<counter id="product_desc" name="Описание лицензии" type="text"/>
+		<counter id="product_desc" name="Описание подписки" type="text"/>
+		<counter id="status" name="Состояние подписки" type="text"/>
 		<counter id="activation_code" name="Код активации" type="text"/>
 		<counter id="slots_count" name="Доступно устройств" units=" шт"/>
-		<counter id="total" name="Всего лицензий" units=" шт"/>
-		<counter id="unusages" name="Неиспользуемые лицензии" units=" шт"/>
+		<counter id="total" name="Действующие подписки" units=" шт"/>
+		<counter id="unusages" name="Неиспользуемые подписки" units=" шт"/>
 		<counter id="all_devices" name="Управляемые устройства" type="html"/>
 		<counter id="country" name="Регион" type="text"/>
 		<counter id="email" name="E-mail" type="text"/>

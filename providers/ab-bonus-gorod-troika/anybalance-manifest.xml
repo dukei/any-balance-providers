@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-bonus-gorod-troika</id>
+	<id version="7">ab-bonus-gorod-troika</id>
 	<api flags="no_browser"/>
 	<name>Город Тройка</name>
 	<description html="true"><![CDATA[

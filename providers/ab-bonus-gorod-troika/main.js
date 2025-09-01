@@ -308,6 +308,13 @@ function main() {
 	var json = getJson(html);
 	AnyBalance.trace(JSON.stringify(json));
 	
+	if(!result.wallet && json.troika && json.troika.length && json.troika.length > 0){
+		for(var i=0; json.troika && i<json.troika.length; ++i){
+		    var t = json.troika[i];
+			
+			sumParam(t.balance, result, 'wallet', null, null, parseBalance, aggregate_sum);
+		}
+	}
 	getParam(json.game.level.name, result, 'level');
 	var lvlNum = json.game.level.number;
 	getParam('Уровень ' + lvlNum, result, 'levelnum');

@@ -14,7 +14,7 @@ var g_headers = {
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	var baseurl = 'https://etherscan.io/';
-	var baseurlApi = 'https://api.etherscan.io/';
+	var baseurlApi = 'https://api.etherscan.io/v2/api?chainid=1';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	AB.checkEmpty(prefs.login, 'Enter your account address!');
@@ -30,7 +30,7 @@ function main() {
 	}
 
 	if(AnyBalance.isAvailable('balance', 'usd', 'btc')){
-		var html = AnyBalance.requestGet(baseurlApi + 'api?module=account&action=balance&address=' + encodeURIComponent(prefs.login) + '&tag=latest&apikey=797R6CPKXY7ZUI7VTHFB9IINH1W4U959RM', g_headers);
+		var html = AnyBalance.requestGet(baseurlApi + '&module=account&action=balance&address=' + encodeURIComponent(prefs.login) + '&tag=latest&apikey=797R6CPKXY7ZUI7VTHFB9IINH1W4U959RM', g_headers);
 		var json = getJson(html);
 		var balance = (+json.result)/1000000000000000000;
 		getParam(balance, result, 'balance');
@@ -38,7 +38,7 @@ function main() {
 	}
 
         if(AnyBalance.isAvailable('usd', 'btc', 'rate', 'rate_btc')){
-		var html = AnyBalance.requestGet(baseurlApi + 'api?module=stats&action=ethprice&apikey=797R6CPKXY7ZUI7VTHFB9IINH1W4U959RM', g_headers);
+		var html = AnyBalance.requestGet(baseurlApi + '&module=stats&action=ethprice&apikey=797R6CPKXY7ZUI7VTHFB9IINH1W4U959RM', g_headers);
 		var json = getJson(html);
 		getParam(Math.round(json.result.ethusd*100)/100, result, ['rate', 'usd']);
 		getParam(+json.result.ethbtc, result, ['rate_btc', 'btc']);

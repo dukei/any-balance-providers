@@ -12,6 +12,11 @@ const BrowserAPI = (() => {
         valid: number //for 'cache' in milliseconds
     }
 
+    type ClientRule = {
+        url: RegExp,
+        action: function|function[],  (PendingRequest, PendingResponse) => callback|boolean|[callback, boolean] (callback to be called after returning the response, true if skip other rules)
+    }
+
     type Options = {
         provider: string
         win?: boolean
@@ -23,6 +28,7 @@ const BrowserAPI = (() => {
         noInterception?: boolean,
         userInteraction?: boolean,
         rules?: RuleSource[],
+        clientRules?: ClientRuleSource[],
         binaryResponses?: false,
         additionalRequestHeaders: {
             url?: RegExp,
@@ -30,6 +36,69 @@ const BrowserAPI = (() => {
             headers: {[name: string]: string}
         }[]
     }
+
+    type Response = {
+        id: string,
+        page: number,
+        r: {
+            body: string,
+            headers: Dict<string>
+            status: number
+        },
+        tasks?: ServerTask[]
+    }
+
+    type TaskType = 'wait'|'input'|'click'
+
+    type ServerTask = {
+        type: TaskType,
+        delayBefore?: number,
+        delayAfter?: number
+    }
+
+    interface ServerTaskInput extends ServerTask {
+        type: 'input',
+        value: string,
+        selector: string,
+        //https://pptr.dev/api/puppeteer.keyboardtypeoptions
+        options?: KeyboardTypeOptions
+    }
+
+    interface ServerTaskClick extends ServerTask {
+        type: 'click',
+        selector: string,
+        //https://pptr.dev/api/puppeteer.clickoptions
+        options?: ClickOptions
+    }
+
+    interface ServerTaskWait extends ServerTask {
+        type: 'wait',
+        delay: number
+    }
+
+    type PendingRequest = {
+        id: string
+        url: string
+        method: string
+        headers: Record<string, string>
+        body?: string
+    }
+
+    export type ApiResponseForRequest = {
+        body: string
+        charset: string
+        contentType: string
+        headers: Record<string, string|string[]>
+        status: number
+    }
+
+    interface PendingResponse  {
+        page: number
+        id: string
+        r?: ApiResponseForRequest
+        tasks?: ServerTask[]
+    }
+
     */
     class BrowserAPI {
         constructor(options) {
@@ -40,7 +109,10 @@ const BrowserAPI = (() => {
         requestAPI(verb, json) {
             const browserApi = this.options.debug ? browserApiDebug : (this.options.win ? browserApiWinRelease : browserApiRelease);
             const html = json
-                ? AnyBalance.requestPost(browserApi + '/' + verb, JSON.stringify(json), {"Referer": this.options.provider + '', "Content-Type": "application/json"}, {options: {"DEFAULT_CHARSET": "utf-8"}})
+                ? AnyBalance.requestPost(browserApi + '/' + verb, JSON.stringify(json), {
+                    "Referer": this.options.provider + '',
+                    "Content-Type": "application/json"
+                }, {options: {"DEFAULT_CHARSET": "utf-8"}})
                 : AnyBalance.requestGet(browserApi + '/' + verb + (verb.indexOf('?') >= 0 ? '&' : '?') + '_=' + (+new Date()), {"Referer": this.options.provider + ''});
             const ret = JSON.parse(html);
             if (ret.status !== 'ok') {
@@ -56,9 +128,9 @@ const BrowserAPI = (() => {
                 userAgent: this.options.userAgent,
                 singlePage: this.options.singlePage,
                 headful: this.options.headful,
-		noInterception: this.options.noInterception,
+                noInterception: this.options.noInterception,
                 userInteraction: this.options.userInteraction,
-		incognito: this.options.incognito,
+                incognito: this.options.incognito,
                 url: url,
                 rules: this.options.rules
             })
@@ -81,25 +153,25 @@ const BrowserAPI = (() => {
                         const headers = [];
                         for (let name in pr.headers) {
                             const hv = pr.headers[name];
-			    if(hv.trim() === '')
-				continue;
+                            if (hv.trim() === '')
+                                continue;
                             const values = hv.split('\n');
-                            for (let i = 0; i < values.length; ++i){
-				if(name.toLowerCase() === 'content-length')
-					continue;
+                            for (let i = 0; i < values.length; ++i) {
+                                if (name.toLowerCase() === 'content-length')
+                                    continue;
                                 headers.push([name, values[i]]);
-			    }
+                            }
                         }
 
                         let additionalHeaders = {};
-                        if(this.options.additionalRequestHeaders){
-                            for(let a=0; a<this.options.additionalRequestHeaders.length; ++a){
+                        if (this.options.additionalRequestHeaders) {
+                            for (let a = 0; a < this.options.additionalRequestHeaders.length; ++a) {
                                 const arh = this.options.additionalRequestHeaders[a];
-                                if(!arh.url || arh.url.test(pr.url)){
+                                if (!arh.url || arh.url.test(pr.url)) {
                                     const headerMatchCounts = this.headerMatchCounts;
-                                    if(!arh.maxCount || (headerMatchCounts[a] || 0) < arh.maxCount) {
+                                    if (!arh.maxCount || (headerMatchCounts[a] || 0) < arh.maxCount) {
                                         additionalHeaders = arh.headers || {};
-                                        if(arh.maxCount)
+                                        if (arh.maxCount)
                                             headerMatchCounts[a] = (headerMatchCounts[a] || 0) + 1;
                                         break;
                                     }
@@ -108,12 +180,12 @@ const BrowserAPI = (() => {
                         }
 
                         const html = AnyBalance.requestPost(pr.url, pr.body, addHeaders(additionalHeaders, headers), {
-				HTTP_METHOD: pr.method, 
-				options: {
-					FORCE_CHARSET: forcedCharset,
-					MANUAL_REDIRECTS: true
-				}
-			});
+                            HTTP_METHOD: pr.method,
+                            options: {
+                                FORCE_CHARSET: forcedCharset,
+                                MANUAL_REDIRECTS: true
+                            }
+                        });
                         const params = AnyBalance.getLastResponseParameters();
                         const convertedHeaders = {};
                         let ct;
@@ -127,11 +199,11 @@ const BrowserAPI = (() => {
                                 //https://stackoverflow.com/questions/5515869/string-length-in-bytes-in-javascript
                                 h[1] = '' + unescape(encodeURIComponent(html || '')).length;
                             }
-                            if(convertedHeaders[name] === undefined){
+                            if (convertedHeaders[name] === undefined) {
                                 convertedHeaders[name] = h[1];
-			    }else if(Array.isArray(convertedHeaders[name])){
-				convertedHeaders[name].push(h[1]);
-                            }else {
+                            } else if (Array.isArray(convertedHeaders[name])) {
+                                convertedHeaders[name].push(h[1]);
+                            } else {
                                 convertedHeaders[name] = [convertedHeaders[name], h[1]];
                             }
                             if (name === 'content-type')
@@ -143,12 +215,14 @@ const BrowserAPI = (() => {
                             r: {
                                 status: AnyBalance.getLastStatusCode(),
                                 headers: convertedHeaders,
-				charset: forcedCharset,
+                                charset: forcedCharset,
                                 contentType: ct,
                                 body: html
                             }
                         }
-                        this.requestAPI('base/response', prDone);
+                        const callbacks = this.applyClientRules(pr, prDone)
+                        const ret = this.requestAPI('base/response', prDone);
+                        callbacks.forEach(cb => cb(ret, this, pr, prDone))
                     }
                 } else if (json.loadStatus === 'load')
                     break;
@@ -156,6 +230,34 @@ const BrowserAPI = (() => {
 
             if (json.loadStatus !== 'load')
                 throw new AnyBalance.Error(`Waiting for page ${page} loading timeout!`);
+        }
+
+        tasks(page, tasks) {
+            const ret = this.requestAPI('base/tasks', {
+                page: page,
+                tasks: tasks
+            })
+            AnyBalance.trace(`Sending ${tasks.length} tasks to page ${ret.page}`);
+            return ret;
+        }
+
+        applyClientRules(pr, prDone) {
+            const crs = this.options.clientRules || [];
+            const url = pr.url;
+            const callbacks = []
+            rules_loop: for(let cr of crs){
+                if(cr.url.test(url)){
+                    let ret = cr.action(this, pr, prDone)
+                    if(!Array.isArray(ret)) ret = [ret]
+                    for(let r of ret) {
+                        if (typeof (r) === 'function')
+                            callbacks.push(r)
+                        if (typeof (r) === 'boolean' && r)
+                            break rules_loop;
+                    }
+                }
+            }
+            return callbacks
         }
 
         //returns {status: 'ok', content: string}

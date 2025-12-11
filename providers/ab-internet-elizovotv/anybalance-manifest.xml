@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+	<id version="1">ab-internet-elizovotv</id>
+	<name>Студия НОВА (Елизово)</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и тарифном плане для пользователей интернет-провайдера <a href="https://elizovo.ru/">Студия НОВА</a>.</p>
+	<p>Информация берется из личного кабинета Студия НОВА на сайте https://inet.elizovotv.ru/.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Студия НОВА.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+  	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Входящий остаток" units=" ₽"/>
+		<counter id="monthly_arrival" name="Приход за месяц" units=" ₽"/>
+		<counter id="monthly_expense" name="Расход за месяц" units=" ₽"/>
+		<counter id="monthly_operating" name="Наработка за месяц" units=" ₽"/>
+		<counter id="unlim_abon" name="Абонплата за Безлимит" units=" ₽"/>
+		<counter id="outgoing_balance" name="Исходящий остаток" units=" ₽"/>
+		<counter id="limit" name="Лимит" units=" ₽"/>
+		<counter id="contract" name="Номер договора" type="text"/>
+		<counter id="period" name="Расчетный период" type="text"/>
+		<counter id="last_arrival_date" name="Дата последнего прихода" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_arrival_sum" name="Сумма последнего прихода" units=" ₽"/>
+		<counter id="last_arrival_type" name="Описание последнего прихода" type="text"/>
+		<counter id="address" name="Адрес подключения" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>Студия, НОВА, Елизово, ТВ, интернет</keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

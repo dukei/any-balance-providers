@@ -36,7 +36,7 @@ function main() {
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', />Адрес:(?:[^>]*>){5}([\s\S]*?<\/strong>)/i, [replaceTagsAndSpaces, /Долг\s*:?/i, '-'], parseBalance);
+	getParam(html, result, 'balance', /<span class="title">Долг:<\/span>\s*<span[^>]*>([\s\S]*?)<\/span>/i, [replaceTagsAndSpaces, /Долг\s*:?/i, '-'], parseBalance);
 	getParam(html, result, 'acc_num', /Номер счета:([^>]*>){3}/i, replaceTagsAndSpaces, html_entity_decode);
 	getParam(html, result, 'fio', /<th colspan="3">([^>]*>){1}/i, replaceTagsAndSpaces, html_entity_decode);
 	

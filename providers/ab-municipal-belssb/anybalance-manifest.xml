@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-municipal-belssb</id>
+	<id version="6">ab-municipal-belssb</id>
 	<api flags="no_browser"/>
 	<name>Балашихинская Электросеть</name>
 	<description html="true"><![CDATA[

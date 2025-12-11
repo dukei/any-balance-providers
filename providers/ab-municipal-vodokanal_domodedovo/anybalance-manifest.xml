@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="1">ab-municipal-vodokanal_domodedovo</id>
+	<api flags="no_browser"/>
+	<name>Домодедовский водоканал</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о задолженности и состоянии счета для абонентов МУП "Домодедовский водоканал" г. Домодедово (https://www.dom-vodokanal.ru/).</p>
+	<p>Информация берется из личного кабинета абонента МУП "Домодедовский водоканал" на сайте https://www.dom-vodokanal.ru/kabinet/.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет МУП "Домодедовский водоканал".</p>
+	<p>Если у вас нет доступа в личный кабинет МУП "Домодедовский водоканал", пройдите регистрацию на странице https://www.dom-vodokanal.ru/help_reg/.</p>
+    ]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+		<module id="misc/saved-data"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Задолженность/Переплата" units=" ₽"/>
+		<counter id="last_upd_date" name="Дата посл. обновления" type="time" format="dd.MM.yyyy"/>
+		<counter id="accrued_coldwater" name="Вода (начислено)" units=" ₽"/>
+		<counter id="accrued_sanitation" name="Канализация (начислено)" units=" ₽"/>
+		<counter id="accrued_watering" name="Полив (начислено)" units=" ₽"/>
+		<counter id="balance_start" name="На начало периода" units=" ₽"/>
+		<counter id="paid_sum" name="Оплачено" units=" ₽"/>
+		<counter id="calculated_sum" name="Доначислено" units=" ₽"/>
+		<counter id="fine_sum" name="Пени" units=" ₽"/>
+		<counter id="total_sum" name="Сумма к оплате" units=" ₽"/>
+		<counter id="countervalue" name="Посл. показания счетчика" units=" м³"/>
+		<counter id="countervalue_date" name="Дата посл. показаний" type="time" format="dd.MM.yyyy"/>
+		<counter id="countervalue_prev" name="Пред. показания счетчика" units=" м³"/>
+		<counter id="countervalue_prev_date" name="Дата пред. показаний" type="time" format="dd.MM.yyyy"/>
+		<counter id="counternum" name="Номер счетчика" type="text"/>
+		<counter id="countertype" name="Тип счетчика" type="text"/>
+		<counter id="counter_set_date" name="Дата установки счетчика" type="time" format="dd.MM.yyyy"/>
+		<counter id="counter_change_date" name="Дата замены счетчика" type="time" format="dd.MM.yyyy"/>
+		<counter id="account" name="Лицевой счет" type="text"/>
+		<counter id="last_pay_date" name="Дата посл. платежа" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_pay_sum" name="Сумма посл. платежа" units=" ₽"/>
+		<counter id="last_pay_type" name="Вид посл. платежа" type="text"/>
+		<counter id="address" name="Адрес" type="text"/>
+		<counter id="phone" name="Номер телефона" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+	</counters>
+	<keywords>водоканал, домодедово, жкх</keywords>
+	<type>municipal</type>
+	<country>ru</country>
+</provider>

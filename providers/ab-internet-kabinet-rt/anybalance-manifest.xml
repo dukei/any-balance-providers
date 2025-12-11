@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
     <api flags="no_browser" />
-	<id version="38">ab-internet-kabinet-rt</id>
+	<id version="39">ab-internet-kabinet-rt</id>
 	<name>Ростелеком РФ (Единый кабинет)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о текущем балансе для абонентов провайдера Ростелеком РФ (https://rt.ru/).</p>

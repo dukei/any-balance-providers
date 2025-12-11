@@ -590,7 +590,7 @@ function getInfoByAlternative(prefs){
     
     AnyBalance.trace('Ответ от внешней системы: ' + html);
 	
-	if(!/value="PAY"/i.test(html)){
+	if(!/_PA_BALANCE_/i.test(html)){
 		var error = getParam(html, /<div[^>]+message error bg-info[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
 		if(error)
 			throw new AnyBalance.Error(error, null, /номер/i.test(error));
@@ -601,7 +601,7 @@ function getInfoByAlternative(prefs){
 	
 	var result = {success: true};
 	
-	getParam(html, result, 'balance', /_PA_BALANCE[\s\S]*?value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'balance', /_PA_BALANCE_[\s\S]*?value="([^"]*)/i, replaceTagsAndSpaces, parseBalance);
 	result.__tariff = prefs.login;
 	result.licschet = prefs.login;
 		

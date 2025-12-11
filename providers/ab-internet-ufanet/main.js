@@ -3,163 +3,296 @@
 
 Получает баланс и информацию о тарифном плане для уфимского интернет-провайдера Ufanet
 
-Сайт оператора: http://ufanet.ru/
+Сайт оператора: https://www.ufanet.ru/
 Личный кабинет: https://my.ufanet.ru/
-
-Отлаживается отладчиком параметры:
-__dbg:true, - без этого будет падать
-__dbgCab:'old' - определяем кабинет
 */
-var g_headers ={}
-function encodeURIComponent1251 (str) {
-	var transAnsiAjaxSys = [];
-	for (var i = 0x410; i <= 0x44F; i++)
-		transAnsiAjaxSys[i] = i - 0x350; // А-Яа-я
-		
-	transAnsiAjaxSys[0x401] = 0xA8;    // Ё
-	transAnsiAjaxSys[0x451] = 0xB8;    // ё
 
-	var ret = [];
-	// Составляем массив кодов символов, попутно переводим кириллицу
-	for (var i = 0; i < str.length; i++) {
-		var n = str.charCodeAt(i);
-		if (typeof transAnsiAjaxSys[n] != 'undefined')
-			n = transAnsiAjaxSys[n];
-		if (n <= 0xFF)
-			ret.push(n);
-	}
-	return escape(String.fromCharCode.apply(null, ret));
-}
+var g_headers = {
+    'Accept': 'application/json, text/plain, */*',
+	'Accept-Language': 'rus',
+	'Appkey': 'VHCOMpfkso3Ke2YQNOT7',
+	'Connection': 'keep-alive',
+	'Content-Type': 'application/json',
+	'Origin': 'https://my.ufanet.ru',
+    'Referer': 'https://my.ufanet.ru/login',
+	'Upgrade-Insecure-Requests': '1',
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36'
+};
+
+var g_baseurl = 'https://my.ufanet.ru/';
 
 function main(){
     var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
+	
+	checkEmpty(prefs.login, 'Введите логин!');
+    checkEmpty(prefs.password, 'Введите пароль!');
 
-    if(prefs.licschet && !/^\d{5,}$/.test(prefs.licschet))
-        throw new AnyBalance.Error('Укажите цифры номера лицевого счета, по которому вы хотите получить информацию, или не указывайте ничего, чтобы получить информацию по первому лицевому счету.');
-
-    var baseurl = 'https://my.ufanet.ru/';
-    var oldbaseurl = 'https://oldlk.ufanet.ru/';
-    //https://bill.ufanet.ru/client/index.html старница статистики
-	if(prefs.cab == 'old') {
-		AnyBalance.trace('Запросим старый кабинет');
-		var html = AnyBalance.requestPost(oldbaseurl + 'login', {
-			city: (prefs.city ? prefs.city : 'ufa'),
-			contract:encodeURIComponent1251(prefs.login),
-			password:prefs.password,
-                        authType: 'login_password'
-		});
-		AnyBalance.setDefaultCharset('windows-1251');
-		
-		AnyBalance.trace('Попали в старый кабинет, обратите внимание, в старом кабинете игнорируется настройка № договора');
-		if(!/Выход/i.test(html)){
-			var error = getParam(html, null, null, /<h2>ОШИБКА:([\s\S]*?)<\/li/, replaceTagsAndSpaces, html_entity_decode);
-			if(error)
-				throw new AnyBalance.Error(error);
-			throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
-		}
-		// http://stat1.ufanet.ru/bgbilling/webexecuter?action=ShowBalance&mid=contract&contractId=488711
-		var result = {success: true};
-		getParam(html, result, 'balance', /Баланс:<\/span>([^<]*)/i, replaceTagsAndSpaces, parseBalance);
-		getParam(html, result, 'licschet', /Лицевой счет:<\/span>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-		getParam(html, result, 'adress', /Адрес:<\/span>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-		getParam(html, result, 'fio', /panel-body[\s\S]*?<h5[\s\S]*?>([^<]*)/i, replaceTagsAndSpaces, html_entity_decode);
-		var table=getParam(html, null, null, /<table[\s\S]*?Услуга[\s\S]*?(<tbody[\s\S]*?<\/table>)/i, null, html_entity_decode);
-		var servise=table.match(/<tr>[\s\S]*?<td>([\s\S]*?)<\/td>/ig).join(',').replace(/\r?\n/g,'');
-		var dates=table.match(/\((\d{1,2}\s[а-я]+\s\d{4}\s\d\d:\d\d)\)/g).toString().match(/\d{1,2}\s[а-я]+\s\d{4}/g);
-		getParam(parseDateWord(dates.sort(function(a,b) { return parseDateWord(a)-parseDateWord(b)})[0]),result,'daysleft');
-		servise=getParam(servise, null, null, null, replaceTagsAndSpaces, html_entity_decode).replace(/\s,/g,',');
-		result.__tariff=servise;
-	} else {
-		function html_to_json(func){
-			var html=func();
-			if (AnyBalance.getLastStatusCode()==401){
-                          AnyBalance.trace('Доступ запрещен');
-			  if (resfresh_token && refreshtoken()){
-			  	var html=func();
-			  }else{
-			  	if (loginNew()) var html=func();
-			  }
-			}
-			if(!/"error_message":null/i.test(html)||!/"status":"ok"/i.test(html)){
-				AnyBalance.trace(html);			
-				var error = getJson(html).error_message;
-				if(error)
-					throw new AnyBalance.Error(error);
-				throw new AnyBalance.Error('Не удалось войти в личный кабинет. Проблемы на сайте или сайт изменен.');
-			}
-        		return getJson(html);
-		}
-
-		var AppKey='VHCOMpfkso3Ke2YQNOT7';
-		AnyBalance.trace('Запросим новый кабинет');
-		var token=AnyBalance.getData('token');
-		var resfresh_token=AnyBalance.getData('resfresh_token');
-		function loginNew(){
-			AnyBalance.trace('Логинимся');
-			var html = AnyBalance.requestPost(baseurl + 'api/v0/token/', {
-				login:prefs.login,
-				password:prefs.password
-			},{AppKey: AppKey});
-			json=getJson(html);
-			if (!json.detail.access) return false;
-			AnyBalance.trace('Ищем токен авторизации');
-			token=json.detail.access;
-			resfresh_token=json.detail.refresh;
-			return true;
-		}
-		function refreshtoken(){
-			AnyBalance.trace('Попытка восстановть доступ');
-			var html = AnyBalance.requestPost(baseurl + 'api/v0/token/refresh/', 
-				{refresh:resfresh_token},{AppKey: AppKey});
-			json=getJson(html);
-			if (!json.detail.access) return false;
-			AnyBalance.trace('Ищем токен авторизации');
-			token=json.detail.access;
-			resfresh_token=json.detail.refresh;
-			return true;
-		}
-		var json = html_to_json(function (){return AnyBalance.requestGet(baseurl + 'api/v0/contract_info/get_all_contract/', 
-			{AppKey: AppKey,
-			Authorization: 'JWT '+token
-		})});
-		AnyBalance.trace('Ищем список лицевых счетов');
-                if (json.status!="ok") throw new AnyBalance.Error('Не удалось получить список лицевых счетов.');
-		if(prefs.licschet){
-			var availableContracts = json.detail.contracts;
-			if(!availableContracts)
-				throw new AnyBalance.Error('Не удалось найти лицевой счет ' + prefs.licschet);
-                        var contract = availableContracts.filter(function(s) { return prefs.licschet==s.title})[0]
-			if(!contract){
-				AnyBalance.trace('В кабинете не нашлось лицевого счета ' + prefs.licschet + ' среди ' + availableContracts.map(function(s) { return s.title }).join(', '));
-				throw new AnyBalance.Error('Не удалось найти лицевой счет ' + prefs.licschet); 
-			}
-		}else{
-			var contract = json.detail.contracts[0];
-		}
-		AnyBalance.trace('Выбран лицевой счет '+contract.title);
-		var json = html_to_json(function (){return AnyBalance.requestPost(baseurl + 'api/v0/contract_info/get_contract_info/',
-			JSON.stringify({contracts: [{contract_id: contract.contract_id, billing_id: contract.billing_id}]}),
-			{AppKey: AppKey, Authorization: 'JWT '+token,Connection: 'keep-alive',Accept: 'application/json, text/plain, */*','Content-Type': 'application/json'})});
-
-
-		var result = {success: true};
-		result.balance=json.detail[0].balance.output_saldo;
-		result.pay=json.detail[0].balance.recommended;
-		result.licschet=json.detail[0].contract_title;
-		if (json.detail[0].balance.expiry_date) result.daysleft=json.detail[0].balance.expiry_date*1000;
-		result.status=json.detail[0].contract_status;
-		result.fio=json.detail[0].customer_name;
-		var tarif=json.detail[0].services;
-		function onlyUnique(value, index, self) {return self.indexOf(value) === index}
-		if (tarif) result.__tariff=tarif.filter(function(s) { return s.service_status=='Активен'}).map(function(s) { return s.tariff.title}).filter(onlyUnique).join(',');
-                result.autopayment=json.detail[0].autopayment.title;
-		json=json.detail[0].contract_address;
-		result.adress=json.city+', '+json.street+', '+json.house+(json.flat>0?'/'+json.flat:'')
-		AnyBalance.setData('token',token);
-		AnyBalance.setData('resfresh_token',resfresh_token);
-                AnyBalance.saveData();
+    if(prefs.num && !/^\d{5,}$/.test(prefs.num))
+        throw new AnyBalance.Error('Введите номер лицевого счета!');
+	
+	AnyBalance.setOptions({
+		SSL_ENABLED_PROTOCOLS: ['TLSv1', 'TLSv1.1', 'TLSv1.2']
+	});
+	
+	AnyBalance.trace('Пробуем войти в личный кабинет...');
+	
+	AnyBalance.restoreCookies();
+	
+	var token = AnyBalance.getData('token' + prefs.login);
+	var resfresh_token = AnyBalance.getData('resfresh_token' + prefs.login);
+	
+	AnyBalance.setExceptions(false); // Может не пустить с первого раза по SSL, поэтому отключаем Exceptions на время запроса
+	
+	var tries = 0;
+	do {
+		var html = AnyBalance.requestGet(g_baseurl + 'api/v0/contract_info/get_all_contract/', addHeaders({
+		    'Authorization': 'JWT ' + token
+		}));
+	    AnyBalance.trace('Попытка ' + (tries+1) + ': ' + (html ? html : AnyBalance.getLastError()));
+	} while (!html && ++ tries < 5);
+	
+	AnyBalance.setExceptions(true); // Теперь можно включить Exceptions
+	
+	if(!html || AnyBalance.getLastStatusCode() > 500) {
+		throw new AnyBalance.Error('Сайт провайдера временно недоступен. Попробуйте еще раз позже');
 	}
+	
+	if(/Error decoding signature/i.test(html) || AnyBalance.getLastStatusCode() == 401){
+		if(resfresh_token){
+			AnyBalance.trace('Сессия устарела. Пробуем возобновить...');
+			
+			var html = AnyBalance.requestPost(g_baseurl + 'api/v0/token/refresh/', JSON.stringify({'refresh': resfresh_token}), g_headers);
+		    
+		    AnyBalance.trace('Авторизация: ' + html);
+		    
+			var json = getJson(html);
+			
+			if(json.error_message || (json.status && json.status !== 'ok')){
+				var error = json.error_message;
+				if(error)
+					throw new AnyBalance.Error(error, null, false);
+				
+				AnyBalance.trace(html);
+				throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
+			}
+			
+			if(!json.detail || (json.detail && !json.detail.access)){
+				AnyBalance.trace(html);
+				throw new AnyBalance.Error('Не удалось получить токен авторизации. Сайт изменен?');
+			}
+			
+			token = json.detail.access;
+			resfresh_token = json.detail.refresh;
+			
+			AnyBalance.setData('token' + prefs.login, token);
+		    AnyBalance.setData('resfresh_token' + prefs.login, resfresh_token);
+			AnyBalance.saveCookies();
+		    AnyBalance.saveData();
+		}else{
+			AnyBalance.trace('Сессия новая. Будем логиниться заново...');
+			
+			clearAllCookies();
+			
+			AnyBalance.setExceptions(false); // Может не пустить с первого раза по SSL, поэтому отключаем Exceptions на время запроса
+		    
+		    var tries = 0;
+	        do {
+				var html = AnyBalance.requestGet('https://my.ufanet.ru/login', g_headers);
+	            AnyBalance.trace('Попытка ' + (tries+1) + ': ' + (html ? html : AnyBalance.getLastError()));
+	        } while (!html && ++ tries < 5);
+		    
+		    AnyBalance.setExceptions(true); // Теперь можно включить Exceptions
+			
+			var html = AnyBalance.requestPost(g_baseurl + 'api/v0/token/', JSON.stringify({'login': prefs.login, 'password': prefs.password}), g_headers);
+		    
+		    AnyBalance.trace('Авторизация: ' + html);
+		    
+			var json = getJson(html);
+			
+			if(json.error_message || (json.status && json.status !== 'ok')){
+				var error = json.error_message;
+				if(error){
+					if(/login|password|логин|парол/i.test(error))
+						throw new AnyBalance.Error('Неверный логин или пароль!', null, true);
+					
+					throw new AnyBalance.Error(error, null, false);
+				}
+				
+				AnyBalance.trace(html);
+				throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
+			}
+			
+			if(!json.detail || (json.detail && !json.detail.access)){
+				AnyBalance.trace(html);
+				throw new AnyBalance.Error('Не удалось получить токен авторизации. Сайт изменен?');
+			}
+			
+			token = json.detail.access;
+			resfresh_token = json.detail.refresh;
+			
+			AnyBalance.setData('token' + prefs.login, token);
+		    AnyBalance.setData('resfresh_token' + prefs.login, resfresh_token);
+			AnyBalance.saveCookies();
+		    AnyBalance.saveData();
+		}
+	}else{
+		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
+	}
+	
+	var result = {success: true};
+	
+	var token = AnyBalance.getData('token' + prefs.login);
+	
+	var html = AnyBalance.requestGet(g_baseurl + 'api/v0/contract_info/get_all_contract/', addHeaders({
+		'Authorization': 'JWT ' + token
+	}));
+	
+	AnyBalance.trace('Список договоров: ' + html);
+	
+	var json = getJson(html);
+	
+	AnyBalance.trace('Найдено лицевых счетов: ' + json.detail.contracts.length);
+	
+	if(json.detail.contracts.length < 1)
+		throw new AnyBalance.Error('У вас нет ни одного лицевого счета');
+    
+	var currContract;
+    
+	for(var i=0; i<json.detail.contracts.length; ++i){
+		var contract = json.detail.contracts[i];
+		AnyBalance.trace('Найден лицевой счет ' + contract.title);
+	    if(!currContract && (!prefs.num || endsWith(contract.title, prefs.num))){
+	    	AnyBalance.trace('Выбран лицевой счет ' + contract.title);
+	    	currContract = contract;
+	    }
+	}
+    
+	if(!currContract)
+		throw new AnyBalance.Error('Не удалось найти лицевой счет ' + prefs.num);
+	
+	var html = AnyBalance.requestPost(g_baseurl + 'api/v0/contract_info/get_contract_info/', JSON.stringify({
+		'contracts': [{contract_id: currContract.contract_id, billing_id: currContract.billing_id}]
+	}), addHeaders({
+		'Authorization': 'JWT ' + token
+	}));
+	
+	AnyBalance.trace('Данные по договору: ' + html);
+	
+    var json = getJson(html);
+	
+	var info = json.detail && json.detail[0];
+	
+	getParam(info.balance.output_saldo, result, 'balance', null, null, parseBalance);
+	getParam(info.balance.recommended, result, 'pay', null, null, parseBalance);
+	if(info.balance.expiry_date){
+		var expDate = getParam(info.balance.expiry_date*1000, result, 'daysleft', null, null, parseBalanceSilent);
+		if (expDate){
+			if (AnyBalance.isAvailable('expiresdays')){
+			    var days = Math.ceil((expDate - (new Date().getTime())) / 86400 / 1000);
+			    if (days >= 0){
+			        result.expiresdays = days;
+			    }else{
+			    	AnyBalance.trace('Дата окончания действия уже наступила');
+			    	result.expiresdays = 0;
+			    }
+			}	
+ 		}else{
+ 		    AnyBalance.trace('Не удалось получить дату окончания действия');
+ 		}
+	}
+	
+	if(info.date_from)
+		getParam(info.date_from*1000, result, 'contractdate');
+	getParam(info.cashback_sum, result, 'bonuses', null, null, parseBalance);
+	getParam(info.contract_title, result, 'licschet');
+	getParam(info.contract_status, result, 'status');
+	getParam(info.autopayment.title, result, 'autopayment', null, null, capitalFirstLetters);
+	getParam(info.customer_name, result, 'fio', null, null, capitalFirstLetters);
+	
+	var tarif = info.services;
+	
+	function onlyUnique(value, index, self) {return self.indexOf(value) === index};
+	
+	if(tarif)
+		result.__tariff = tarif.filter(function(s) { return s.service_status == 'Активен'}).map(function(s) { return s.tariff.title}).filter(onlyUnique).join(', ');
+    
+	var add = info.contract_address;
+	var address = '';
+	
+	if(add.city)
+		address += add.city;
+	if(add.street)
+		address += address ? ', ' + add.street : '';
+	if(add.house)
+		address += address ? ', ' + add.house : '';
+	if(add.flat)
+		address += address ? ', ' + add.flat : '';
+	
+	getParam(address, result, 'adress');
+	
+	if(AnyBalance.isAvailable('last_oper_date', 'last_oper_sum', 'last_oper_type', 'last_oper_desc')){
+		var dt = new Date();
+	    var dtPrev = new Date(dt.getFullYear()-1, dt.getMonth(), '01', dt.getHours(), dt.getMinutes(), dt.getSeconds());
+	    var dateFrom = Math.floor(new Date(dtPrev).getTime() / 1000);
+	    var dateTo = Math.floor(new Date(dt).getTime() / 1000);
+		
+		var html = AnyBalance.requestGet(g_baseurl + 'api/v0/service_management/get_balance_detail/?contract_id=' + currContract.contract_id + '&billing_id=' + currContract.billing_id + '&date_from=' + dateFrom + '&date_to=' + dateTo + '&COUNT_MONTHS=12', addHeaders({
+		    'Authorization': 'JWT ' + token
+		}));
+        
+		AnyBalance.trace('Операции с балансом: ' + html);
+        
+        var json = getJson(html);
+		
+		if(json.detail && json.detail.balance_detail){
+			var obj = json.detail.balance_detail;
+			
+			for(var key in obj){
+    	        var lastMonth = obj[key];
+            }
+			
+			var dir = '', defaultComm = '', defaultType = 'Баланс счета';
+			
+			if(lastMonth && lastMonth.length && lastMonth.length > 0){
+				AnyBalance.trace('Найдено операций за месяц: ' + lastMonth.length);
+				
+				for(var i=0; i<lastMonth.length; ++i){
+		            var operation = lastMonth[i];
+					
+					if(operation.type == 'start_month'){
+						defaultComm = 'На начало месяца';
+					}else if(operation.type == 'end_month'){
+						defaultComm = 'На конец месяца';
+				    }else if(operation.type == 'charge'){
+						dir = '-';
+				    }
+		            
+					getParam(operation.date, result, 'last_oper_date');
+	                getParam(dir + operation.sum, result, 'last_oper_sum', null, null, parseBalance);
+	                getParam(operation.typeTitle ? operation.typeTitle : defaultType, result, 'last_oper_type');
+			        getParam(operation.comment ? operation.comment : defaultComm, result, 'last_oper_desc');
+					
+					break;
+	            }
+			}else{
+			    AnyBalance.trace('Не удалось получить данные по последней операции');
+		    }
+		}else{
+			AnyBalance.trace('Не удалось получить данные по операциям');
+		}
+	}
+	
+	var html = AnyBalance.requestGet(g_baseurl + 'bonus/public/api/v0/accounts/', addHeaders({
+		'Authorization': 'JWT ' + token
+	}));
+	
+	AnyBalance.trace('Бонусная программа: ' + html);
+	
+    var json = getJson(html);
+	
+	getParam(json.balance, result, 'bonuses', null, null, parseBalance);
+	getParam(json.title, result, 'fio', null, null, capitalFirstLetters);
 
     AnyBalance.setResult(result);
 }

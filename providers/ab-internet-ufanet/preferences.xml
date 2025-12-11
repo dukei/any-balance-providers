@@ -1,48 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen>
-    <EditTextPreference 
-        title="№ договора" 
-        positiveButtonText="ОК" 
-        summary="||{@s}" 
-        dialogTitle="№ договора" 
-        negativeButtonText="Отмена" 
-        dialogMessage="Введите номер договора для входа в личный кабинет https://my.ufanet.ru."
-        key="login">
-    </EditTextPreference>
-    <EditTextPreference 
+     <EditTextPreference
+		obligatory="true"
+        key="login"
+        title="Логин"
+        summary="Логин для входа в личный кабинет|Введите логин\n|{@s}\n"
+        dialogTitle="Логин"
+        dialogMessage="Введите логин, используемый для входа в личный кабинет"
         positiveButtonText="ОК"
-        key="password" 
-        dialogTitle="Пароль"
-        negativeButtonText="Отмена"
+        negativeButtonText="Отмена">
+    </EditTextPreference>
+    <EditTextPreference
+		obligatory="true"
+        key="password"
         title="Пароль"
-        summary="||***********"
-        dialogMessage="Введите пароль, используемый для входа в личный кабинет https://my.ufanet.ru."
-        inputType="textPassword">
-    </EditTextPreference>
-    <ListPreference 
-        key="city" 
-        title="Город"
-        summary="||{@s}"
-        entries="Ишимбай|Нефтекамск|Октябрьский|Оренбург|Орск|Салават|Стерлитамак|Уфа"
-        entryValues="ish|nft|okt|orb|orsk|slv|str|ufa"
-		defaultValue="ufa">
-    </ListPreference>!
-    <EditTextPreference 
+        summary="Пароль для входа в личный кабинет|Введите пароль\n|**********\n"
+        inputType="textPassword"
+        dialogTitle="Пароль"
+        dialogMessage="Введите пароль, используемый для входа в личный кабинет"
         positiveButtonText="ОК"
-        key="licschet" 
-        dialogTitle="Лицевой счет"
-        negativeButtonText="Отмена"
-        title="Лицевой счет"
-        summary="|Автоматически\n|{@s}\n"
-        dialogMessage="Введите цифры лицевой счета, чей баланс вы хотите посмотреть. Чтобы смотреть информацию по первому счету, оставьте это поле пустым."
-        inputType="number">
+        negativeButtonText="Отмена">
     </EditTextPreference>
-    <ListPreference 
-        key="cab" 
-        title="Кабинет"
-        summary="||{@s}"
-        entries="Новый my.ufanet.ru|Старый oldlk.ufanet.ru"
-        entryValues="new|old"
-		defaultValue="new">
-    </ListPreference>	
+	<EditTextPreference
+		positiveButtonText="ОК"
+		key="num"
+		dialogTitle="Лицевой счет"
+		negativeButtonText="Отмена"
+		title="Лицевой счет"
+		summary="Лицевой счет для получения данных|Автоматически\n|{@s}\n"
+		dialogMessage="Введите номер лицевого счета, по которому вы хотите получать информацию. Если оставить поле пустым, будет показана информация по первому лицевому счету"
+		inputType="number">
+	</EditTextPreference>
 </PreferenceScreen>

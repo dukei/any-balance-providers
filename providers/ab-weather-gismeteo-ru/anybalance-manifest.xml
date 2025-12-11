@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="3.0" version="40">ab-weather-gismeteo-ru</id>
+	<id major_version="3.0" version="41">ab-weather-gismeteo-ru</id>
 	<api flags="no_browser"/>
 	<name>Gismeteo</name>
 	<description html="true"><![CDATA[

@@ -35,12 +35,13 @@ function main() {
 	
 	if (!prefs.city) {
         AnyBalance.trace('Город не указан в настройках. Пробуем определить по IP');
-		html = AnyBalance.requestGet(baseurl + 'mq/city/ip/', addHeaders({Referer: baseurl}));
+		html = AnyBalance.requestGet(baseurl + 'mq/city/ip/?geo=' + prefs.domen, addHeaders({Referer: baseurl}));
 		AnyBalance.trace(html);
 		url = getParam(html, null, null, /"url":\s*?"([^"]*)/i);
 		
 		if(!url){
 			var json = getJson(html);
+			json = json.data;
 			if(json.slug && json.id)
 			    url = baseurl + 'weather-' + json.slug + '-' + json.id + '/';
 		}
@@ -48,7 +49,7 @@ function main() {
 		checkEmpty(url, 'Не удалось определить город по IP-адресу. Введите название города в настройках провайдера', true);
     } else {
         AnyBalance.trace('Ищем ссылку для города ' + prefs.city);
-        html = AnyBalance.requestGet(baseurl + 'mq/city/q/?q=' + encodeURIComponent(prefs.city) + '&limit=10', addHeaders({Referer: baseurl}));
+        html = AnyBalance.requestGet(baseurl + 'mq/city/q/?q=' + encodeURIComponent(prefs.city) + '&geo=' + prefs.domen + '&limit=10', addHeaders({Referer: baseurl}));
         var json = getJson(html);
         AnyBalance.trace(JSON.stringify(json));
 		json = json.data;

@@ -1,13 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="8">ab-municipal-permenergosbyt</id>
+	<id version="9">ab-municipal-permenergosbyt</id>
 	<api flags="no_browser"/>
 	<name>Пермэнергосбыт (Пермь)</name>
 	<description html="true"><![CDATA[
-	<p>Получает баланс и информацию о счетчике Пермэнергосбыта (https://permenergosbyt.ru)</p>
-	<p>Информация берется из личного кабинета Пермэнергосбыта: https://lk.permenergosbyt.ru/</p>
-	<p>Для повышения уровня безопасности Ваших учетных данных введен номер мобильного или стационарного телефона</p>
+	<p>Предоставляет информацию о балансе, последней операции и показаниях счетчиков для абонентов <a href="https://permenergosbyt.ru/">ПАО "Пермэнергосбыт"</a>.</p> 
+	<p>Информация берется из личного кабинета абонента ПАО "Пермэнергосбыт" на сайте https://lk.permenergosbyt.ru/.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и номер телефона, привязанного к личному кабинету ПАО "Пермэнергосбыт".</p>
+	<p>Если к личному кабинету привязаны другие лицевые счета, укажите номер нужного счета в настройках провайдера.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -19,14 +22,41 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
 		<counter id="account" name="Лицевой счет" type="text"/>
-		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="countertype" name="Тип счетчика" type="text"/>
+		<counter id="countertariff" name="ТЗ счетчика" type="text"/>
+		<counter id="counterrate" name="Ставка счетчика" type="text"/>
+		<counter id="counterdateset" name="Дата установки" type="time" format="dd.MM.yyyy"/>
+		<counter id="counterdateterm" name="Дата след. поверки" type="time" format="dd.MM.yyyy"/>
+		<counter id="countervalency" name="Значность счетчика" type="text"/>
+		<counter id="counternum" name="Номер счетчика" type="text"/>
+		<counter id="countervalue" name="Показания счетчика" units=" кВт*ч"/>
+		<counter id="countertype1" name="Тип счетчика 2" type="text"/>
+		<counter id="countertariff1" name="ТЗ счетчика 2" type="text"/>
+		<counter id="counterrate1" name="Ставка счетчика 2" type="text"/>
+		<counter id="counterdateset1" name="Дата установки 2" type="time" format="dd.MM.yyyy"/>
+		<counter id="counterdateterm1" name="Дата след. поверки 2" type="time" format="dd.MM.yyyy"/>
+		<counter id="countervalency1" name="Значность счетчика 2" type="text"/>
+		<counter id="counternum1" name="Номер счетчика 2" type="text"/>
+		<counter id="countervalue1" name="Показания счетчика 2" units=" кВт*ч"/>
+		<counter id="countertype2" name="Тип счетчика 3" type="text"/>
+		<counter id="countertariff2" name="ТЗ счетчика 3" type="text"/>
+		<counter id="counterrate2" name="Ставка счетчика 3" type="text"/>
+		<counter id="counterdateset2" name="Дата установки 3" type="time" format="dd.MM.yyyy"/>
+		<counter id="counterdateterm2" name="Дата след. поверки 3" type="time" format="dd.MM.yyyy"/>
+		<counter id="countervalency2" name="Значность счетчика 3" type="text"/>
+		<counter id="counternum2" name="Номер счетчика 3" type="text"/>
+		<counter id="countervalue2" name="Показания счетчика 3" units=" кВт*ч"/>
+		<counter id="lastoperdate" name="Дата посл. операции" type="time" format="dd.MM.yyyy"/>
+		<counter id="lastopersum" name="Сумма посл. операции" units=" ₽"/>
+		<counter id="lastopertype" name="Тип посл. операции" type="text"/>
 		<counter id="address" name="Адрес" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
-		<counter id="date" name="Дата фиксации показаний" type="time" format="dd.MM.yyyy"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords>permenergosbyt</keywords>
+	<keywords>пермэнерго, пермь, электричество</keywords>
 	<type>municipal</type>
 	<country>ru</country>
 </provider>

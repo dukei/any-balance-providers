@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="4.0" version="254">ab-megafon</id>
+	<id major_version="4.1" version="258">ab-megafon</id>
 	<api flags="no_browser"/>
 	<name>МегаФон</name>
 	<description html="true"><![CDATA[
@@ -89,6 +89,7 @@
 		<counter id="last_pay_sum" name="Сумма последнего платежа" units=" ₽"/>
 		<counter id="last_pay_date" name="Дата последнего платежа" type="time" format="dd.MM.yyyy"/>
 		<counter id="last_pay_descr" name="Место последнего платежа" type="text"/>
+		<counter id="next_billing_date" name="Дата следующего списания" type="time" format="dd.MM.yyyy"/>
 		<counter id="statuslock" name="Статус блокировки" type="text"/>
 		<counter id="bonus_burn" name="Бонусные баллы, сгорающие в конце текущего месяца" units=" Б"/>
 		<counter id="bonus_status" name="Статус бонусной программы" prefix="Бонус: " type="text"/>

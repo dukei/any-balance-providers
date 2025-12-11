@@ -1,30 +1,45 @@
 var g_api_headers = {
-    'User-Agent': 'MLK Android Phone 4.28.10',
-    'Connection': 'Keep-Alive'
-};
-
-var g_headers = {
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-    'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4',
-    'Connection': 'keep-alive',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36'
+	'Accept': 'application/json,text/plain,*/*',
+	'User-Agent': 'NLK Android Phone 4.57.0',
+	'X-App-Store': 'gms_portal',
+	'X-Cabinet-Capabilities': 'rw-refresh-token-2022',
+	'X-Cabinet-Platform': 'ANDROID'
 };
 
 var api_url = 'https://api.megafon.ru/mlk/';
 var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4'];
 
+function generateUUID(){
+	function s4() {
+  		return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+	}
+  	return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
+
 /** API Megafon LK*/
 function callAPI(method, url, params, allowerror) {
     var html;
-    if(method == 'post') {
-        if(typeof(params) == 'string')
+	
+	if(/services\/currentServices/i.test(url)){
+		g_api_headers['Accept-Language'] = 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7';
+		g_api_headers['User-Agent'] = 'Mozilla/5.0 (Linux; Android 8.0.0; AUM-L29 Build/HONORAUM-L29; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/106.0.5249.126 Mobile Safari/537.36';
+		g_api_headers['X-App-Type'] = 'webView';
+		g_api_headers['X-Requested-With'] = 'ru.megafon.mlk';
+		delete g_api_headers['X-Cabinet-Platform'];
+		delete g_api_headers['X-Cabinet-Capabilities'];
+		delete g_api_headers['X-App-Store'];
+	}
+	
+	if(method == 'post'){
+        if(typeof(params) == 'string'){
             html = AnyBalance.requestPost(api_url + url, params, addHeaders({'Content-Type': 'application/json; charset=utf-8'}, g_api_headers));
-        else
+        }else{
             html = AnyBalance.requestPost(api_url + url, params, g_api_headers);
-    }else
+		}
+    }else{
         html = AnyBalance.requestGet(api_url + url, g_api_headers);
-    
+	}
+	
 	var json = {};
     if(html){
         try{
@@ -33,6 +48,7 @@ function callAPI(method, url, params, allowerror) {
             json = getJsonEval(html);
         }
     }
+	
     if(json.code === 'a216'){ //Аккаунт заблокирован, надо явно его разблокировать через ussd или поддержку
     	throw new AnyBalance.Error(json.message, null, true);
     }
@@ -53,10 +69,6 @@ function megafonLkAPILogin(options){
     checkEmpty(prefs.login && /^\d{10}$/.test(prefs.login), 'Введите 10 цифр номера телефона без пробелов и разделителей в качестве логина!');
 
     AnyBalance.trace('Пробуем войти через API мобильного приложения...');
-
-    var sessid = AnyBalance.getCookie('JSESSIONID');
-    if(sessid) //А то логин ставит secure cookie и из-за этого check в официальном приложении никогда не работает
-        AnyBalance.setCookie('api.megafon.ru', 'JSESSIONID', sessid);
 
     var html = AnyBalance.requestGet('https://api.megafon.ru/mlk/auth/check', g_api_headers);
     if(AnyBalance.getLastStatusCode() >= 400){
@@ -81,9 +93,9 @@ function megafonLkAPILogin(options){
             password: prefs.password
         }, true);
 
-        if (json.code) {
-            if (json.code == 'a211' && options.allow_captcha) { //Капча
-                var capchaImg = AnyBalance.requestGet(api_url + 'auth/captcha', g_api_headers);
+        if(json.code){
+            if(json.code == 'a211' && options.allow_captcha){ //Капча
+                var capchaImg = AnyBalance.requestGet(api_url + 'api/captcha/next', g_api_headers);
                 var captcha = AnyBalance.retrieveCode('Мегафон иногда требует подтвердить, что вы не робот. Сейчас как раз такой случай.\n\nЧтобы уменьшить вероятность требования капчи, используйте опцию входа без пароля с однократным вводом кода из SMS при первом обновлении баланса.', capchaImg, {/*inputType: 'number'*/});
                 json = callAPI('post', 'login', {
                     login: prefs.login,
@@ -92,21 +104,15 @@ function megafonLkAPILogin(options){
                 });
             }
 
-            if (json.code)
+            if(json.code)
                 throw new AnyBalance.Error('Ошибка вызова API! ' + json.message, null, /парол/i.test(json.message));
         }
 
         __setLoginSuccessful();
     }
-}
-
-function randomId(){
-	var chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-	var out = '';
-	for(var i=0; i<11; ++i){
-		out += chars.substr(Math.floor(Math.random()*chars.length), 1);
-	}
-	return out;
+	
+	var jwtToken = json.jwtToken;
+	g_api_headers['X-Cabinet-Authorization'] = 'Bearer ' + jwtToken;
 }
 
 function megafonLkAPILoginNew(options){
@@ -114,17 +120,19 @@ function megafonLkAPILoginNew(options){
 	var prefs = AnyBalance.getPreferences();
     AnyBalance.setDefaultCharset('utf-8');
 
-    var deviceid = AnyBalance.getData('deviceid');
-    if(!deviceid){
-    	deviceid = randomId();
-    	AnyBalance.setData('deviceid', deviceid);
+    var deviceId = AnyBalance.getData('device_id');
+    if(!deviceId){
+    	deviceId = generateUUID();
+    	AnyBalance.setData('device_id', deviceId);
     	AnyBalance.saveData();
     }
-    AnyBalance.trace('Device id: ' + deviceid);
-    g_api_headers['X-MLK-DEVICE-ID'] = deviceid;
+    AnyBalance.trace('Идентификатор устройства: ' + deviceId);
+    g_api_headers['X-Mlk-Device-Id'] = deviceId;
 
 	if(!/^\d{10}$/.test(prefs.login))
 		throw new AnyBalance.Error('Пожалуйста, укажите в настройках 10 цифр вашего номера Мегафон, например, 9261234567');
+	
+	AnyBalance.setCookie('api.megafon.ru', 'X-Cabinet-Pin-Switcher', 'true', {path: '/'});
 
 	var token = AnyBalance.getData('token-' + prefs.login);
 	if(token){
@@ -134,10 +142,14 @@ function megafonLkAPILoginNew(options){
 			AnyBalance.trace(JSON.stringify(json));
 			if(/Внутренняя ошибка/i.test(json.message)) //Иногда сервер глючит и не надо присылать смс второй раз
 				throw new AnyBalance.Error(json.message + '\nПожалуйста, попробуйте позже');
-				 
+			var csrfToken = AnyBalance.getCookie('NEW-CSRF-TOKEN');
+            if(csrfToken) // Надо установить хедер X-Csrf-Token, без него не пропустит
+                g_api_headers['X-Csrf-Token'] = csrfToken;
 		    AnyBalance.trace('Входим по пину');
 			var pin = AnyBalance.getData('pin-' + prefs.login);
-			json = callAPI('post', 'auth/pin', JSON.stringify({captcha: null, msisdn: prefs.login, pin: pin}), true);
+			json = callAPI('post', 'api/auth/pin', JSON.stringify({captcha: null, msisdn: prefs.login, pin: pin}), true);
+			var jwtToken = json.jwtToken;
+		    g_api_headers['X-Cabinet-Authorization'] = 'Bearer ' + jwtToken;
 			if(json.code){
 			    AnyBalance.trace(JSON.stringify(json));
 			    if(/Внутренняя ошибка/i.test(json.message)) //Иногда сервер глючит и не надо присылать смс второй раз
@@ -162,15 +174,22 @@ function megafonLkAPILoginNew(options){
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error(json.message || 'Ошибка входа. Неправильный номер?', null, true);
 		}
+		
+		var csrfToken = AnyBalance.getCookie('NEW-CSRF-TOKEN');
+        if(csrfToken) // Надо установить хедер X-Csrf-Token, без него не пропустит
+            g_api_headers['X-Csrf-Token'] = csrfToken;
 
 		var code = AnyBalance.retrieveCode('Пожалуйста, введите код входа в Личный Кабинет из СМС для привязки номера к устройству', null, {inputType: 'number', time: 300000});
 
-		json = callAPI('post', 'auth/otp/submit', {login: prefs.login, otp: code}, true);
+		json = callAPI('post', 'api/auth/otp/submit', {login: prefs.login, otp: code}, true);
 
 		if(json.code){
 			AnyBalance.trace(html);
 			throw new AnyBalance.Error(json.message || 'Неверный код подтверждения');
 		}
+		
+		var jwtToken = json.jwtToken;
+		g_api_headers['X-Cabinet-Authorization'] = 'Bearer ' + jwtToken;
 
 		var pin = Math.floor(1000 + Math.random()*9000).toString();
 		json = callAPI('post', 'api/profile/pin', JSON.stringify({captcha: null, pin: pin}));
@@ -205,15 +224,17 @@ function megafonLkAPIDo(options, result) {
         }
     }
 	
-	if(AnyBalance.isAvailable('tariff', 'sub_smit') && !result.tariff){
+	if(AnyBalance.isAvailable('tariff', 'sub_smit', 'next_billing_date')){
 		try{
-    	    json = callAPI('get', 'api/tariff/2019-3/current');
+    	    json = callAPI('get', 'api/tariff/2019-3/current?includeOptions=false');
     	    getParam(json.name, result, 'tariff', null, replaceTagsAndSpaces);
 		    if(json.ratePlanCharges && json.ratePlanCharges.price){
 				var per = 1; // Почему-то периоды возвращает по-разному (то за 30 дней, то за день)
 				if(/в [день|сутки]/i.test(json.ratePlanCharges.price.unitPeriod))
 					per = 30;
-		        getParam(json.ratePlanCharges.price.value*per + '', result, 'sub_smit', null, replaceTagsAndSpaces, parseBalance);
+		        var tariffPrice = getParam(json.ratePlanCharges.price.value, null, null, null, replaceTagsAndSpaces, parseBalanceSilent);
+				getParam(tariffPrice*per + '', result, 'sub_smit', null, replaceTagsAndSpaces, parseBalance);
+				getParam(json.ratePlanCharges.chargeDate, result, 'next_billing_date', null, replaceTagsAndSpaces, parseDate);
 		    }
 		}catch(e){
     	    AnyBalance.trace('Ошибка получения информации о тарифном плане: ' + e.message);
@@ -593,8 +614,9 @@ function processServices(result){
 		return;
 
     try{
-	    var json = callAPI('get', 'api/options/list/current');
-	    
+	    var json = callAPI('get', 'api/services/currentServices/list');
+		AnyBalance.trace('Найдено услуг: ' + ((json.free ? json.free.length : 0) + (json.paid ? json.paid.length : 0)));
+        	    
         getParam(json.free ? json.free.length : 0, result, 'services_free');
         getParam(json.paid ? json.paid.length : 0, result, 'services_paid');
 	    getParam((json.free ? json.free.length : 0) + (json.paid ? json.paid.length : 0), result, 'services_count');

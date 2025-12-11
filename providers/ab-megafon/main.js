@@ -3,12 +3,12 @@
 */
 
 var g_headers = {
-    Accept:'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-    'Accept-Charset':'windows-1251,utf-8;q=0.7,*;q=0.3',
-    'Accept-Language':'ru,en-US;q=0.9,en;q=0.8,ru-RU;q=0.7',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
+    'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
     'Cache-Control':'max-age=0',
-    Connection:'keep-alive',
-    'User-Agent':'Mozilla/5.0 (Windows 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'
+	'Connection': 'keep-alive',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'
 };
 
 var g_countersTable = {
@@ -57,6 +57,7 @@ var g_countersTable = {
 		"last_pay_sum": "payments.sum",
 		"last_pay_date": "payments.date",
 		"last_pay_descr": "payments.descr",
+		"next_billing_date": "next_billing_date",
 		"statuslock": "statuslock",
 		"add_num": "add_num",
 		"add_num2": "add_num2",

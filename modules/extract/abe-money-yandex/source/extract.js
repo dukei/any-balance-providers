@@ -285,7 +285,7 @@ function loginAndGetBalance(prefs, result) {
 		    	AnyBalance.trace('Найдено операций: ' + JSON.stringify(hist.length));
 		    	for(var i=0; i<hist.length; i++) {
                     var h = hist[i];
-                    getParam(h.operationDateTime, result, 'lastOperDate', null, null, parseDateISO);
+                    getParam(h.timestamp, result, 'lastOperDate', null, null, parseDateISO);
                     getParam(h.amount.value, result, 'lastOperSum', null, null, parseBalance);
                     getParam(h.title, result, 'lastOperDesc');
 		            		

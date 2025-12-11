@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="2">ab-internet-garant-grodno</id>
+	<id version="5">ab-internet-garant-grodno</id>
 	<api flags="no_browser|private"/>
 	<name>ГАРАНТ (garant.by)</name>
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе инетрнет-провайдера ГАРАНТ (GRODNO) в г. Гродно http://garant.by/</p>
-	<p>Информация берется из личного кабинета https://my.garant.by</p>
+	<p>Информация берется из личного кабинета https://my.garant.by/p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
         <depends>
@@ -18,10 +18,24 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" BYN"/>
+
+		<counter id="balanceInt" name="Баланс Интернета" units=" BYN"/>
+		<counter id="canDisconnect" name="Состояние услуги" type="text"/>
+		<counter id="account" name="Лицевой счёт для оплаты в банках" type="text"/>
+		<counter id="balanceTv" name="Баланс Телевидения" units=" BYN"/>
+		<counter id="tarifInt" name="Тариф интернета" type="text"/>
+		<counter id="tariаfTv" name="Тариф Телевидения" type="text"/>
+		<counter id="sumTariаfTv" name="Сумма тарифа Телевидения в месяц"  units=" BYN"/>
+		<counter id="sumTariаfIn" name="Сумма тарифа Интернета в месяц"  units=" BYN"/>
+		<counter id="lastActivitiesInt" name="Последний платеж Интернет" type="text"/>
+		<counter id="lastActivitiesTV" name="Последний платеж Телевидения" type="text"/>
+		<counter id="tarifIntAdditionaliInt" name="Сумма тарифа Интернета с учетом услуг в месяц" type="text"/>
+		<counter id="tarifIntAdditionalTv" name="Сумма тарифа Телевидения с учетом услуг в месяц" type="text"/>
+		<counter id="additionalServicesInt" name="Доп.Услуги интернета" type="text"/>
+		<counter id="additionalServicesTv" name="Доп. Услуги телевидения"  type="text"/>	
 		<counter id="balanceCredit" name="Кредит" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="account" name="Лицевой счёт для оплаты в банках" type="text"/>
+		
 	</counters>
 	<keywords></keywords>
 	<type>internet</type>

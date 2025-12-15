@@ -128,7 +128,7 @@ function getOrdinaryLoginForm(html){
 }
 
 function loadProtectedPage(fromUrl, headers){
-	const url = fromUrl.startsWith(g_baseurlLogin) ? fromUrl : 'https://auth-lk.ssl.mts.ru/account/login?goto=https://lk.mts.ru/';
+	const url = fromUrl; //.startsWith(g_baseurlLogin) ? fromUrl : 'https://auth-lk.ssl.mts.ru/account/login?goto=https://lk.mts.ru/';
 
     var html = AnyBalance.requestGet(url, headers);
     
@@ -140,7 +140,7 @@ function loadProtectedPage(fromUrl, headers){
 		clearAllCookies();
 
         const bro = new BrowserAPI({
-            provider: 'mts-login-q4',
+            provider: 'mts-login-q5',
             userAgent: headers["User-Agent"],
             headful: true,
 			//noInterception: true,
@@ -150,7 +150,7 @@ function loadProtectedPage(fromUrl, headers){
                 resType: /^(image|stylesheet|font)$/.toString(),
                 action: 'abort',
             }, {
-		        url: /_qrator\/qauth(?:_\w+)*\.js/.toString(),
+		url: /_qrator\/qauth(?:_\w+)*\.js/.toString(),
                 action: 'cache',
                 valid: 360*1000
             }, {
@@ -163,17 +163,21 @@ function loadProtectedPage(fromUrl, headers){
                 url: /\.(png|jpg|ico|svg)/.toString(),
                 action: 'abort',
             }, {
-				url: /\.mts\.ru/.toString(),
+		url: /\.mts\.ru/.toString(),
                 action: 'request',
-			}, {
+	    }, {
                 url: /.*/.toString(),
                 action: 'abort',
+            }],
+            clientRules: [{
+                url: /__qrator\/captcha\/gen/,
+                action: solveQratorCaptcha
             }],
             additionalRequestHeaders: [{
                 headers: {
 			        'User-Agent': headers["User-Agent"]
                 }
-		    }],
+	    }],
             debug: AnyBalance.getPreferences().debug
         });
 
@@ -206,6 +210,41 @@ function loadProtectedPage(fromUrl, headers){
         html = AnyBalance.requestGet(fromUrl, headers);
 
     return html;
+}
+
+function solveQratorCaptcha(bro, req, resp){
+    if(!resp.tasks)
+        resp.tasks = []
+
+    const myTaskIdx = resp.tasks.length
+
+    resp.tasks.push({
+        type: 'wait',
+        delay: 70000
+    })
+
+    return (respResult) => {
+        const waitId = respResult.tasks[myTaskIdx];
+
+        const captchaInfo = JSON.parse(resp.r.body)
+        const image = getParam(captchaInfo.image, /base64,(.*)/)
+        const answer = AnyBalance.retrieveCode('МТС требует ввести капчу, чтобы подтвердить, что вы не робот. Пожалуйста, введите символы с картинки', image, {time: 60000});
+
+        bro.tasks(resp.page, [
+        {
+            type: 'input',
+            selector: '#captcha-input',
+            value: answer,
+            options: { delay: 211 }
+        }, {
+            type: 'click',
+            selector: '.check-btn'
+        }, {
+            type: 'cancel_wait',
+            taskId: waitId,
+            delayAfter: 5000
+        }]);
+    }
 }
 
 function enterMtsLK(options) {

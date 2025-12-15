@@ -694,7 +694,7 @@ function loginWithPassword(){
 
     g_savedData.restoreCookies();
 	
-    var html = AnyBalance.requestGet('https://lk.mts.ru/', g_headers); // Надо, чтобы новая кука TS0 установилась
+    var html = loadProtectedPage('https://lk.mts.ru/', g_headers); // Надо, чтобы новая кука TS0 установилась
 	
 	if(!html || AnyBalance.getLastStatusCode() >= 500){
         throw new AnyBalance.Error('Личный кабинет МТС временно недоступен. Попробуйте еще раз позже');

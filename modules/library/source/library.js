@@ -1389,8 +1389,16 @@ var AB = (function (global_scope) {
 		return processKeyValues(params, (key, value) => encodeURIComponent(key) + '=' + encodeURIComponent(value)).join('&');
 	}
 
+    /**
+     *
+     * @param checkfunc: undefined|RegExp|c => boolean
+     */
 	function clearAllCookies(checkfunc){
 		var cookies = AnyBalance.getCookies();
+        if(checkfunc instanceof RegExp) {
+            const re = checkfunc;
+            checkfunc = c => re.test(c.name)
+        }
 		for(var i=0; i<cookies.length; ++i){
 			var cookie = cookies[i];
 			if(!checkfunc || checkfunc(cookie))

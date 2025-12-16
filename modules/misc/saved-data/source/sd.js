@@ -17,11 +17,20 @@ function SavedData(provider, account, defaultData){
 		AnyBalance.setData(getDataName(), obj);
 	}
 
-	function restoreCookies(){
+	/**
+	 *
+	 * @param filter: undefined|RegExp|(domain, name, value, cookie) => boolean
+	 */
+	function restoreCookies(filter){
+		if(filter instanceof RegExp) {
+			const re = filter
+			filter = c => re.test(c.name)
+		}
 		var cookies = getDataObj().cookies;
 		for(var i=0; cookies && i<cookies.length; ++i){
 			var cookie = cookies[i];
-			AnyBalance.setCookie(cookie.domain, cookie.name, cookie.value, cookie);
+			if(!filter || filter(cookie))
+				AnyBalance.setCookie(cookie.domain, cookie.name, cookie.value, cookie);
 		}
 	}
 

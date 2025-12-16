@@ -137,7 +137,7 @@ function loadProtectedPage(fromUrl, headers){
 		if(!AnyBalance.getCapabilities().clientOkHttp && !AnyBalance.getCapabilities().clientDebugger)
         	throw new AnyBalance.Error('Для работы провайдера требуется обновить приложение. Новая версия AnyBalance доступна на RuStore');
         AnyBalance.setOptions({CLIENT: 'okhttp'});
-		clearAllCookies();
+		clearAllCookies(/^(TS|qrator+)/); //Стираем только кураторские куки
 
         const bro = new BrowserAPI({
             provider: 'mts-login-q5',

@@ -385,7 +385,7 @@ var AB = (function (global_scope) {
             /\D*(?:сентябр(?:я|ь)|сен|september|sep|Вер(?:есень)?)\D*/i, '.09.',
             /\D*(?:октябр(?:я|ь)|окт|october|oct|Жов(?:тень)?)\D*/i, '.10.',
             /\D*(?:ноябр(?:я|ь)|ноя|november|nov|Лис(?:топад)?)\D*/i, '.11.',
-            /\D*(?:декабр(?:я|ь)|dec|december|dec|Гру(?:день)?)\D*/i, '.12.', /\s+/g, '']);
+            /\D*(?:декабр(?:я|ь)|дек|december|dec|Гру(?:день)?)\D*/i, '.12.', /\s+/g, '']);
         // Если года нет - его надо подставить
         if (endsWith(dateString, '.')) {
             dateString += new Date().getFullYear();
@@ -724,7 +724,7 @@ var AB = (function (global_scope) {
             AnyBalance.trace("Could not parse traffic value from " + text);
             return;
         }
-        var units = getParam(_text, /([kmgtкмгт][бb]?|[бb](?![\wа-я])|байт|bytes)/i);
+        var units = getParam(_text, /([kmgtкмгт][бb]?|[бb](?![\wа-я])|байт|byte)/i);
         if (!units && !defaultUnits) {
             AnyBalance.trace("Could not parse traffic units from " + text);
             return;

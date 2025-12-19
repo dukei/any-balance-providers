@@ -123,12 +123,16 @@ function isOnLogin(){
 	return AnyBalance.getLastUrl().indexOf(g_baseurlLogin) == 0;
 }
 
+function isLoginAfresh(baseurl){
+    return AnyBalance.getLastUrl().indexOf(baseurl) == 0;
+}
+
 function getOrdinaryLoginForm(html){
 	return getElement(html, /<form[^>]+name="Login"/i);
 }
 
 function loadProtectedPage(fromUrl, headers){
-	const url = fromUrl; //.startsWith(g_baseurlLogin) ? fromUrl : 'https://auth-lk.ssl.mts.ru/account/login?goto=https://lk.mts.ru/';
+	const url = fromUrl; //.startsWith(g_baseurlLogin) ? fromUrl : 'https://united-auth.ssl.mts.ru/account/login?goto=https://lk.mts.ru/&xClientId=LK';
 
     var html = AnyBalance.requestGet(url, headers);
     
@@ -137,7 +141,7 @@ function loadProtectedPage(fromUrl, headers){
 		if(!AnyBalance.getCapabilities().clientOkHttp && !AnyBalance.getCapabilities().clientDebugger)
         	throw new AnyBalance.Error('Для работы провайдера требуется обновить приложение. Новая версия AnyBalance доступна на RuStore');
         AnyBalance.setOptions({CLIENT: 'okhttp'});
-		clearAllCookies(/^(TS|qrator+)/); //Стираем только кураторские куки
+//		clearAllCookies();
 
         const bro = new BrowserAPI({
             provider: 'mts-login-q5',
@@ -150,7 +154,7 @@ function loadProtectedPage(fromUrl, headers){
                 resType: /^(image|stylesheet|font)$/.toString(),
                 action: 'abort',
             }, {
-		url: /_qrator\/qauth(?:_\w+)*\.js/.toString(),
+		        url: /_qrator\/qauth(?:_\w+)*\.js/.toString(),
                 action: 'cache',
                 valid: 360*1000
             }, {
@@ -163,13 +167,13 @@ function loadProtectedPage(fromUrl, headers){
                 url: /\.(png|jpg|ico|svg)/.toString(),
                 action: 'abort',
             }, {
-		url: /\.mts\.ru/.toString(),
+				url: /\.mts\.ru/.toString(),
                 action: 'request',
-	    }, {
+			}, {
                 url: /.*/.toString(),
                 action: 'abort',
             }],
-            clientRules: [{
+			clientRules: [{
                 url: /__qrator\/captcha\/gen/,
                 action: solveQratorCaptcha
             }],
@@ -177,7 +181,7 @@ function loadProtectedPage(fromUrl, headers){
                 headers: {
 			        'User-Agent': headers["User-Agent"]
                 }
-	    }],
+		    }],
             debug: AnyBalance.getPreferences().debug
         });
 
@@ -203,11 +207,10 @@ function loadProtectedPage(fromUrl, headers){
 
         g_savedData.setCookies();
         g_savedData.save();
-
     }
-
-    if(!fromUrl.startsWith(g_baseurlLogin))
-        html = AnyBalance.requestGet(fromUrl, headers);
+	
+	if(!fromUrl.startsWith(g_baseurlLogin))
+		html = AnyBalance.requestGet(fromUrl, headers);
 
     return html;
 }
@@ -248,21 +251,39 @@ function solveQratorCaptcha(bro, req, resp){
 }
 
 function enterMtsLK(options) {
+	var baseurl = options.baseurl || g_baseurl;
     var url = options.url || g_baseurlLogin;
-
-    var html = loadProtectedPage(url, g_headers);
+	
+	var html = AnyBalance.requestGet(url, g_headers);
 
     if(fixCookies()){
         AnyBalance.trace("Куки исправлены на входе...");
         html = AnyBalance.requestGet(url, g_headers);
         fixCookies();
     }
-
-    if (AnyBalance.getLastStatusCode() >= 500) {
-        AnyBalance.trace("МТС вернул 500. Пробуем ещё разок...");
-        html = AnyBalance.requestGet(url, g_headers);
-        fixCookies();
-    }
+	
+	if(/__qrator|Access to [^<]* is forbidden|Доступ к сайту [^<]* запрещен/.test(html)){
+		if(!isLoginAfresh(baseurl)){
+		    // Если упёрлись в Qrator, пробуем обойти по главной
+		    html = loadProtectedPage('https://lk.mts.ru/', g_headers);
+	        // Пробуем повторить запрос. Обход по url не сработает, поэтому делаем раздельно
+		    html = AnyBalance.requestGet(url, g_headers);
+		}else{ // Если нас сразу переадресовали на целевую страницу, значит, уже залогинены
+			AnyBalance.trace("Сессия успешно возобновлена");
+		    return html;
+		}
+	}
+	
+	if(AnyBalance.getLastStatusCode() >= 500){
+	    if(!isLoginAfresh(baseurl)){ // Если сессия возобновлена, МТС редиректит на lk.mts.ru:443 с ошибкой 502, поэтому проверяем на логин
+            AnyBalance.trace("МТС вернул 500. Пробуем ещё разок...");
+            html = AnyBalance.requestGet(url, g_headers);
+            fixCookies();
+		}else{ // МТС переадресует на целевую страницу со статусом 502, значит, уже залогинены
+			AnyBalance.trace("Сессия успешно возобновлена");
+		    return html;
+		}
+	}
 
     if (AnyBalance.getLastStatusCode() >= 500)
         throw new AnyBalance.Error("Ошибка на сервере МТС, сервер не смог обработать запрос. Можно попытаться позже...");
@@ -313,9 +334,11 @@ function enterMtsLK(options) {
 		if(/\/amserver\/NUI\//i.test(AnyBalance.getLastUrl())){
 			AnyBalance.trace('МТС направил на новый вход NUI');
 			options.ref = AnyBalance.getLastUrl();
-			options.statetrace = getParam(AnyBalance.getLastUrl(), /statetrace=([\s\S]*?)(?:&|$)/i, replaceHtmlEntities);
-			if(options.statetrace){ // Получили statetrace, формируем url для логина
-				options.url = 'https://login.mts.ru/amserver/wsso/authenticate?realm=%2Fusers&client_id=LK&authIndexType=service&authIndexValue=login-spa&goto=https%3A%2F%2Flogin.mts.ru%2Famserver%2Foauth2%2Fauthorize%3Fscope%3Dprofile%2520account%2520phone%2520slaves%253Aall%2520slaves%253Aprofile%2520sub%2520email%2520user_address%2520identity_doc%2520lbsv%2520sso%2520openid%26response_type%3Dcode%26client_id%3DLK%26state%3D' + options.statetrace + '%26redirect_uri%3Dhttps%253A%252F%252Fauth-lk.ssl.mts.ru%252Faccount%252Fcallback%252Flogin&statetrace=' + options.statetrace;
+			options.statetrace = getParam(AnyBalance.getLastUrl(), /statetrace(?:=|%3D)([\s\S]*?)(?:&|%26|$)/i, replaceHtmlEntities);
+			options.nonce = getParam(AnyBalance.getLastUrl(), /nonce(?:=|%3D)([\s\S]*?)(?:&|%26|$)/i, replaceHtmlEntities);
+			options.xtraceid = getParam(AnyBalance.getLastUrl(), /x-trace-id(?:=|%3D)([\s\S]*?)(?:&|%26|$)/i, replaceHtmlEntities);
+			if(options.statetrace && options.nonce && options.xtraceid){ // Получили идентификаторы, формируем полный url для логина
+			    options.url = 'https://login.mts.ru/amserver/wsso/authenticate?client_id=LK&scope=profile%20account%20phone%20slaves:all%20slaves:profile%20sub%20email%20user_address%20identity_doc%20lbsv%20sso%20openid%20offline%20offline_access&redirect_uri=https%3A%2F%2Funited-auth.ssl.mts.ru%2Faccount%2Fcallback%2Flogin&authIndexType=service&authIndexValue=login-spa&goto=https%3A%2F%2Flogin.mts.ru%2Famserver%2Foauth2%2Frealms%2Froot%2Frealms%2Fusers%2Fauthorize%3Fclient_id%3DLK%26nonce%3D' + options.nonce + '%26redirect_uri%3Dhttps%253A%252F%252Funited-auth.ssl.mts.ru%252Faccount%252Fcallback%252Flogin%26response_type%3Dcode%26scope%3Dprofile%2Baccount%2Bphone%2Bslaves%253Aall%2Bslaves%253Aprofile%2Bsub%2Bemail%2Buser_address%2Bidentity_doc%2Blbsv%2Bsso%2Bopenid%2Boffline%2Boffline_access%26state%3D' + options.statetrace + '%26x-trace-id%' + options.xtraceid + '&response_type=code&statetrace=' + options.statetrace;
 			}else{ // Используем стандартный url для логина
 				options.url = 'https://login.mts.ru/amserver/wsso/authenticate?authIndexType=service&authIndexValue=login-spa';
 			}
@@ -412,21 +435,38 @@ function enterMTS(options){
 
     var html = options.html;
     fixCookies();
-
+    
     if(!html || !getOrdinaryLoginForm(html)){
-        html = loadProtectedPage(loginUrl, g_headers);
+		html = AnyBalance.requestGet(loginUrl, g_headers);
         fixCookies();
+		if(/__qrator|Access to [^<]* is forbidden|Доступ к сайту [^<]* запрещен/.test(html)){
+		    if(!isLoginAfresh(baseurl)){
+			    // Если упёрлись в Qrator, пробуем обойти по главной
+		        html = loadProtectedPage('https://lk.mts.ru/', g_headers);
+	            // Пробуем повторить запрос. Обход по loginUrl не сработает, поэтому делаем раздельно
+		        html = AnyBalance.requestGet(loginUrl, g_headers);
+			}else{ // Если нас сразу переадресовали на целевую страницу, значит, уже залогинены
+			    AnyBalance.trace('Сессия успешно возобновлена');
+		        return html;
+		    }
+	    }
         if(AnyBalance.getLastStatusCode() >= 500){
-            AnyBalance.trace("МТС вернул 500. Пробуем ещё разок...");
-			html = AnyBalance.requestGet(loginUrl, g_headers);
-			fixCookies();
+            if(!isLoginAfresh(baseurl)){
+                AnyBalance.trace("МТС вернул 500. Пробуем ещё разок...");
+                html = AnyBalance.requestGet(loginUrl, g_headers);
+                fixCookies();
+		    }else{ // МТС переадресует на целевую страницу со статусом 502, значит, уже залогинены
+			    AnyBalance.trace("Сессия успешно возобновлена");
+		        return html;
+		    }
 		}
 	    
         if(AnyBalance.getLastStatusCode() >= 500)
         	throw new AnyBalance.Error("Ошибка на сервере МТС, сервер не смог обработать запрос. Можно попытаться позже...", allowRetry);
     }
 
-    if(AnyBalance.getLastUrl().indexOf(baseurl) == 0){ //Если нас сразу переадресовали на целевую страницу, значит, уже залогинены
+    if(isLoginAfresh(baseurl)){ //Если нас сразу переадресовали на целевую страницу, значит, уже залогинены
+		AnyBalance.trace("Сессия успешно возобновлена");
 		return html;
 	}
 
@@ -748,7 +788,7 @@ function enterLKNUI(options){
 	var json = getJson(html);
 //	AnyBalance.trace('Проверка доступа: ' + JSON.stringify(json));
 
-    if(!json.header){
+    if(!json.header && !json.successUrl){
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удаётся зайти в личный кабинет. Он изменился или проблемы на сайте.', allowRetry);
     }
@@ -756,7 +796,7 @@ function enterLKNUI(options){
 	if (json.header)
 		AnyBalance.trace('Progress header: ' + json.header);
 	
-	if (json.header == "device-match-hold") {
+	if (json.header && json.header == "device-match-hold") {
 		var params = json;
 		params.callbacks[0].input[0].value = '{"screen":{"screenWidth":1600,"screenHeight":900,"screenColourDepth":24},"userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","platform":"Win32","language":"ru","timezone":{"timezone":-180},"plugins":{"installedPlugins":"internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;"},"fonts":{"installedFonts":"cursive;monospace;serif;sans-serif;fantasy;default;Arial;Arial Black;Arial Narrow;Bookman Old Style;Bradley Hand ITC;Century;Century Gothic;Comic Sans MS;Courier;Courier New;Georgia;Impact;Lucida Console;Monotype Corsiva;Papyrus;Tahoma;Times;Times New Roman;Trebuchet MS;Verdana;"},"appName":"Netscape","appCodeName":"Mozilla","appVersion":"5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","product":"Gecko","productSub":"20030107","vendor":"Google Inc."}';
 		params.callbacks[2].input[0].value = "true";
@@ -773,7 +813,7 @@ function enterLKNUI(options){
 		    AnyBalance.trace('Progress header: ' + json.header);
 	}
 	
-	if (json.header == "verify-captcha") {
+	if (json.header && json.header == "verify-captcha") {
 		AnyBalance.trace('МТС затребовал капчу');
 		var data = json.callbacks[0].output[0].value;
 		var img = getParam(data, /data:image\/\w+?(?:png)?;base64,([^"]+)/i);
@@ -798,7 +838,7 @@ function enterLKNUI(options){
 	    }
 	}
 	
-	if (json.header == "radius-frontend-request") {
+	if (json.header && json.header == "radius-frontend-request") {
 		var params = json;
 		params.callbacks[0].input[0].value = "0";
 		params.callbacks[3].input[0].value = "mts-w-payment";
@@ -812,7 +852,7 @@ function enterLKNUI(options){
 		    AnyBalance.trace('Progress header: ' + json.header);
 	}
 	
-	if (json.header == "confirm-network-phone") {
+	if (json.header && json.header == "confirm-network-phone") {
 		var params = json;
 		
 		params.callbacks[0].input[0].value = "1";
@@ -827,7 +867,7 @@ function enterLKNUI(options){
 		    AnyBalance.trace('Progress header: ' + json.header);
 	}
 	
-	if (json.header == "network-header-resource" || json.header == "network-header-resource-v1") {
+	if (json.header && json.header == "network-header-resource" || json.header == "network-header-resource-v1") {
 		var params = json;
 		params.callbacks[0].input[0].value = "1";
         params.callbacks[1].input[0].value = "mts-w-payment";
@@ -841,7 +881,7 @@ function enterLKNUI(options){
 		    AnyBalance.trace('Progress header: ' + json.header);
 	}
 			
-	if (json.header == "network-header" || json.header == "network-header-v1") {
+	if (json.header && json.header == "network-header" || json.header == "network-header-v1") {
 		var params = json;
 //		params.callbacks[1].input[0].value = "1"; // Оставить по умолчанию, иначе мтс не пропускает запрос
 		params.callbacks[2].input[0].value = "mts-w-payment";
@@ -849,13 +889,13 @@ function enterLKNUI(options){
 		html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
 	
 	    var json = getJson(html);
-//		AnyBalance.trace('Проверка сети МТС: ' + JSON.stringify(json));
+//      AnyBalance.trace('Проверка сети МТС: ' + JSON.stringify(json));
         
 		if (json.header)
 		    AnyBalance.trace('Progress header: ' + json.header);
 	}
 	    
-	if (json.header == "enter-phone") {
+	if (json.header && json.header == "enter-phone") {
 		var params = json;
 		params.callbacks[0].input[0].value = "7" + options.login;
 		params.callbacks[1].input[0].value = "1";
@@ -882,7 +922,7 @@ function enterLKNUI(options){
 		json = checkPasskeyOffer(json, loginUrl, headers);
 	}
 		
-	if (json.header == "verify-password") {
+	if (json.header && json.header == "verify-password") {
 	    var params = json;
 		params.callbacks[0].input[0].value = options.password;
 		params.callbacks[1].input[0].value = "true"; // Для установки куки persistent ("Запомнить")
@@ -908,7 +948,7 @@ function enterLKNUI(options){
 		json = checkPasskeyOffer(json, loginUrl, headers);
 	}
 	
-	if (json.header == "verify-otp") {
+	if (json.header && json.header == "verify-otp") {
 		AnyBalance.trace('МТС запросил проверку с помощью кода из SMS');
 		var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, высланный на номер ' + recipient + '\n\nЕсли вы не хотите постоянно вводить SMS-пароли при входе, выберите способ входа "Пароль" в настройках безопасности вашего личного кабинета МТС', null, {inputType: 'number', time: 300000});
 		
@@ -953,7 +993,7 @@ function enterLKNUI(options){
 }
 
 function checkPasskeyOffer(json, loginUrl, headers){
-	if (json.header == "passkey-start-registration") {
+	if (json.header && json.header == "passkey-start-registration") {
 		AnyBalance.trace('МТС предложил установить ключ доступа. Отказываемся...');
 		var params = json;
         params.callbacks[0].input[0].value = "0";

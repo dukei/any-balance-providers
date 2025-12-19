@@ -2,7 +2,6 @@
  Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
  */
 
-
 var region_aliases = {
     eao: 'primorye',
     dv: 'primorye'
@@ -29,8 +28,8 @@ var g_headers = {
 	'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
 	'Upgrade-Insecure-Requests': '1',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36',
-	'If-Modified-Since': null, //Иначе МТС глючит с кешированием...
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+//	'If-Modified-Since': null, //Иначе МТС глючит с кешированием... // А теперь с хедером глючит, закрываем
 };
 
 var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4'];
@@ -375,8 +374,9 @@ function fetchAccountStatus(html, result) {
 
 function isLoggedIn(html) {
     var prefs = AnyBalance.getPreferences();
-    var html = AnyBalance.requestGet('https://auth-lk.ssl.mts.ru/account/is-authorized', addHeaders({
-        Referer: 'https://lk.mts.ru/'
+    var html = AnyBalance.requestGet('https://united-auth.ssl.mts.ru/account/is-authorized?xClientId=LK', addHeaders({
+        Origin: 'https://lk.mts.ru',
+		Referer: 'https://lk.mts.ru/'
     }));
 	
     return html === 'true';
@@ -431,13 +431,13 @@ function getLKJson1(html) {
 	var json = getJson(html);
 	var out = {fio: null, phone_formatted: null, phone: null, license: null, region: null, balance: null, tariff: null};
 	var account = json.userProfile;
-	out.fio = account.displayName;
+	out.fio = account.displayName || account.organization; //Для B2B кабинетов показываем название организации
     out.phone_formatted = ('' + account.login).replace(/(.*)(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7($2)$3-$4-$5');
     out.phone = '' + account.login;
 	out.license = '' + account.accountNumber;
 	out.region = '' + account.regionTitle;
 //	out.balance = Math.round(account.balance*100)/100; // Здесь баланс неоперативно обновляется
-    out.tariff = getParam('' + account.tariff, null, null, /(?:[\s\S]*?-\s)([\s\S]*?)(?:\s\([\s\S]*?)?$/i, replaceTagsAndSpaces); // Москва - НЕТАРИФ 052022 (МАСС) (SCP)
+    var tarifff = getParam('' + account.tariff, null, null, /(?:[\s\S]*?-\s)([\s\S]*?)(?:\s\([\s\S]*?)?$/i, replaceTagsAndSpaces); // Москва - НЕТАРИФ 052022 (МАСС) (SCP)
 	
 	if(!out.balance){
 	    var token = callNewLKApiToken('accountInfo/balance');
@@ -457,6 +457,22 @@ function getLKJson1(html) {
     if(!out.phone){
     	AnyBalance.trace('Не удаётся получить информацию о текущем пользователе. Сайт изменен?\n' + html);
     }
+	
+	var data = callNewLKApiGraphql({
+        "operationName": "GetProductsTariffInfo",
+        "variables": {
+            "screenName": "default"
+        },
+        "query": "query GetProductsTariffInfo($screenName: String!) {\n  tariffInfo(input: {screenName: $screenName}) {\n    name\n    alias\n    tariffPricesInfo {\n      mainPrice {\n        price\n        basePrice\n        date\n        descriptionPrice\n        __typename\n      }\n      __typename\n    }\n    tariffType\n    industryCode\n    tariffManage\n    tariffPaymentType\n    tariffContent {\n      tariffButton\n      tariffSettingUrl\n      autoconvergent {\n        widgetMobile\n        hintBadge\n        badge\n        __typename\n      }\n      familyGroup {\n        addUser\n        addUserUrl\n        __typename\n      }\n      recommendedAmount {\n        title\n        amount\n        text\n        icon\n        modalSheet {\n          text\n          buttons {\n            text\n            url\n            __typename\n          }\n          __typename\n        }\n        __typename\n      }\n      tariffPdfUrl\n      __typename\n    }\n    tariffSigns {\n      key\n      value\n      __typename\n    }\n    __typename\n  }\n}"
+    }, 'GetBalanceBaseQueryInput');
+    
+	if(data && data.tariffInfo && data.tariffInfo.name){
+		out.tariff = data.tariffInfo.name;
+	}
+	
+	if(!out.tariff && tarifff){
+		out.tariff = tarifff;
+	}
 
     return out;
 }
@@ -476,7 +492,7 @@ function getLKJson2(html) {
 	out.license = '' + account.number;
 	out.region = getParam('' + account.tariff.system, null, null, /([\s\S]*?)(?:\s-\s[\s\S]*?)?$/i, replaceTagsAndSpaces); // Москва - НЕТАРИФ 052022 (МАСС) (SCP)
 //	out.balance = Math.round(json['mobile:balance']*100)/100; // Здесь вообще нет баланса
-    out.tariff = '' + account['tariff']['name'];
+    var tarifff = '' + account['tariff']['name'];
 	
 	if(!out.balance){
 	    var data = callNewLKApiGraphql({
@@ -506,6 +522,22 @@ function getLKJson2(html) {
     if(!out.phone){
     	AnyBalance.trace('Не удаётся получить информацию о текущем пользователе. Сайт изменен?\n' + html);
     }
+	
+	var data = callNewLKApiGraphql({
+        "operationName": "GetProductsTariffInfo",
+        "variables": {
+            "screenName": "default"
+        },
+        "query": "query GetProductsTariffInfo($screenName: String!) {\n  tariffInfo(input: {screenName: $screenName}) {\n    name\n    alias\n    tariffPricesInfo {\n      mainPrice {\n        price\n        basePrice\n        date\n        descriptionPrice\n        __typename\n      }\n      __typename\n    }\n    tariffType\n    industryCode\n    tariffManage\n    tariffPaymentType\n    tariffContent {\n      tariffButton\n      tariffSettingUrl\n      autoconvergent {\n        widgetMobile\n        hintBadge\n        badge\n        __typename\n      }\n      familyGroup {\n        addUser\n        addUserUrl\n        __typename\n      }\n      recommendedAmount {\n        title\n        amount\n        text\n        icon\n        modalSheet {\n          text\n          buttons {\n            text\n            url\n            __typename\n          }\n          __typename\n        }\n        __typename\n      }\n      tariffPdfUrl\n      __typename\n    }\n    tariffSigns {\n      key\n      value\n      __typename\n    }\n    __typename\n  }\n}"
+    }, 'GetBalanceBaseQueryInput');
+    
+	if(data && data.tariffInfo && data.tariffInfo.name){
+		out.tariff = data.tariffInfo.name;
+	}
+	
+	if(!out.tariff && tarifff){
+		out.tariff = tarifff;
+	}
 
     return out;
 }
@@ -522,7 +554,7 @@ function getLKJson3(html) {
     out.phone_formatted = ('' + json['mobile:phone']).replace(/(.*)(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7($2)$3-$4-$5');
     out.phone = '' + json['mobile:phone'];
     out.balance = Math.round(json['mobile:balance']*100)/100;
-//	out.tariff = ('' + json['mobile:tariff']}; // Тарифа здесь нет
+//	var tarifff = ('' + json['mobile:tariff']}; // Тарифа здесь нет
 	
     if(!out.balance){
     	AnyBalance.trace('Нулевой баланс! Возможно, что-то не так! \n' + html);
@@ -531,6 +563,22 @@ function getLKJson3(html) {
     if(!out.phone){
     	AnyBalance.trace('Не удаётся получить информацию о текущем пользователе. Сайт изменен?\n' + html);
     }
+	
+	var data = callNewLKApiGraphql({
+        "operationName": "GetProductsTariffInfo",
+        "variables": {
+            "screenName": "default"
+        },
+        "query": "query GetProductsTariffInfo($screenName: String!) {\n  tariffInfo(input: {screenName: $screenName}) {\n    name\n    alias\n    tariffPricesInfo {\n      mainPrice {\n        price\n        basePrice\n        date\n        descriptionPrice\n        __typename\n      }\n      __typename\n    }\n    tariffType\n    industryCode\n    tariffManage\n    tariffPaymentType\n    tariffContent {\n      tariffButton\n      tariffSettingUrl\n      autoconvergent {\n        widgetMobile\n        hintBadge\n        badge\n        __typename\n      }\n      familyGroup {\n        addUser\n        addUserUrl\n        __typename\n      }\n      recommendedAmount {\n        title\n        amount\n        text\n        icon\n        modalSheet {\n          text\n          buttons {\n            text\n            url\n            __typename\n          }\n          __typename\n        }\n        __typename\n      }\n      tariffPdfUrl\n      __typename\n    }\n    tariffSigns {\n      key\n      value\n      __typename\n    }\n    __typename\n  }\n}"
+    }, 'GetBalanceBaseQueryInput');
+    
+	if(data && data.tariffInfo && data.tariffInfo.name){
+		out.tariff = data.tariffInfo.name;
+	}
+	
+	if(!out.tariff && tarifff){
+		out.tariff = tarifff;
+	}
 
     return out;
 }
@@ -551,6 +599,22 @@ function getLKJson4(html) {
 	if(!json.phone){
     	AnyBalance.trace('Не удаётся получить информацию о текущем пользователе. Сайт изменен?\n' + html);
     }
+	
+	var data = callNewLKApiGraphql({
+        "operationName": "GetProductsTariffInfo",
+        "variables": {
+            "screenName": "default"
+        },
+        "query": "query GetProductsTariffInfo($screenName: String!) {\n  tariffInfo(input: {screenName: $screenName}) {\n    name\n    alias\n    tariffPricesInfo {\n      mainPrice {\n        price\n        basePrice\n        date\n        descriptionPrice\n        __typename\n      }\n      __typename\n    }\n    tariffType\n    industryCode\n    tariffManage\n    tariffPaymentType\n    tariffContent {\n      tariffButton\n      tariffSettingUrl\n      autoconvergent {\n        widgetMobile\n        hintBadge\n        badge\n        __typename\n      }\n      familyGroup {\n        addUser\n        addUserUrl\n        __typename\n      }\n      recommendedAmount {\n        title\n        amount\n        text\n        icon\n        modalSheet {\n          text\n          buttons {\n            text\n            url\n            __typename\n          }\n          __typename\n        }\n        __typename\n      }\n      tariffPdfUrl\n      __typename\n    }\n    tariffSigns {\n      key\n      value\n      __typename\n    }\n    __typename\n  }\n}"
+    }, 'GetBalanceBaseQueryInput');
+    
+	if(data && data.tariffInfo && data.tariffInfo.name){
+		out.tariff = data.tariffInfo.name;
+	}
+	
+	if(!out.tariff && tarifff){
+		out.tariff = tarifff;
+	}
 
     return json;
 }
@@ -676,6 +740,12 @@ function enterLK(options) {
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Он изменился или проблемы на сайте.');
     }
+	
+	// Ставим куку Antiforgery, с ней логин дольше живёт без проверки
+	html = AnyBalance.requestGet('https://lk.mts.ru/api/login/user-info', addHeaders({
+		Referer: g_baseurl + '/',
+		'X-Requested-With': 'XMLHttpRequest'
+	}));
 
     __setLoginSuccessful();
 
@@ -694,7 +764,7 @@ function loginWithPassword(){
 
     g_savedData.restoreCookies();
 	
-    var html = loadProtectedPage('https://lk.mts.ru/', g_headers); // Надо, чтобы новая кука TS0 установилась
+	var html = AnyBalance.requestGet('https://lk.mts.ru/', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() >= 500){
         throw new AnyBalance.Error('Личный кабинет МТС временно недоступен. Попробуйте еще раз позже');
@@ -704,15 +774,12 @@ function loginWithPassword(){
     
 	if(!isLoggedIn(html)){
         AnyBalance.trace('Сессия новая. Будем логиниться заново...');
-		clearAllCookiesExceptProtection();
-        var html = enterLK({login: prefs.login, password: prefs.password, baseurl: 'https://lk.mts.ru', url: 'https://auth-lk.ssl.mts.ru/account/login?goto=https://lk.mts.ru/'});
+//		clearAllCookiesExceptProtection();
+		var html = enterLK({login: prefs.login, password: prefs.password, baseurl: 'https://lk.mts.ru', url: 'https://united-auth.ssl.mts.ru/account/login?goto=https://lk.mts.ru/&xClientId=LK'});
 	}else{
 		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
     }
 	
-	html = AnyBalance.requestGet('https://lk.mts.ru/api/Access/user-verification', addHeaders({Referer: g_baseurl + '/'}));
-	AnyBalance.trace('Верификация пользователя: ' + html);
-
 	g_savedData.setCookies();
 	g_savedData.save();
 	
@@ -1205,8 +1272,12 @@ function getCsrfToken(){
 	}));
 
     var csrfToken = AnyBalance.getLastResponseHeader('X-Refresh-Csrf-Token');
-	if(!csrfToken)
+	if(!csrfToken){
 		AnyBalance.trace('Не удалось получить csrfToken');
+	}else{
+		g_savedData.setCookies();
+	    g_savedData.save();
+	}
 	
 	return csrfToken;
 }
@@ -1547,7 +1618,7 @@ function mainLK(html, result) {
 			var accId = account.id; // id аккаунта/номера для переключения
 	        var csrfToken = getCsrfToken(); // Для переключения номера нужен новый токен csrf
 			
-			html = AnyBalance.requestPost('https://auth-lk.ssl.mts.ru/account/switch/' + accId, null, addHeaders({
+			html = AnyBalance.requestPost('https://united-auth.ssl.mts.ru/account/switch/' + accId + '?xClientId=LK', null, addHeaders({
 				'Content-Type': 'application/json',
                 Referer: g_baseurl + '/',
 				'X-Csrf-Token': csrfToken,

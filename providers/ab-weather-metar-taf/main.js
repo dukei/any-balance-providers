@@ -12,12 +12,12 @@ var g_headers = {
 
 function main() {
     var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://aviationweather.gov/cgi-bin/data/';
+	var baseurl = 'https://aviationweather.gov/api/data/';
 	AnyBalance.setDefaultCharset('utf-8');
 	
 	checkEmpty(prefs.fieldCode, 'Введите код станции!');
-	
-	var html = AnyBalance.requestGet(baseurl + 'metar.php?ids=' + prefs.fieldCode + '&sep=true&format=xml', g_headers);
+
+	var html = AnyBalance.requestGet(baseurl + 'metar?ids=' + prefs.fieldCode + '&sep=true&format=xml', g_headers);
 	
 	if(!html || AnyBalance.getLastStatusCode() > 400) {
 		AnyBalance.trace(html);
@@ -97,7 +97,7 @@ function main() {
     }
         
 	if(AnyBalance.isAvailable('taf_raw_text')){
-		html = AnyBalance.requestGet(baseurl + 'taf.php?ids=' + prefs.fieldCode + '&sep=true&format=xml', g_headers);
+		html = AnyBalance.requestGet(baseurl + 'taf?ids=' + prefs.fieldCode + '&sep=true&format=xml', g_headers);
         
 	    var info = getElement(html, /<TAF[^>]*>/i);
             if(!info){

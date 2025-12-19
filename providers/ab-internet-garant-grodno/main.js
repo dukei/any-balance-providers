@@ -67,8 +67,7 @@ AnyBalance.trace(html);
 //	AnyBalance.trace(res_data);
 	 AnyBalance.trace("ФИО : " + res_data.data.person.vc_name);
 	getParam(res_data.data.person.vc_name, result, 'fio');
-	AnyBalance.trace("Лицевой счет : " + res_data.data.personal_accounts[0].vc_subj_code);
-	getParam(res_data.data.personal_accounts[0].vc_subj_code, result, 'account');
+	
 
     if(res_data.data.equipment_addresses[0].vc_visual_code.indexOf('Беларусь')>=0){
         AnyBalance.trace("Адрес : " + res_data.data.equipment_addresses[0].vc_visual_code);
@@ -132,6 +131,10 @@ AnyBalance.trace(html);
 	INT
 	*/
 		json_Int = AnyBalance.requestGet(baseurl + "/accounts/"+res_data.data.personal_accounts[1].vc_code+'?='+time,g_headers2);
+
+
+		AnyBalance.trace("Лицевой счет : " + res_data.data.personal_accounts[1].vc_code);
+		getParam(res_data.data.personal_accounts[1].vc_code, result, 'account');
 		if (!json_Int || AnyBalance.getLastStatusCode() > 400) {
 			throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 		}
@@ -195,7 +198,8 @@ AnyBalance.trace(html);
 	INT
 	*/
 		json_Int = AnyBalance.requestGet(baseurl + "/accounts/"+res_data.data.personal_accounts[0].vc_code+'?='+time,g_headers2);
-
+		AnyBalance.trace("Лицевой счет : " + res_data.data.personal_accounts[0].vc_code);
+		getParam(res_data.data.personal_accounts[0].vc_code, result, 'account');
 		if (!json_Int || AnyBalance.getLastStatusCode() > 400) {
 			throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
 		}

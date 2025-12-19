@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="6" date="2025-12-19">
+	- Лицевой счет неправильно отображался у Старых Абонентов
+	</change>
 <change version="5" date="2025-12-11"> - Исправление ошибок </change>
 <change version="4" date="2025-12-08"> - Исправление ошибок добавление новых балансов</change>
 <change version="3" date="2025-01-01"> - Исправление ошибок </change>
@@ -7,4 +10,3 @@
 <change version="1" date="2020-01-01"> - Поддержка доступа к личному кабинету через интернет </change>
 
 </history>
-

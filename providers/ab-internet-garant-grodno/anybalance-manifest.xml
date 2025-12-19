@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="5">ab-internet-garant-grodno</id>
+	<id version="6">ab-internet-garant-grodno</id>
 	<api flags="no_browser|private"/>
 	<name>ГАРАНТ (garant.by)</name>
 	<description html="true"><![CDATA[
@@ -8,7 +8,7 @@
 	<p>Информация берется из личного кабинета https://my.garant.by/p>
 	]]></description>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
-        <depends>
+	<depends>
 		<module id="library"/>
         </depends>
 	<files>

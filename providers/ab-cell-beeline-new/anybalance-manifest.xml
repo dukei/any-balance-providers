@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="183">ab-cell-beeline-new</id>
+	<id version="187">ab-cell-beeline-new</id>
 	<name>Билайн (новый кабинет)</name>
 	<api flags="no_browser" min_level="5"/>
 	<description html="true"><![CDATA[
@@ -36,7 +36,6 @@
 	<depends>
 		<module id="library"/>
 		<module id="nadapter"/>
-		<module id="extract/abe-cell-beeline"/>
 	</depends>
 	<files>
 	    <icon>icon.png</icon>
@@ -49,22 +48,24 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
-		<counter id="unified_balance" name="Общий баланс" units=" {@currency}"/>
-		<counter id="addon_balance" name="Баланс для доп. услуг" units=" {@currency}"/>
+<!--	<counter id="unified_balance" name="Общий баланс" units=" {@currency}"/>
+		<counter id="addon_balance" name="Баланс для доп. услуг" units=" {@currency}"/> -->
 		<counter id="prebal" name="Предварительная сумма по договору" units=" {@currency}"/>
-		<counter id="overpay" name="Переплата" units=" {@currency}"/>
+	    <counter id="overpay" name="Переплата" units=" {@currency}"/>
 		<counter id="sms_left" name="Остаток SMS" units=" sms"/>
 		<counter id="mms_left" name="Остаток MMS" units=" mms"/>
 		<counter id="rub_bonus" name="Рублей БОНУС" units=" {@currency}"/>
 		<counter id="rub_bonus2" name="Денежный бонус" units=" {@currency}"/>
 		<counter id="rub_bonus2_till" name="Денежный бонус доступен до" type="time" format="dd.MM.yyyy"/>
 		<counter id="min_bi" name="Минуты на Билайн" type="time_interval" format="{@MIN}" units=" мин"/>
-		<counter id="min_local" name="Минуты на местные номера" type="time_interval" format="{@MIN}" units=" мин"/>
-		<counter id="rub_opros" name="Бонусы по программе Счастливое время" units=" {@currency}"/>
+		<counter id="min_local" name="Остаток минут" type="time_interval" format="{@MIN}" units=" мин"/>
+		<counter id="rub_opros" name="Бонусы за опрос" units=" {@currency}"/>
+		<counter id="rub_opros_till" name="Бонусы за опрос доступны до" type="time" format="dd.MM.yyyy"/>
 		<counter id="traffic_left" name="Остаток трафика" units=" Mb"/>
 		<counter id="traffic_left_night" name="Остаток ночного трафика" units=" Mb"/>
 		<counter id="traffic_bonus" name="Бонусный трафик" units=" Mb"/>
 		<counter id="traffic_rouming" name="Остаток трафика в роуминге" units=" Mb"/>
+		<counter id="traffic_tethering" name="Остаток трафика для раздачи" units=" Мб"/>
 		<counter id="min_left_1" name="Остаток минут 1" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_left_2" name="Остаток минут 2" type="time_interval" format="{@MIN}" units=" мин"/>
 		<counter id="min_left_3" name="Остаток минут 3" type="time_interval" format="{@MIN}" units=" мин"/>
@@ -81,17 +82,18 @@
 		<counter id="statuslock" name="Статус блокировки" type="text"/>
 		<counter id="total_balance" name="Сумма по всем номерам" units=" {@currency}"/>
 		<counter id="traffic_used" name="Использовано трафика" units=" Mb"/>
-		<counter id="traffic_used_4g" name="Трафик по Безлимит в 4G" units=" Mb"/>
-		<counter id="traffic_used_total" name="Общий расход трафика" units=" Мб"/>
+<!--	<counter id="traffic_used_4g" name="Трафик по Безлимит в 4G" units=" Mb"/>
+		<counter id="traffic_used_total" name="Общий расход трафика" units=" Мб"/> -->
 		<counter id="traffic_total" name="Всего трафика" units=" Mb"/>
 		<counter id="min_local_till" name="Срок действия пакета минут" type="time" format="dd.MM.yyyy"/>
-		<counter id="honeycomb" name="Накопленные соты" prefix="🐝 " units=" шт"/>
+<!--	<counter id="honeycomb" name="Накопленные соты" prefix="🐝 " units=" шт"/> -->
 		<counter id="services_count" name="Подключенные услуги" prefix="💼 " units=" шт"/>
 		<counter id="services_paid" name="Платные услуги" prefix="💵 " units=" шт"/>
 		<counter id="services_free" name="Бесплатные услуги" prefix="🎁 " units=" шт"/>
 		<counter id="services_abon" name="Абонплата за услуги (месяц)" units=" {@currency}"/>
 		<counter id="services_abon_day" name="Абонплата за услуги (сутки)" units=" {@currency}"/>
-		<counter id="debet" name="Начислено за услуги" units=" {@currency}"/>
+		<counter id="subscriptions_count" name="Подключенные подписки" prefix="📌 " units=" шт"/>
+<!--	<counter id="debet" name="Начислено за услуги" units=" {@currency}"/> -->
 		<counter id="abon_tariff" name="Абонплата по тарифу" units=" {@currency}"/>
 		<counter id="bills" name="Выставленные счета" units=" шт"/>
 	</counters>

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="9">ab-bonus-sberspasibo</id>
+	<id version="11">ab-bonus-sberspasibo</id>
 	<api flags="no_browser"/>
 	<name>СберСпасибо</name>
 	<description html="true"><![CDATA[
@@ -29,13 +29,13 @@
 		<counter id="level" name="Расчетный период" type="text"/>
 		<counter id="leveltill" name="Дата действия категорий" type="time" format="dd.MM.yyyy"/>
 		<counter id="leveldays" name="Срок действия категорий" units=" дн"/>
-		<counter id="categories" name="Повышенный кешбэк" type="html"/>
+<!--	<counter id="categories" name="Повышенный кешбэк" type="html"/>
 		<counter id="lastoperdate" name="Дата посл. операции" type="time" format="dd.MM.yyyy"/>
 		<counter id="lastoperrubsum" name="Сумма посл. операции" units=" ₽"/>
 		<counter id="lastopersum" name="Бонусы посл. операции" units=" Б"/>
 		<counter id="lastopertype" name="Тип посл. операции" type="text"/>
 		<counter id="lastoperdesc" name="Место посл. операции" type="text"/>
-		<counter id="lastopercard" name="Карта посл. операции" type="text"/>
+		<counter id="lastopercard" name="Карта посл. операции" type="text"/> -->
 		<counter id="email" name="E-mail" type="text"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
 	</counters>

@@ -391,7 +391,7 @@ function main() {
 		if(json.data.loyaltySystem){
 	        getParam(json.data.loyaltySystem.balance, result, 'balance', null, null, parseBalance);
 	        getParam(json.data.loyaltySystem.miles, result, 'miles', null, null, parseBalance);
-			if(json.data.loyaltySystem.bon_to_annulment){
+			if(json.data.loyaltySystem.bon_to_annulment && json.data.loyaltySystem.bon_to_annulment.date){
 	            getParam(json.data.loyaltySystem.bon_to_annulment.value, result, 'annul', null, null, parseBalance);
 	            getParam(json.data.loyaltySystem.bon_to_annulment.date, result, 'annuldate', null, null, parseDate);
 	        }
@@ -405,7 +405,7 @@ function main() {
 	}else{
 		AnyBalance.trace('Не удалось найти информацию по профилю');
 	}
-	
+/*	
 	if(AnyBalance.isAvailable('categories')){
 	    var html = AnyBalance.requestGet(g_baseurl + '/api/online/loyalty/v1/privileges/main', addHeaders({Referer: g_baseurl + "/lk_categories"}));
 	    var json = getJson(html);
@@ -423,7 +423,7 @@ function main() {
 					    for(var j=0; j<item.contentItems.length; ++j){
 	                        var category = item.contentItems[j];
                             
-			                sumParam(capitalizeFirstLetter(category.title.replace(/^[\s\S]*?%\s*/i, '').replace(/\s$/g, '')) 
+			                sumParam(capitalizeFirstLetter(category.title.replace(/^[\s\S]*?%\s*\\\\\/i, '').replace(/\s$/g, '')) 
 			                + ': ' + category.title.replace(/%[\s\S]*?$/i, '').replace(/\s$/g, '') + '%', result, 'categories', null, null, null, create_aggregate_join(',<br> '));
 			            }
 						
@@ -470,7 +470,7 @@ function main() {
 		    AnyBalance.trace('Не удалось получить информацию о последнем заказе');
 	    }
 	}
-*/	
+	
 	if(AnyBalance.isAvailable(['lastopertype', 'lastoperdate', 'lastoperrubsum', 'lastopersum', 'lastopercard', 'lastoperdesc'])){
 	    var html = AnyBalance.requestGet(g_baseurl + '/api/online/personal/loyalitySystem/transactions?page=1&cnt=100', addHeaders({Referer: g_baseurl + "/lk_history"}));
 	    var json = getJson(html);
@@ -490,7 +490,7 @@ function main() {
 			    getParam(transaction.operationDate, result, 'lastoperdate', null, null, parseDate);
 			    getParam(-(transaction.amount), result, 'lastoperrubsum', null, null, parseBalance);
 	            getParam(transaction.bonusBalanceChange, result, 'lastopersum', null, null, parseBalance);
-			    getParam(transaction.cardName + (transaction.cardLastDigits ? ' (' + transaction.cardLastDigits + ')' : ''), result, 'lastopercard');
+			    getParam(transaction.cardName + (transaction.cardLastDigits ? ' (' + transaction.cardLastDigits + ')' : ''), result, 'lastopercard', null, replaceTagsAndSpaces);
 	            getParam(transaction.partnerName, result, 'lastoperdesc');
 			    
 			    break;
@@ -499,7 +499,7 @@ function main() {
 		    AnyBalance.trace('Не удалось получить информацию о последней операции');
 	    }
 	}
-
+*/
 	AnyBalance.setResult(result);
 }
 

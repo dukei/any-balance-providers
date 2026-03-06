@@ -1,12 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-municipal-belssb</id>
+	<id version="9">ab-municipal-belssb</id>
 	<api flags="no_browser"/>
 	<name>Балашихинская Электросеть</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе Балашихинской Электросети.</p>
-	<p>Информация берется из личного кабинета http://www.belssb.ru/lk</p>
+	<p>Предоставляет информацию о балансе, начислениях и оплате для абонентов ЗАО "Балашихинская Электросеть" (https://www.belssb.ru/).</p>
+	<p>Информация берется из личного кабинета абонента БЭЛС на сайте https://www.belssb.ru/lk/.</p>
 	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет БЭЛС.</p>
+	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -18,14 +21,30 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="acc_num" name="Номер счета" type="text"/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="basetime" name="Дата актуальности базы" type="time" format="dd.MM.yyyy"/>
+		<counter id="prev" name="Предыдущие показания" units=" кВт*ч"/>
+		<counter id="current" name="Текущие показания" units=" кВт*ч"/>
+		<counter id="diff" name="Расход" units=" кВт*ч"/>
+		<counter id="tarif" name="Тариф" units=" ₽/кВт*ч"/>
+		<counter id="to_pay" name="Начислено по тарифу" units=" ₽"/>
+		<counter id="meter" name="Прибор учета" type="text"/>
+		<counter id="meter_verification_date" name="Дата поверки ПУ" type="time" format="dd.MM.yyyy"/>
+		<counter id="meter_verification_date_till" name="Срок поверки ПУ" type="time" format="dd.MM.yyyy"/>
+		<counter id="meter_last_readings_date" name="Дата принятых показаний" type="time" format="dd.MM.yyyy"/>
+		<counter id="meter_readings_general" name="Общие показания" units=" кВт*ч"/>
+		<counter id="meter_readings_night" name="Показания ночь" units=" кВт*ч"/>
+		<counter id="meter_readings_peak" name="Показания пик" units=" кВт*ч"/>
+		<counter id="last_pay_date" name="Дата посл. оплаты" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_pay_sum" name="Сумма посл. оплаты" units=" ₽"/>
+		<counter id="last_bill_date" name="Дата посл. счета" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_bill_sum" name="Сумма посл. счета" units=" ₽"/>
+		<counter id="last_bill_type" name="Тип посл. счета" type="text"/>
+		<counter id="address" name="Адрес подключения" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
-		<counter id="prev" name="Предыдущие показания"/>
-		<counter id="current" name="Текущие показания"/>
-		<counter id="diff" name="Расход"/>
 	</counters>
-	<keywords></keywords>
+	<keywords>электросеть</keywords>
 	<type>municipal</type>
 	<country>ru</country>
 </provider>

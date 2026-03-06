@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id major_version="4.1" version="45">ab-cell-life-by</id>
+	<id major_version="4.2" version="47">ab-cell-life-by</id>
 	<api flags="no_browser" />
-	<name>life:) (Беларусь)</name>
+	<name>Life (Беларусь)</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе и тарифном плане для пользователей белорусского оператора сотовой связи <a href="https://life.com.by/">life:)</a>.</p>
-	<p>Информация берется из мобильного приложения <a href="https://play.google.com/store/apps/details?id=by.com.life.lifego&hl=ru">Мой life:)</a>.</p>  
+	<p>Предоставляет информацию о балансе и тарифном плане для пользователей белорусского оператора сотовой связи <a href="https://life.com.by/">Life</a>.</p>
+	<p>Информация берется из мобильного приложения <a href="https://play.google.com/store/apps/details?id=by.com.life.lifego&hl=ru">Life</a>.</p>  
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p>Для работы провайдера требуется ввести номер телефона и код подтверждения из SMS, высланного на этот номер.</p>
@@ -21,16 +21,16 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" suffix=" р"/>
+		<counter id="balance" name="Баланс" units=" р"/>
 		<counter id="bonuses" name="Бонусный счет" units=" р"/>
 		<counter id="bonuses_burn" name="Сгораемые бонусы" units=" р"/>
 		<counter id="bonuses_burn_date" name="Дата сгорания бонусов" type="time" format="dd.MM.yyyy"/>
 		<counter id="abon" name="Абонплата по тарифу" units=" {@perunit}"/>
-		<counter id="traffic_left" name="Остаток трафика" suffix=" Мб"/>
+		<counter id="traffic_left" name="Остаток трафика" units=" Мб"/>
 		<counter id="min_left_other" name="Минуты в другие сети" units=" мин"/>
 		<counter id="min_left" name="Минуты внутри сети" units=" мин"/>
-		<counter id="sms_left_other" name="SMS во все сети" suffix=" sms"/>
-		<counter id="sms_left" name="SMS внутри сети" suffix=" sms"/>
+		<counter id="sms_left_other" name="SMS во все сети" units=" sms"/>
+		<counter id="sms_left" name="SMS внутри сети" units=" sms"/>
 		<counter id="paid_to" name="Срок действия пакета" type="time" format="dd.MM.yyyy"/>
 		<counter id="status" name="Статус" type="text"/>
 		<counter id="services_total" name="Подключенные услуги" prefix="💼 " units=" шт"/>
@@ -42,6 +42,8 @@
 		<counter id="last_payment_sum" name="Сумма последнего платежа" units=" р"/>
 		<counter id="last_payment_date" name="Дата последнего платежа" type="time" format="dd.MM.yyyy"/>
 		<counter id="last_payment_descr" name="Место последнего платежа" type="text"/>
+		<counter id="notifications" name="Уведомления" units=" шт"/>
+		<counter id="email" name="E-mail" type="text"/>
 		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>

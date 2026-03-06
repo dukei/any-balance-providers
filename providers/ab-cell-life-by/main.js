@@ -63,11 +63,11 @@ function main(){
 
 function callApi(verb, params){
 	var headers = {
-        'Accept-Language': 'ru',
-		'Connection': 'Keep-Alive',
-        'Version': 'Android App 1.0.251',
-        'Accept-Encoding': 'gzip',
-        'User-Agent': 'okhttp/4.12.0'
+		'Accept-Encoding': 'gzip',
+	    'Accept-Language': 'ru',
+        'Connection': 'close',
+        'User-Agent': 'okhttp/4.12.0',
+	    'Version': 'Android App 1.0.261'
     };
 	
 	var accessToken = AnyBalance.getData('accessToken');
@@ -80,14 +80,12 @@ function callApi(verb, params){
 		headers['Content-Type'] = 'application/json';
 	}
 	
-	if(/otp\/send|oauth\/token/i.test(verb)){
-		var baseurl = 'https://oauth.life.com.by/';
-		headers['Connection'] = 'Keep-Alive';
+	if(/otp\/send|connect\/token/i.test(verb)){
+		var baseurl = 'https://lifegoauth.life.com.by/';
 	}else{
-		var baseurl = 'https://lifegoapi.life.com.by/';
+		var baseurl = 'https://ecolifeapi.life.by/';
 		if(accessToken)
 		    headers['Authorization'] = 'Bearer ' + accessToken;
-		headers['Connection'] = 'close';
 	}
 	
 	AnyBalance.trace('Запрос: ' + baseurl + verb);
@@ -117,13 +115,13 @@ function loginPure(verb, params){
 	    AnyBalance.saveData();
 	}
 	
-	var json = callApi('api/v1/otp/send', {'user': '375' + prefs.login, 'channel': 'sms', 'app': 'lifego_andr', 'lang': 'ru'});
+	var json = callApi('realms/lifego/sms-otp/send?username=375' + prefs.login + '&template=OTP_LIFEGO_ANDR');
 	
 	var formattedLogin = prefs.login.replace(/.*(\d\d)(\d{3})(\d\d)(\d\d)$/, '+375 ($1) $2-$3-$4');
 	
 	var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения из SMS, высланного на номер ' + formattedLogin, null, {inputType: 'number', time: 300000});
     
-	var json = callApi('oauth/token', {'username': '375' + prefs.login, 'password': code, 'Authorization-id': deviceId, 'grant_type': 'password', 'client_id': 'lifego_android', 'client_secret': 'hummed-Z$rSiDf958z*@VA'});
+	var json = callApi('realms/lifego/protocol/openid-connect/token', {'username': '375' + prefs.login, 'otp_code': code, 'device_id': deviceId, 'grant_type': 'password', 'client_id': 'lifego_android', 'device_name': 'HONOR AUM-L29', 'version': 'Мой life:) Android 2.0.1'});
 	
     if(!json.access_token){
     	AnyBalance.trace(JSON.stringify(json));
@@ -157,7 +155,7 @@ function loginRefreshToken(){
 	var refreshToken = AnyBalance.getData('refreshToken');
 	try{
 		AnyBalance.trace('Токен устарел. Пробуем обновить...');
-		var json = callApi('oauth/token', {'refresh_token': refreshToken, 'Authorization-id': deviceId, 'grant_type': 'refresh_token', 'client_id': 'lifego_android', 'client_secret': 'hummed-Z$rSiDf958z*@VA', 'device-name': 'HONOR AUM-L29', 'version': 'Мой life:) Android 1.1.53'});
+		var json = callApi('realms/lifego/protocol/openid-connect/token', {'refresh_token': refreshToken, 'device_id': deviceId, 'grant_type': 'refresh_token', 'client_id': 'lifego_android', 'device_name': 'HONOR AUM-L29', 'version': 'Мой life:) Android 2.0.1'});
 		AnyBalance.trace('Успешно вошли по refreshToken');
 		saveTokens(json);
 		return true;
@@ -218,15 +216,12 @@ function mainApi() {
   	    getParam(json.content.balance, result, 'balance', null, null, parseBalance);
     }
 	
-    json = callApi('tariff/tariffTop');
-	
-	if(AnyBalance.isAvailable('__tariff', 'paid_to', 'abon', 'phone')){
-  	    json = callApi('tariff/tariffTop');
+	if(AnyBalance.isAvailable('__tariff', 'paid_to', 'abon')){
+  	    json = callApi('tariff/tariffTop/v2');
 		getParam(json.content.tariff.title, result, '__tariff');
   	    getParam(json.content.paidTo, result, 'paid_to', null, null, parseDate);
 	    getParam(json.content.tariff.price, result, 'abon', null, null, parseBalance);
 	    result.perunit = getParam(json.content.tariff.price, null, null, null, null, parseCurrency);
-		result.phone = prefs.login.replace(/.*(\d\d)(\d{3})(\d\d)(\d\d)$/, '+375 ($1) $2-$3-$4');
     }
 	
 	if(AnyBalance.isAvailable('bonuses', 'bonuses_burn', 'bonuses_burn_date')){
@@ -238,7 +233,7 @@ function mainApi() {
 					getParam(Math.round(item.cost*100)/100, result, 'bonuses', null, null, parseBalance);
 					for(var j=item.detailed.length-1; j>=0; j--){
 						var detail = item.detailed[j];
-				        getParam(detail.cost, result, 'bonuses_burn', null, null, parseBalance);
+				        getParam(Math.round(detail.cost*100)/100, result, 'bonuses_burn', null, null, parseBalance);
 		                getParam(detail.date, result, 'bonuses_burn_date', null, null, parseDate);
 						
 						break;
@@ -330,9 +325,20 @@ function mainApi() {
 		var content = json.content && json.content[0];
 		if(content && content.items && content.items.length && content.items.length > 0){
             AnyBalance.trace('Найдено платежей в текущем месяце: ' + content.items.length);
-			getParam(content.items[0].count, result, 'last_payment_sum', null, null, parseBalance);
-		    getParam(content.items[0].date, result, 'last_payment_date', null, null, parseDate);
 			getParam(content.items[0].name, result, 'last_payment_descr');
+			if(content.items[0].detailed && content.items[0].detailed.length && content.items[0].detailed.length > 0){ // Для множественных платежей (Понетки)
+				for(var j=0; j<content.items[0].detailed.length; ++j){
+				    var payment = content.items[0].detailed[j];
+					getParam(payment.count, result, 'last_payment_sum', null, null, parseBalance);
+		            getParam(payment.date, result, 'last_payment_date', null, null, parseDate);
+					break;
+		        }
+			}else{
+				getParam(content.items[0].count, result, 'last_payment_sum', null, null, parseBalance);
+		        getParam(content.items[0].date, result, 'last_payment_date', null, null, parseDate);
+			}
+			
+			
 			for(var i=0; i<content.items.length; ++i){
 				var payment = content.items[i];
 				sumParam(payment.count, result, 'month_refill', null, null, parseBalanceSilent, aggregate_sum);
@@ -361,9 +367,18 @@ function mainApi() {
                 AnyBalance.trace('Найдено платежей за последние 3 месяца: ' + allContent.length);
 			    for(var i=0; i<allContent.length; ++i){
 				    var payment = allContent[i];
-					getParam(payment.count, result, 'last_payment_sum', null, null, parseBalance);
-		            getParam(payment.date, result, 'last_payment_date', null, null, parseDate);
 			        getParam(payment.name, result, 'last_payment_descr');
+					if(payment.detailed && payment.detailed.length && payment.detailed.length > 0){ // Для множественных платежей (Понетки)
+				        for(var j=0; j<payment.detailed.length; ++j){
+				            var payment = payment.detailed[j];
+					        getParam(payment.count, result, 'last_payment_sum', null, null, parseBalance);
+		                    getParam(payment.date, result, 'last_payment_date', null, null, parseDate);
+					        break;
+		                }
+			        }else{
+				        getParam(content.items[0].count, result, 'last_payment_sum', null, null, parseBalance);
+		                getParam(content.items[0].date, result, 'last_payment_date', null, null, parseDate);
+			        }
 					break;
 		        }
 	        }else{
@@ -372,11 +387,22 @@ function mainApi() {
 		}
     }
 	
-	if(AnyBalance.isAvailable('fio', 'status')){
+	if(AnyBalance.isAvailable('notifications')){
+  	    json = callApi('notification/listHeader');
+		
+		getParam(json.unread_number||0, result, 'notifications', null, null, parseBalance);
+    }
+	
+	if(AnyBalance.isAvailable('status', 'email', 'phone', 'fio')){
   	    json = callApi('profile-subscriber');
-		if(json.content.contract.fullName)
-  	        getParam(json.content.contract.fullName.match(/[A-ZА-Я][a-zа-я]+|[0-9]+/g).join(' '), result, 'fio');
-	    getParam(json.content.contract.status, result, 'status');
+		getParam(json.content.userData, result, 'email');
+		result.phone = prefs.login.replace(/.*(\d\d)(\d{3})(\d\d)(\d\d)$/, '+375 ($1) $2-$3-$4');
+		if(json.content.contract){
+			getParam(json.content.contract.status, result, 'status');
+		    var owner = json.content.contract.fullName || json.content.contract.companyName;
+			if(owner && !/null/i.test(owner))
+  	            getParam(owner.match(/[A-ZА-Я][a-zа-я]+|[0-9]+/g).join(' '), result, 'fio');
+		}
     }
 	
 	AnyBalance.setResult(result);

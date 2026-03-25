@@ -66,8 +66,8 @@ function callApi(verb, params){
 		'Accept-Encoding': 'gzip',
 	    'Accept-Language': 'ru',
         'Connection': 'close',
-        'User-Agent': 'okhttp/4.12.0',
-	    'Version': 'Android App 1.0.261'
+        'User-Agent': 'okhttp/5.3.2',
+	    'Version': 'Android App 1.0.267'
     };
 	
 	var accessToken = AnyBalance.getData('accessToken');
@@ -121,7 +121,7 @@ function loginPure(verb, params){
 	
 	var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения из SMS, высланного на номер ' + formattedLogin, null, {inputType: 'number', time: 300000});
     
-	var json = callApi('realms/lifego/protocol/openid-connect/token', {'username': '375' + prefs.login, 'otp_code': code, 'device_id': deviceId, 'grant_type': 'password', 'client_id': 'lifego_android', 'device_name': 'HONOR AUM-L29', 'version': 'Мой life:) Android 2.0.1'});
+	var json = callApi('realms/lifego/protocol/openid-connect/token', {'username': '375' + prefs.login, 'otp_code': code, 'device_id': deviceId, 'grant_type': 'password', 'client_id': 'lifego_android', 'device_name': 'HONOR AUM-L29', 'version': 'Life Android 2.0.7'});
 	
     if(!json.access_token){
     	AnyBalance.trace(JSON.stringify(json));
@@ -140,7 +140,7 @@ function loginAccessToken(){
 	var accessToken = AnyBalance.getData('accessToken');
 	try{
 	    AnyBalance.trace('Токен сохранен. Пробуем войти...');
-		var json = callApi('profile-subscriber');
+		var json = callApi('notification/dashboardInfo');
 		AnyBalance.trace('Успешно вошли по accessToken');
 		return true;
 	}catch(e){
@@ -155,7 +155,7 @@ function loginRefreshToken(){
 	var refreshToken = AnyBalance.getData('refreshToken');
 	try{
 		AnyBalance.trace('Токен устарел. Пробуем обновить...');
-		var json = callApi('realms/lifego/protocol/openid-connect/token', {'refresh_token': refreshToken, 'device_id': deviceId, 'grant_type': 'refresh_token', 'client_id': 'lifego_android', 'device_name': 'HONOR AUM-L29', 'version': 'Мой life:) Android 2.0.1'});
+		var json = callApi('realms/lifego/protocol/openid-connect/token', {'refresh_token': refreshToken, 'device_id': deviceId, 'grant_type': 'refresh_token', 'client_id': 'lifego_android', 'device_name': 'HONOR AUM-L29', 'version': 'Life Android 2.0.7'});
 		AnyBalance.trace('Успешно вошли по refreshToken');
 		saveTokens(json);
 		return true;
@@ -394,15 +394,22 @@ function mainApi() {
     }
 	
 	if(AnyBalance.isAvailable('status', 'email', 'phone', 'fio')){
-  	    json = callApi('profile-subscriber');
-		getParam(json.content.userData, result, 'email');
+		try{ // Профиль глючит на некоторых номерах, поэтому делаем через try
+		    json = callApi('profile-subscriber');
+		    if(json.content){
+			    getParam(json.content.userData, result, 'email');
+		        if(json.content.contract){
+			        getParam(json.content.contract.status, result, 'status');
+		            var owner = json.content.contract.fullName || json.content.contract.companyName;
+			        if(owner && !/null/i.test(owner))
+  	                    getParam(owner.match(/[A-ZА-Я][a-zа-я]+|[0-9]+/g).join(' '), result, 'fio');
+		        }
+			}
+	    }catch(e){
+		    AnyBalance.trace('Не удалось получить информацию по профилю: ' + e.message);
+	    }
+		
 		result.phone = prefs.login.replace(/.*(\d\d)(\d{3})(\d\d)(\d\d)$/, '+375 ($1) $2-$3-$4');
-		if(json.content.contract){
-			getParam(json.content.contract.status, result, 'status');
-		    var owner = json.content.contract.fullName || json.content.contract.companyName;
-			if(owner && !/null/i.test(owner))
-  	            getParam(owner.match(/[A-ZА-Я][a-zа-я]+|[0-9]+/g).join(' '), result, 'fio');
-		}
     }
 	
 	AnyBalance.setResult(result);

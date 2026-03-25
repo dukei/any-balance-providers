@@ -1,18 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="1">ab-cell-mcn</id>
+	<id version="2">ab-cell-mcn</id>
 	<api flags="no_browser"/>
 	<name>MCN Телеком</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию о балансе MCN Телеком. <a href="https://lk.mcn.ru"/>https://lk.mcn.ru/</a></p>
+	<p>Предоставляет информацию о текущем балансе и другие данные для абонентов провайдера MCN Телеком (https://www.mcn.ru/).</p>
+	<p>Информация берется из личного кабинета MCN Телеком на сайте <a href="https://base.mcn.ru/">https://base.mcn.ru/</a> или на сайте <a href="https://lk.mcn.ru/">https://lk.mcn.ru/</a>.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Как получить доступ</p>
-	<ul>
-	<li>Введите в настройки провайдера e-mail и пароль</li>
-	</ul>
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет MCN Телеком.</p>
+	<p>Если у вас нет личного кабинета MCN Телеком, вы можете зарегистрировать его на сайте https://shop.mcn.ru/.</p>
 	]]></instruction>
-	<author>DimaZ &lt;DIMAZ.KHUA@gmail.com&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>
@@ -23,19 +22,19 @@
 		<history>history.xml</history>
 	</files>
 	<counters>
-		<counter id="balance" name="Баланс" units=" р."/>
-		<counter id="credit" name="Кредитный лимит" units=" р."/>
+		<counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="credit" name="Кредитный лимит" units=" ₽"/>
 		<counter id="ls" name="Лицевой счет" type="text"/>
 		<counter id="tel0" name="1.Номер телефона" type="text"/>
 		<counter id="tel1" name="2.Номер телефона" type="text"/>
 		<counter id="tel2" name="3.Номер телефона" type="text"/>
 		<counter id="tel3" name="4.Номер телефона" type="text"/>
 		<counter id="tel4" name="5.Номер телефона" type="text"/>
-		<counter id="inet0" name="1.Трафик" prefix="{@pretel0}" sufix="{@suf_inet0}" units=" МБ"/>
-		<counter id="inet1" name="2.Трафик" prefix="{@pretel1}" sufix="{@suf_inet1}" units=" МБ"/>
-		<counter id="inet2" name="3.Трафик" prefix="{@pretel2}" sufix="{@suf_inet2}" units=" МБ"/>
-		<counter id="inet3" name="4.Трафик" prefix="{@pretel3}" sufix="{@suf_inet3}" units=" МБ"/>
-		<counter id="inet4" name="5.Трафик" prefix="{@pretel4}" sufix="{@suf_inet4}" units=" МБ"/>
+		<counter id="inet0" name="1.Трафик" prefix="{@pretel0}" suffix="{@suf_inet0}" units=" Мб"/>
+		<counter id="inet1" name="2.Трафик" prefix="{@pretel1}" suffix="{@suf_inet1}" units=" Мб"/>
+		<counter id="inet2" name="3.Трафик" prefix="{@pretel2}" suffix="{@suf_inet2}" units=" Мб"/>
+		<counter id="inet3" name="4.Трафик" prefix="{@pretel3}" suffix="{@suf_inet3}" units=" Мб"/>
+		<counter id="inet4" name="5.Трафик" prefix="{@pretel4}" suffix="{@suf_inet4}" units=" Мб"/>
 		<counter id="deactivate_future_date0" name="1.Отключение" prefix="{@pretel0}" type="time" format="dd.MM.YYYY"/>
 		<counter id="deactivate_future_date1" name="2.Отключение" prefix="{@pretel1}" type="time" format="dd.MM.YYYY"/>
 		<counter id="deactivate_future_date2" name="3.Отключение" prefix="{@pretel2}" type="time" format="dd.MM.YYYY"/>
@@ -46,6 +45,8 @@
 		<counter id="tariff2" name="3.Тариф" prefix="{@pretel2}" type="text"/>
 		<counter id="tariff3" name="4.Тариф" prefix="{@pretel3}" type="text"/>
 		<counter id="tariff4" name="5.Тариф" prefix="{@pretel4}" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
 	<keywords></keywords>
 	<type>cell</type>

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="187">ab-cell-beeline-new</id>
+	<id version="188">ab-cell-beeline-new</id>
 	<name>Билайн (новый кабинет)</name>
 	<api flags="no_browser" min_level="5"/>
 	<description html="true"><![CDATA[
@@ -36,6 +36,7 @@
 	<depends>
 		<module id="library"/>
 		<module id="nadapter"/>
+		<module id="extract/abe-cell-beeline"/>
 	</depends>
 	<files>
 	    <icon>icon.png</icon>
@@ -74,7 +75,7 @@
 		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="agreement" name="Договор" type="text"/>
 		<counter id="type" name="Тип кабинета" type="text"/>
-		<counter id="month_refill" name="Пополнения за месяц" units=" {@currency}"/>
+<!--	<counter id="month_refill" name="Пополнения за месяц" units=" {@currency}"/> -->
 		<counter id="last_pay_sum" name="Сумма последнего платежа" units=" {@currency}"/>
 		<counter id="last_pay_date" name="Дата последнего платежа" type="time" format="dd.MM.yyyy"/>
 		<counter id="last_pay_place" name="Место последнего платежа" type="text"/> <!-- Только для предоплатных абонентов -->

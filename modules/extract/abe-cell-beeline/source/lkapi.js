@@ -11,15 +11,25 @@
 var g_baseurlApi = 'https://my.beeline.ru/api/';
 var g_baseurlApiNew = 'https://api.beeline.ru/';
 
-var g_apiHeaders = {
-//	'Accept': 'application/vnd.beeline.api.v1.mobapp+json',
-	'User-Agent': 'MyBeeline/4.72.0-3913',
+var g_apiHeadersNew = {
+	'Accept': 'application/json',
 	'Connection': 'Keep-Alive',
 	'Client-Type': 'MobbApp2',
-	'X-AppVersion':'4.72.0',
-	'X-AndroidVersion':'26',
+	'Content-Type': 'application/json',
+	'X-AppVersion':'5.14.0',
+	'X-AndroidVersion':'29',
 	'X-Device':'PHONE',
-	'X-Theme':'Light'
+	'X-Theme':'Light',
+	'User-Agent': 'MyBeeline/5.14.0-4228'
+};
+
+var g_apiHeaders = {
+//	'Accept': 'application/vnd.beeline.api.v1.mobapp+json',
+	'User-Agent': 'okhttp/2.6.0',
+	'Client-Type': 'MYBEE/ANDROID/PHONE/2.90',
+	'X-AppVersion':'4.43.0',
+	'X-AndroidVersion':'26',
+	'X-Device':'PHONE'
 };
 
 function callAPIProc(url, getParams, postParams, method) {
@@ -45,6 +55,11 @@ function callAPIProc(url, getParams, postParams, method) {
 
 	var html, maxtries = 5, tries = 0;
 	
+	if(/my\.beeline\.ru/i.test(url) && !/sso\/list/i.test(url))
+		AnyBalance.sleep(1000);
+	
+	AnyBalance.trace('Запрос: ' + url);
+	
 	do{
 	    if(!method && !postParams){
 		    html = AnyBalance.requestGet(url, g_apiHeaders);
@@ -55,10 +70,17 @@ function callAPIProc(url, getParams, postParams, method) {
 			    {HTTP_METHOD: method || 'POST'}
 		    );
 	    }
+	    
+	    AnyBalance.trace('Ответ: ' + html);
+		
+		if(AnyBalance.getLastStatusCode() >= 500){
+            AnyBalance.trace(html);
+            throw new AnyBalance.Error('Сервер мобильного API временно недоступен');
+        }
 		
 		if(/Too Many Requests/i.test(html) || AnyBalance.getLastStatusCode() == 429){
-			if(tries < 5){
-//				AnyBalance.trace('Превышено количество одновременных запросов к серверу. Ждем 2 секунды и пробуем повторить запрос...');
+			if(tries < maxtries){
+//				AnyBalance.trace('Превышено количество одновременных запросов к серверу. Ожидаем 1 секунду и пробуем повторить запрос...');
 				++tries;
 				AnyBalance.sleep(1000);
 			}else{
@@ -69,7 +91,7 @@ function callAPIProc(url, getParams, postParams, method) {
 			break;
 		}
 	}while(true);
-
+	
 	var json = getJson(html);
 	
 	if(json.offerUrl){
@@ -104,21 +126,23 @@ function apiLogin(baseurl){
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.setDefaultCharset('utf-8');
 	
-	var myBee = AnyBalance.getData('myBee' + prefs.login);
-	var adId = AnyBalance.getData('adId' + prefs.login);
-
-	try{
-		AnyBalance.restoreCookies();
-		g_apiHeaders['X-Auth-Token'] = AnyBalance.getData('authToken' + prefs.login);
-		g_apiHeaders['X-AdID'] = AnyBalance.getData('adId' + prefs.login);
-	    getApiAssocNumbers();
-		AnyBalance.trace('Сессия сохранена. Входим автоматически...');
-		return;
-	}catch(e){
-		AnyBalance.trace('Сессия новая. Будем логиниться заново...');
-		clearAllCookies();
-		delete g_apiHeaders['X-Auth-Token'];
-		delete g_apiHeaders['X-AdID'];
+//	var myBee = AnyBalance.getData('myBee' + prefs.login);
+//	var adId = AnyBalance.getData('adId' + prefs.login);
+	
+	if(AnyBalance.getData('authToken' + prefs.login)){
+	    try{
+		    AnyBalance.restoreCookies();
+		    g_apiHeaders['X-Auth-Token'] = AnyBalance.getData('authToken' + prefs.login);
+//		    g_apiHeaders['X-AdID'] = AnyBalance.getData('adId' + prefs.login);
+	        getApiAssocNumbers();
+		    AnyBalance.trace('Сессия сохранена. Входим автоматически...');
+		    return;
+	    }catch(e){
+		    AnyBalance.trace('Сессия новая. Будем логиниться заново...');
+		    clearAllCookies();
+		    delete g_apiHeaders['X-Auth-Token'];
+//		    delete g_apiHeaders['X-AdID'];
+	    }
 	}
 
 	var newPass;
@@ -127,21 +151,32 @@ function apiLogin(baseurl){
 		newPass = createNewPasswordApi();
 	}
 	
-	if(!myBee)
-	    myBee = generateUUID();
-	
-	if(!adId)
-	    adId = generateUUID();
-	
-	g_apiHeaders['X-AdID'] = adId;
-	
-	var json = callAPIProc('mw/auth/1/auth', {client_id: 'mybee;' + myBee + ';android_26;4.72.0_3913', login: prefs.login, password: prefs.password || newPass});
-	
+//	var json = callAPIProc('1.0/auth?login=' + prefs.login + '&password=' + encodeURIComponent(prefs.password || newPass));
+    
+	var json = callAPIProc('2.0/auth/auth', {
+			userType: 'Mobile',
+			login: prefs.login
+		}, {
+			password: prefs.password || newPass
+		}, 'PUT'
+	);
 	g_apiHeaders['X-Auth-Token'] = json.token;
+	
+//	if(!myBee)
+//	    myBee = generateUUID();
+	
+//	if(!adId)
+//	    adId = generateUUID();
+	
+//	g_apiHeaders['X-AdID'] = adId;
+	
+//	var json = callAPIProc('mw/auth/1/auth', {client_id: 'mybee;' + myBee + ';android_29;5.27.2_4292', login: prefs.login, password: prefs.password || newPass});
+	
+//	g_apiHeaders['X-Auth-Token'] = json.token;
     
 	AnyBalance.setData('authToken' + prefs.login, json.token);
-	AnyBalance.setData('myBee' + prefs.login, myBee);
-	AnyBalance.setData('adId' + prefs.login, adId);
+//	AnyBalance.setData('myBee' + prefs.login, myBee);
+//	AnyBalance.setData('adId' + prefs.login, adId);
 	AnyBalance.setCookie(getParam(g_baseurlApi, null, null, /:\/\/([^\/]*)/), 'token', json.token);
 	AnyBalance.saveCookies();
     AnyBalance.saveData();
@@ -210,6 +245,8 @@ function switchToAssocNumber(num){
 			return prefs.phone = subscribers[0].ctn;
 		}
 	}
+	
+	AnyBalance.sleep(1000);
 
 	var assocs = getApiAssocNumbers();
 	for(var i=0; i<assocs.ssoAccountList.length; ++i){
@@ -218,6 +255,10 @@ function switchToAssocNumber(num){
 	    var ctn = findCTNForLogin(sso.name);
 	    if(ctn){
 			AnyBalance.trace('Используем присоединенный логин ' + sso.name + ' и номер ' + ctn);
+//			if(num){ // С новым API на другой номер надо переключаться с получением нового токена, иначе не пустит
+//			    var json = callAPIProc('mw/auth/1/changeActiveLogin', null, {login: prefs.__login});
+//	            g_apiHeaders['X-Auth-Token'] = json.token;
+//			}
 			return ctn;
 		}
 	}
@@ -243,36 +284,52 @@ function processApi(result){
 	};
 	getParam(type[processApi.payType[prefs.phone]]||processApi.payType[prefs.phone], result, 'type');
 	
-	processApiInfo(result);
-	
-	if(typeof(processApiPayments) == 'function')
-		processApiPayments(result);
-	
-	processApiServices(result);
-
-	processApiTariff(result);
-	
-	processApiStatus(result);
-
 	if(processApi.payType[prefs.phone] == 'PREPAID'){
 		processApiPrepaid(result);
 	}else{
 		processApiPostpaid(result);
 	}
+	
+	processApiStatus(result);
+	
+	processApiTariff(result);
+	
+	processApiServices(result);
+	
+	processApiSubscriptions(result);
+	
+	if(typeof(processApiPayments) == 'function')
+		processApiPayments(result);
+	
+	processApiInfo(result);
 }
 
 function processApiTariff(result){
-	if(!AnyBalance.isAvailable('tariff'))
+	if(!AnyBalance.isAvailable('tariff', 'abon_tariff', 'next_billing_date'))
 		return;
 
 	var prefs = AnyBalance.getPreferences();
-    var json = callAPIProc('mobile/api/v1/profile/pricePlanLight');
+/*    var json = callAPIProc('mobile/api/v1/profile/pricePlanLight');
 	
 	if(json.data && json.data.entityName)
 		getParam(json.data.entityName, result, 'tariff');
 	
 	if(json.data && json.data.rcRate)
 		getParam(json.data.rcRate, result, 'abon_tariff', null, null, apiParseBalanceRound);
+	
+	if(json.data && json.data.nextBillingDate)
+	    getParam(json.data.nextBillingDate, result, 'next_billing_date', null, null, parseDateISO);
+	
+	if(AnyBalance.isAvailable('next_billing_date') && !result.next_billing_date && (json.data && json.data.rcRatePeriod)){ // Скорее всего, установлен базовый период списания 
+	    var dt = new Date();
+		if(/monthly/i.test(json.data.rcRatePeriod)){
+		    var dts = new Date(dt.getFullYear(), dt.getMonth()+1, '01');
+		}else if(/daily/i.test(json.data.rcRatePeriod)){
+			var dts = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()+1);
+		}
+		var nextBillingDate = dts.getFullYear() + '-' + n2(dts.getMonth()+1) + '-' + n2(dts.getDate()) + 'T00:00:00+03:00';
+	    getParam(nextBillingDate, result, 'next_billing_date', null, null, parseDateISO);
+	}
 	
 	if(json.data && json.data.name && json.data.tariffType == 'up'){ // Для тарифов линейки UP пробуем получить аппера
 		var planName = json.data.name;
@@ -296,9 +353,9 @@ function processApiTariff(result){
 		    AnyBalance.trace('Не удалось получить имя аппера: ' + e.message);
 	    }
 	}
-    
+ */   
 	if(!result.tariff){ // На случай, если не удалось получить тариф первым способом
-	    var json = callAPIProc('1.0/info/pricePlan', {ctn: prefs.phone});
+		var json = callAPIProc('1.0/info/pricePlan', {ctn: prefs.phone});
         
 	    getParam(json.pricePlanInfo.entityName, result, 'tariff');
 	    
@@ -312,21 +369,25 @@ function processApiStatus(result){
 		return;
 	
 	var prefs = AnyBalance.getPreferences();
-	
+/*	
 	var json = callAPIProc('mobile/api/v1/profile/userInfo');
 	
-	if(json.blocking){
-		result.statuslock = 'Номер заблокирован';
+	var lockInfo = json.data && json.data.contract && json.data.contract.status;
+	
+	if(lockInfo && lockInfo.text){
+		getParam(lockInfo.text, result, 'statuslock', /([\s\S]*?)(?:\.[\s\S]*?)?$/i, null, capitalizeFirstLetter);
 	}else{
 		result.statuslock = 'Номер не блокирован';
 	}
-	
+*/	
 	if(!result.statuslock){ // На случай, если не удалось получить статус первым способом
 	    var json = callAPIProc('1.0/info/status', {ctn: prefs.phone});
 	    
 	    if(json.statusDesc){
+			getParam(json.statusDesc, result, 'statuslock', /([\s\S]*?)(?:\.[\s\S]*?)?$/i, null, capitalizeFirstLetter);
+	    }else if(json.status !== 'A'){
 		    result.statuslock = 'Номер заблокирован';
-	    }else{
+		}else{
 		    result.statuslock = 'Номер не блокирован';
 	    }
 	}
@@ -363,11 +424,11 @@ function processApiHoneycomb(result){
 }
 
 function processApiInfo(result){
-	if(!AnyBalance.isAvailable('info', 'agreement'))
+	if(!AnyBalance.isAvailable('info'))
 		return;
 
 	var prefs = AnyBalance.getPreferences();
-	var json = callAPIProc('1.0/sso/contactData', {login: prefs.login});
+	var json = callAPIProc('1.0/sso/contactData', {login: prefs.__login});
 
     if (!result.info)
         result.info = {};
@@ -375,26 +436,27 @@ function processApiInfo(result){
 	var info = result.info;
 	var jsp = create_aggregate_join(' ');
 
-	if(json.lastName){
-		getParam(json.lastName, info, 'info.name_last');
-		sumParam(json.lastName, info, 'info.fio', null, null, null, jsp);
-	}
 	if(json.firstName && json.firstName != prefs.login){
 		getParam(json.firstName, info, 'info.name');
 		sumParam(json.firstName, info, 'info.fio', null, null, null, jsp);
 	}
+	if(json.lastName){
+		getParam(json.lastName, info, 'info.name_last');
+		sumParam(json.lastName, info, 'info.fio', null, null, null, jsp);
+	}
 	getParam(json.invoiceAddr, info, 'info.address');
 	getParam(json.market, info, 'info.region');
+	getParam(json.ban, info, 'info.agreement');
 
 	// Номер телефона
 	getParam(prefs.phone, info, 'info.phone', /^\d{10}$/, [/(\d{3})(\d{3})(\d{2})(\d{2})/, '+7 $1 $2-$3-$4']);
-	
-	getParam('' + json.ban, result, 'agreement');
 }
 
 function processApiPrepaid(result){
 	var prefs = AnyBalance.getPreferences();
 	
+	var baseurl = 'https://my.beeline.' + (prefs.country || 'ru') + '/';
+/*	
 	var json = callAPIProc('mobile/api/v1/profile/balance');
 	
 	if(json.data){
@@ -403,19 +465,57 @@ function processApiPrepaid(result){
 			getParam(json.data.balance.currency, result, ['currency_code', 'balance']);
 	        getParam(g_currencys[json.data.balance.currency], result, ['currency', 'balance']);
 		}
-	    if(AnyBalance.isAvailable('next_billing_date'))
+	    if(json.data.nextBillingDate)
 	        getParam(json.data.nextBillingDate, result, 'next_billing_date', null, null, parseDateISO);
 	}
-
-	if(!result.balance || !result.currency || (AnyBalance.isAvailable('next_billing_date' && !result.next_billing_date))){
-		var json = callAPIProc('1.0/info/prepaidBalance', {ctn: prefs.phone});
-		
-		getParam(json.balance, result, 'balance', null, null, apiParseBalanceRound);
-		getParam(json.currency, result, ['currency_code', 'balance']);
-		getParam(g_currencys[json.currency], result, ['currency', 'balance']);
-		getParam(json.nextBillingDate || (json.smartPricePlanParams && json.smartPricePlanParams.nextBillingDate), result, 'next_billing_date', null, null, parseDateISO);
-	}
+*/	
+    var json, maxtries = 30, tries = 0, errortext;
 	
+	do{
+		try{
+		   json = callAPIProc('1.0/info/prepaidBalance', {ctn: prefs.phone});
+	    }catch(e){
+		    AnyBalance.trace('Не удалось получить баланс: ' + e.message);
+	    }
+	    // По запросу баланса сервер сильно глючит на части тарифов. Если вернулся баланс 777 или ошибка 500, пробуем перелогиниться и зайти с новым токеном
+	    if(AnyBalance.getLastStatusCode() >= 500 || (json.balance && /^777(?:[.,0+]*)$/i.test(json.balance))){
+			if(tries < maxtries){
+				if(AnyBalance.getLastStatusCode() >= 500){
+					errortext = 'Сервер вернул ' + AnyBalance.getLastStatusCode();
+				}else if(json.balance && /^777(?:[.,0+]*)$/i.test(json.balance)){
+					errortext = 'Получили баланс 777';
+				}
+				AnyBalance.trace((errortext ? errortext + '. ' : '') + 'Пробуем перелогиниться и запросить баланс с новым токеном. Попытка: ' + (tries+1) + '/' + maxtries);
+				++tries;
+				AnyBalance.setData('authToken' + prefs.login, undefined);
+				delete g_apiHeaders['X-Auth-Token'];
+			    clearAllCookies();
+				AnyBalance.saveData();
+			    AnyBalance.sleep(2000);
+				apiLogin(baseurl);
+			}else{
+				AnyBalance.trace('Достигнуто максимальное количество запросов баланса');
+				break;
+			}
+		}else{
+			break;
+		}
+	}while(true);
+	
+	if(json.balance && !/^777(?:[.,0+]*)$/i.test(json.balance)){
+		getParam(json.balance, result, 'balance', null, null, apiParseBalanceRound);
+		AnyBalance.setData('balance' + prefs.login, json.balance);
+		AnyBalance.saveData();
+	}else{
+		getParam(AnyBalance.getData('balance' + prefs.login)||null, result, 'balance', null, null, apiParseBalanceRound);
+	}
+	getParam(g_currencys[json.currency], result, ['currency', 'balance']);
+	
+	var nextBillingDate = json.nextBillingDate || (json.smartPricePlanParams && json.smartPricePlanParams.nextBillingDate);
+	
+	if(nextBillingDate)
+	        getParam(nextBillingDate, result, 'next_billing_date', null, null, parseDateISO);
+/*	
 	try{
 	    processApiUnifiedBalance(result);
 	}catch(e){
@@ -427,6 +527,18 @@ function processApiPrepaid(result){
 	}catch(e){
 		AnyBalance.trace('Не удалось получить баланс для доп. услуг: ' + e.message);
 	}
+*/	
+	try{
+    	processApiRemaindersPrepaid(result);
+	}catch(e){
+		AnyBalance.trace('Не удалось получить остатки по пакетам: ' + e.message);
+	}
+/*	
+	try{
+	    processApiExpensesPrepaid(result);
+	}catch(e){
+		AnyBalance.trace('Не удалось получить детализацию расходов: ' + e.message);
+	}
 	
 	try{
 		processApiHoneycomb(result)
@@ -434,20 +546,8 @@ function processApiPrepaid(result){
 		AnyBalance.trace('Не удалось получить баланс накопленных сот: ' + e.message);
 	}
 
-	try{
-    	processApiRemaindersPrepaid(result);
-	}catch(e){
-		AnyBalance.trace('Не удалось получить остатки по пакетам: ' + e.message);
-	}
-	
-	try{
-	    processApiExpensesPrepaid(result);
-	}catch(e){
-		AnyBalance.trace('Не удалось получить детализацию расходов: ' + e.message);
-	}
-
 	if(typeof(processApiDetalizationPrepaid) == 'function')
-		processApiDetalizationPrepaid(result);
+		processApiDetalizationPrepaid(result); */
 }
 
 function processApiRemaindersPrepaid(result){
@@ -458,25 +558,49 @@ function processApiRemaindersPrepaid(result){
 
 	var prefs = AnyBalance.getPreferences();
 	
-	if(AnyBalance.isAvailable('remainders.traffic_rouming')){ // Трафик в роуминге только старый апи показывает
-	    var json = callAPIProc('1.0/info/accumulators', {ctn: prefs.phone});
-	    
-		if(json.accumulators && json.accumulators.length && json.accumulators.length > 0){
-	        for(var z = 0; z < json.accumulators.length; z++) {
-		        var curr = json.accumulators[z];
-		        
-		        if(curr.unit == 'KBYTE' && /ROAMGPRS/i.test(curr.soc))
-			        sumParam(curr.rest + ' ' + curr.unit, remainders, 'remainders.traffic_rouming', null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
-		    }
-		}
-		
-		if(!result.remainders.traffic_rouming)
-			AnyBalance.trace('Не удалось получить трафик в роуминге');
-	}
+	var json = callAPIProc('1.0/info/accumulators', {ctn: prefs.phone});
 	
+	if(json.accumulators && json.accumulators.length && json.accumulators.length > 0){
+	    for(var z=0; z<json.accumulators.length; z++) {
+		    var curr = json.accumulators[z];
+		    
+		    // Минуты
+		    if(curr.unit == 'SECONDS') {
+			    if(/на междугородные номера|на междугородные звонки/i.test(curr.restName || curr.accName)){
+				    sumParam(curr.rest + ' ' + curr.unit, remainders, 'remainders.min_left_2', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+			    } else if(isLocalMin(curr.restName || curr.accName)) { 
+				    sumParam(curr.rest + ' ' + curr.unit, remainders, 'remainders.min_local', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+			    } else { 	//Приоритет билайна не случаен, их минуты определить сложнее
+				    sumParam(curr.rest + ' ' + curr.unit, remainders, 'remainders.min_bi', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+			    }
+		    } else if(curr.unit == 'SMS') {
+			    sumParam(curr.rest + ' ' + curr.unit, remainders, 'remainders.sms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+		    } else if(curr.unit == 'MMS') {
+			    sumParam(curr.rest + ' ' + curr.unit, remainders, 'remainders.mms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+		    } else if(curr.unit == 'KBYTE') {
+			    if (curr.soc == 'ROAMGPRS'){
+				    sumParam(curr.rest + ' ' + curr.unit, remainders, ['remainders.traffic_rouming'], null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+			    }else if(/TETHERING|UNLTETPOS/i.test(curr.soc) || /для раздачи/i.test(curr.restName || curr.accName)){ // Пакет для раздачи на максимальной скорости
+				    sumParam(curr.rest + ' ' + curr.unit, remainders, 'remainders.traffic_tethering', null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+				}else{
+				    sumParam(curr.rest + ' ' + curr.unit, remainders, ['remainders.traffic_left', 'remainders.traffic_used'], null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+				    sumParam(curr.size + ' ' + curr.unit, remainders, ['remainders.traffic_total', 'remainders.traffic_used'], null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+			        if(isset(remainders.traffic_total) && isset(remainders.traffic_left)) 
+			    	    sumParam(Math.round(remainders.traffic_total - remainders.traffic_left, 2), remainders, 'remainders.traffic_used', null, null, null, aggregate_sum);
+			    }
+		    } else {
+			    AnyBalance.trace('Неизвестные единицы: ' + JSON.stringify(curr));
+		    }
+	    }
+    }
+		
+//		if(!result.remainders.traffic_rouming)
+//			AnyBalance.trace('Не удалось получить трафик в роуминге');
+
+/*	
 	var json = callAPIProc('mobile/api/v2/profile/accumulators');
 	
-	if(json.data && json.data.list && json.data.list.length && json.data.list.length > 0 ){
+	if(json.data && json.data.list && json.data.list.length && json.data.list.length > 0){
 	    for(var z = 0; z < json.data.list.length; z++) {
 		    var curr = json.data.list[z];
 		    
@@ -495,7 +619,9 @@ function processApiRemaindersPrepaid(result){
 		    } else if(curr.unit == 'KBYTE') {
 			    if (/ROAMGPRS/i.test(curr.soc) && !result.remainders.traffic_rouming){ // Ищем, только если через старый апи трафик в роуминге не получили
 				    sumParam(curr.rest + ' ' + curr.unit, remainders, 'remainders.traffic_rouming', null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
-			    } else {
+			    } else if (/TETHERING|UNLTETPOS/i.test(curr.soc) || /для раздачи/i.test(curr.accName)){ // Пакет для раздачи на максимальной скорости
+				    sumParam(curr.rest + ' ' + curr.unit, remainders, 'remainders.traffic_tethering', null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+				} else {
 				    sumParam(curr.rest + ' ' + curr.unit, remainders, ['remainders.traffic_left', 'remainders.traffic_used'], null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 				    sumParam(curr.size + ' ' + curr.unit, remainders, ['remainders.traffic_total', 'remainders.traffic_used'], null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
 			        
@@ -509,7 +635,7 @@ function processApiRemaindersPrepaid(result){
 	}else{
 		AnyBalance.trace('Не удалось получить остатки по пакетам');
 	}
-	
+*/	
 	var json = callAPIProc('1.0/info/prepaidAddBalance', {ctn: prefs.phone}); // Дополнительные пакеты и опции, подключенные к номеру
 	
 	for(var prop in json){
@@ -517,20 +643,41 @@ function processApiRemaindersPrepaid(result){
 			for(var i = 0; i < json[prop].length; i++) {
 				var curr = json[prop][i];
 				
-				if(/shadow|name\.(?:seconds|internet|mms|sms)/i.test(curr.name)) { // Новый API уже показывает суммы остатков по пакетам, здесь ищем только бонусы
+				if(/shadow/i.test(curr.name)) { // Пересекающиеся с основным пакеты пропускаем, ищем только бонусы и пакеты по подпискам
 					AnyBalance.trace('Пересекающийся пакет ' + curr.name + ': ' + curr.value + ' ' + curr.unit + '. Пропускаем...');
 					continue;
 				}else if(/bonusopros/i.test(curr.name)) {
 					sumParam(curr.value + '', remainders, 'remainders.rub_opros', null, replaceTagsAndSpaces, apiParseBalanceRound, aggregate_sum);
+					getParam(curr.dueDate, remainders, 'remainders.rub_opros_till', null, replaceTagsAndSpaces, parseDateISO); 
 				}else if(/bonusmoney/i.test(curr.name)) {
 					sumParam(curr.value + '', remainders, 'remainders.rub_bonus', null, replaceTagsAndSpaces, apiParseBalanceRound, aggregate_sum);
- 				}else if(/bonusbalance17/i.test(curr.name)) { // Денежный бонус
+				}else if(/bonusbalance17/i.test(curr.name)) { // Денежный бонус
 					getParam(curr.value + '', remainders, 'remainders.rub_bonus2', null, replaceTagsAndSpaces, apiParseBalanceRound);
 					getParam(curr.dueDate, remainders, 'remainders.rub_bonus2_till', null, replaceTagsAndSpaces, parseDateISO); 
-				}else if(/bonusseconds/i.test(curr.name)) { // Бонус секунд-промо
-					sumParam(curr.value + '', remainders, 'remainders.min_left_1', null, replaceTagsAndSpaces, apiParseBalanceRound, aggregate_sum);
-				}else if(/9seconds/i.test(curr.name)) { // Минуты на звонки в Узбекистан, номера сети Tcell Таджикистан, билайн Кыргызстана и Армении для тарифов UP
-					sumParam(curr.value + '', remainders, 'remainders.min_left_3', null, replaceTagsAndSpaces, apiParseBalanceRound, aggregate_sum);
+				}else if(/bonusseconds/i.test(curr.name)) { //Бонус секунд-промо
+				    if(!remainders.min_local){ // Если в основном пакете минуты не найдены, выводим бонусные минуты
+						sumParam(curr.value + ' ' + curr.unit, remainders, 'remainders.min_local', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+					}else{ // иначе, выводим минуты в отдельный счетчик
+						sumParam(curr.value + ' ' + curr.unit, remainders, 'remainders.min_left_1', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+					}
+				}else if(/\.9seconds/i.test(curr.name)) { // Минуты на звонки в Узбекистан, номера сети Tcell Таджикистан, билайн Кыргызстана и Армении для тарифов UP
+					sumParam(curr.value + ' ' + curr.unit, remainders, 'remainders.min_left_3', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+				}else if(/seconds/i.test(curr.name)) {
+					sumParam(curr.value + ' ' + curr.unit, remainders, 'remainders.min_local', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+				}else if(/internet/i.test(curr.name)) {
+					sumParam(curr.value + ' BYTE', remainders, 'remainders.traffic_left', null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+				}else if(/mms/i.test(curr.name)) {
+					sumParam(curr.value + ' ' + curr.unit, remainders, 'remainders.mms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				}else if(/sms/i.test(curr.name)) {
+					sumParam(curr.value + ' ' + curr.unit, remainders, 'remainders.sms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+				}else if(/Time/i.test(prop)) {
+					sumParam(curr.value + ' ' + curr.unit, remainders, 'remainders.min_local', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
+				}else if(/Data/i.test(prop)) {
+					if(/\.14kbyte/i.test(curr.name)){ // Подарочный терабайт
+						sumParam(curr.value + ' BYTE', remainders, 'remainders.traffic_bonus', null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+					}else{
+						sumParam(curr.value + ' BYTE', remainders, 'remainders.traffic_left', null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+					}
 				}else{
 					AnyBalance.trace('Неизвестная опция ' + curr.name + ': ' + JSON.stringify(curr));
 				}
@@ -556,12 +703,19 @@ function getPostpaidBalanceApi(ctn){
 function processApiPostpaid(result){
 	var prefs = AnyBalance.getPreferences();
 
-	if(isAvailable(['balance', 'currency', 'currency_code'])) {
+	try{
 		json = getPostpaidBalanceApi(prefs.phone);
 		
 		getParam(json.balance + '', result, 'balance', null, replaceTagsAndSpaces, apiParseBalanceRound);
 		getParam(json.currency, result, ['currency_code', 'balance'], null, replaceTagsAndSpaces);
 		getParam(g_currencys[json.currency], result, ['currency', 'balance'], null, replaceTagsAndSpaces);
+		
+		var nextBillingDate = json.nextBillingDate || (json.smartPricePlanParams && json.smartPricePlanParams.nextBillingDate);
+		
+		if(nextBillingDate)
+	        getParam(nextBillingDate, result, 'next_billing_date', null, replaceTagsAndSpaces, parseDateISO);
+	}catch(e){
+		AnyBalance.trace('Не удалось получить баланс: ' + e.message);
 	}
 
 	if(AnyBalance.isAvailable('prebal')){
@@ -584,7 +738,7 @@ function processApiPostpaid(result){
 			AnyBalance.trace('Не удалось получить переплату: ' + e.message);
 		}
 	}
-	
+/*	
 	try{
 	    processApiUnifiedBalance(result);
 	}catch(e){
@@ -602,22 +756,22 @@ function processApiPostpaid(result){
 	}catch(e){
 		AnyBalance.trace('Не удалось получить баланс накопленных сот: ' + e.message);
 	}
-
+*/
 	try{
 		processApiRemaindersPostpaid(result);
 	}catch(e){
 		AnyBalance.trace('Не удалось получить остатки по пакетам: ' + e.message);
 	}
-	
+/*	
 	try{
 	    processApiExpensesPostpaid(result);
 	}catch(e){
 		AnyBalance.trace('Не удалось получить детализацию расходов: ' + e.message);
-	}
+	} */
 }
 
 function isLocalMin(name){
-	return /Минут(?:\D+)? общения|номера других|на других|на все номера|др(?:угих|\.) операторов|всех|любых|местные.*вызовы|любые местные|кроме номеров .?Билайн.?/i.test(name);
+	return /Минут(?:\D+)? общения|номера других|на других|на все номера|др(?:угих|\.) операторов|всех|любых|местные.*вызовы|любые местные|по РФ|кроме номеров .?Билайн.?/i.test(name);
 }
 
 function processApiRemaindersPostpaid(result){
@@ -641,15 +795,19 @@ function processApiRemaindersPostpaid(result){
 				sumParam(curr.currValue + ' ', remainders, 'remainders.min_bi', null, replaceTagsAndSpaces, parseMinutes, aggregate_sum);
 			}
 		} else if(curr.unitType == 'SMS_MMS') {
-			sumParam(curr.currValue + ' ' + curr.unit, remainders, 'remainders.sms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+			sumParam(curr.currValue + ' ', remainders, 'remainders.sms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 		} else if(curr.unitType == 'MMS') {
-			sumParam(curr.currValue + ' ' + curr.unit, remainders, 'remainders.mms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
+			sumParam(curr.currValue + ' ', remainders, 'remainders.mms_left', null, replaceTagsAndSpaces, parseBalance, aggregate_sum);
 		} else if(curr.unitType == 'INTERNET') {
-			sumParam(curr.currValue + ' mb', remainders, ['remainders.traffic_left', 'remainders.traffic_used'], null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
-			sumParam(curr.initialSize + ' mb', remainders, ['remainders.traffic_total', 'remainders.traffic_used'], null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
-			
-			if(isset(remainders.traffic_total) && isset(remainders.traffic_left)) {
-				sumParam(remainders.traffic_total - remainders.traffic_left, remainders, 'remainders.traffic_used', null, null, null, aggregate_sum);
+			if(/TETHERING|UNLTETPOS/i.test(curr.soc) || /для раздачи/i.test(curr.restName)){ // Пакет для раздачи на максимальной скорости
+				sumParam(curr.currValue + ' MBYTE', remainders, 'remainders.traffic_tethering', null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+			}else{
+			    sumParam(curr.currValue + ' MBYTE', remainders, ['remainders.traffic_left', 'remainders.traffic_used'], null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+			    sumParam(curr.initialSize + ' MBYTE', remainders, ['remainders.traffic_total', 'remainders.traffic_used'], null, replaceTagsAndSpaces, parseTraffic, aggregate_sum);
+			    
+			    if(isset(remainders.traffic_total) && isset(remainders.traffic_left)) {
+				    sumParam(remainders.traffic_total - remainders.traffic_left, remainders, 'remainders.traffic_used', null, null, null, aggregate_sum);
+			    }
 			}
 		} else {
 			AnyBalance.trace('Неизвестные единицы: ' + JSON.stringify(curr));
@@ -710,6 +868,19 @@ function processApiServices(result){
 	}
 }
 
+function processApiSubscriptions(result){
+	if(!AnyBalance.isAvailable('subscriptions_count'))
+		return;
+
+	var prefs = AnyBalance.getPreferences();
+    
+	var json = callAPIProc('1.0/info/subscriptions', {ctn: prefs.phone});
+    
+	var subscriptions = (json.subscriptions && json.subscriptions.length) || 0;
+	
+	getParam(subscriptions, result, 'subscriptions_count');
+}
+/*
 function processApiExpensesPrepaid(result){
 	if(!AnyBalance.isAvailable(['month_refill', 'debet', 'traffic_used_4g', 'traffic_used_total']))
 		return;
@@ -796,7 +967,7 @@ function processApiExpensesPostpaid(result){
 	if(!result.debet)
 		result.debet = 0;
 }
-
+*/
 function createNewPasswordApi(){
 	var prefs = AnyBalance.getPreferences();
 
@@ -926,7 +1097,7 @@ function processApiPayments0(json, result){
 		getParam(payment.paymentType, p, 'payments.type_code');
 		getParam(payment.paymentStatus, p, 'payments.status_code');
 		getParam(payment.payTypeName, p, 'payments.type');
-		if(!payment.payPoint || (payment.payPoint && /Проверить баланс в приложении/i.test(payment.payPoint))){
+		if(!payment.payPoint || (payment.payPoint && /Проверить баланс в приложении|Настройте автоплат[её]ж/i.test(payment.payPoint))){
 			getParam(payment.payTypeName, p, 'payments.place');
 		}else{
 			getParam(payment.payPoint, p, 'payments.place');
@@ -934,4 +1105,8 @@ function processApiPayments0(json, result){
 
 		result.payments.push(p);
 	}
+}
+
+function capitalizeFirstLetter(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
 }

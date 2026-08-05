@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<id version="6">ab-internet-kirzach-telecom</id>
+	<api flags="no_browser"/>
+	<name>Киржач Телеком</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и услугах провайдера Киржач Телеком (г. Киржач, Владимирская область).</p>
+	<p>Информация берется из личного кабинета <a href="https://lk.kirzhachtelecom.ru/login">https://lk.kirzhachtelecom.ru/login</a></p>
+	]]></description>
+	<author>K. Molchanov</author>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>library.js</js>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+	<counters>
+		<counter id="balance" name="Баланс" units=" р"/>
+		<counter id="debt" name="Задолженность" units=" р"/>
+		<counter id="monthly_fee" name="Ежемесячная плата" units=" р"/>
+		<counter id="recommended_pay" name="Рекомендуемый платеж" units=" р"/>
+		<counter id="last_pay_sum" name="Сумма последнего платежа" units=" р"/>
+		<counter id="last_pay_date" name="Дата последнего платежа" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_pay_type" name="Вид последнего платежа" type="text"/>
+		<counter id="address" name="Адрес подключения" type="text"/>
+		<counter id="fio" name="ФИО" type="text"/>
+		<counter id="account" name="Лицевой счет" type="text"/>
+		<counter id="beg_period" name="Начало расчетного периода" type="time" format="dd.MM.yyyy"/>
+		<counter id="end_period" name="Окончание расчетного периода" type="time" format="dd.MM.yyyy"/>
+	</counters>
+	<keywords>киржач киржачтелеком интернет провайдер владимирская область</keywords>
+	<type>internet</type>
+	<country>ru</country>
+</provider>

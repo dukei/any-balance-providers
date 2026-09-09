@@ -1429,6 +1429,27 @@ var AB = (function (global_scope) {
 		}
 	}
 
+	/*
+		Вместо sitekey можно передавать
+		{
+			SITEKEY: string,
+			USERAGENT?: string,
+                }
+	*/
+	function solveSmartCaptcha(text, url, sitekey, time){
+		if(AnyBalance.getCapabilities().smartCaptcha){
+			var grc_response = AnyBalance.retrieveCode(text, null, {
+				type: 'yandex_smart_captcha',
+				time: time || 120000,
+				sitekey: typeof(sitekey) === 'object' ? JSON.stringify(sitekey) : sitekey,
+				url: url
+			});
+			return grc_response;
+		}else{
+			throw new AnyBalance.Error('Провайдер требует распознавания Yandex Smart Captcha, но текущая версия AnyBalance API не позволяет это сделать. Обновите программу или обратитесь к разработчикам.');
+		}
+	}
+
     return {
         getParam: getParam,
         checkEmpty: checkEmpty,
@@ -1503,6 +1524,7 @@ var AB = (function (global_scope) {
         createUrlEncodedParams: createUrlEncodedParams,
         clearAllCookies: clearAllCookies,
         solveRecaptcha: solveRecaptcha,
+        solveSmartCaptcha: solveSmartCaptcha,
         regexEscape: regexEscape,
         isObject: isObject
     };

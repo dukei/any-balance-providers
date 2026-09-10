@@ -64,18 +64,18 @@ function main(){
 			suspended = true;
 	});
 
-	// Баланс — как на сайте (без знака минус)
-	AB.getParam(pa && pa.n_sum_bal, result, 'balance', null, AB.replaceTagsAndSpaces, AB.parseBalance);
-
 	AB.getParam(d.person && d.person.vc_name, result, 'fio', null, AB.replaceTagsAndSpaces);
 	AB.getParam(pa && pa.vc_account, result, 'account', null, AB.replaceTagsAndSpaces);
-	// При блокировке за неуплату сайт показывает «Задолженность» (= n_recommended_pay),
-	// при отсутствии долга — «Рекомендуемый платеж». Отдельные счётчики, без минуса в балансе.
+	// При блокировке за неуплату сайт показывает «Задолженность» (= n_recommended_pay) —
+	// её пишем в баланс со знаком минус. Если долга нет — в баланс идёт n_sum_bal,
+	// а n_recommended_pay показывается отдельным счётчиком «Рекомендуемый платеж».
 	var recPay = parseFloat(pa && pa.n_recommended_pay) || 0;
-	if (suspended && recPay)
-		result.debt = recPay; // «Задолженность»
-	else
+	if (suspended && recPay) {
+		result.balance = -recPay; // «Задолженность» со знаком минус
+	} else {
+		AB.getParam(pa && pa.n_sum_bal, result, 'balance', null, AB.replaceTagsAndSpaces, AB.parseBalance);
 		AB.getParam(pa && pa.n_recommended_pay, result, 'recommended_pay', null, AB.replaceTagsAndSpaces, AB.parseBalance);
+	}
 	if (pa && pa.d_accounting_begin)
 		AB.getParam(pa.d_accounting_begin, result, 'beg_period', null, AB.replaceTagsAndSpaces, AB.parseDateISO);
 	if (pa && pa.d_accounting_end)

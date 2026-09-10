@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="6">ab-internet-kirzach-telecom</id>
+	<id version="7">ab-internet-kirzach-telecom</id>
 	<api flags="no_browser"/>
 	<name>Киржач Телеком</name>
 	<description html="true"><![CDATA[
@@ -17,7 +17,6 @@
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" р"/>
-		<counter id="debt" name="Задолженность" units=" р"/>
 		<counter id="monthly_fee" name="Ежемесячная плата" units=" р"/>
 		<counter id="recommended_pay" name="Рекомендуемый платеж" units=" р"/>
 		<counter id="last_pay_sum" name="Сумма последнего платежа" units=" р"/>

@@ -57,19 +57,16 @@ function main(){
 		AnyBalance.trace('Не найдено информации о лицевом счете.');
 
 	// Услуги (тарифы)
-	var servs = d.servs || [],
-		suspended = false;
-	servs.forEach(function(s){
-		if (s.n_good_state_id == 8114) // GOOD_STATE_InsufficientFunds - услуга заблокирована за неуплату
-			suspended = true;
-	});
+	var servs = d.servs || [];
+	// GOOD_STATE_InsufficientFunds (8114) — услуга заблокирована за неуплату
+	var suspended = servs.some(function(s){ return s.n_good_state_id == 8114; });
 
 	AB.getParam(d.person && d.person.vc_name, result, 'fio', null, AB.replaceTagsAndSpaces);
 	AB.getParam(pa && pa.vc_account, result, 'account', null, AB.replaceTagsAndSpaces);
 	// При блокировке за неуплату сайт показывает «Задолженность» (= n_recommended_pay) —
 	// её пишем в баланс со знаком минус. Если долга нет — в баланс идёт n_sum_bal,
 	// а n_recommended_pay показывается отдельным счётчиком «Рекомендуемый платеж».
-	var recPay = parseFloat(pa && pa.n_recommended_pay) || 0;
+	var recPay = parseFloat(pa && pa.n_recommended_pay);
 	if (suspended && recPay) {
 		result.balance = -recPay; // «Задолженность» со знаком минус
 	} else {

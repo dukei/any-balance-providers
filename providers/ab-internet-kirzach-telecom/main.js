@@ -53,6 +53,9 @@ function main(){
 		d = json.data,
 		pa = (d.personal_accounts && d.personal_accounts.length) ? d.personal_accounts[0] : null;
 
+	// Все поля ЛК — обычные строки JSON, поэтому везде один и тот же вызов getParam
+	function get(v, id, parser){ AB.getParam(v, result, id, null, AB.replaceTagsAndSpaces, parser); }
+
 	if (!pa)
 		AnyBalance.trace('Не найдено информации о лицевом счете.');
 
@@ -61,8 +64,8 @@ function main(){
 	// GOOD_STATE_InsufficientFunds (8114) — услуга заблокирована за неуплату
 	var suspended = servs.some(function(s){ return s.n_good_state_id == 8114; });
 
-	AB.getParam(d.person && d.person.vc_name, result, 'fio', null, AB.replaceTagsAndSpaces);
-	AB.getParam(pa && pa.vc_account, result, 'account', null, AB.replaceTagsAndSpaces);
+	get(d.person && d.person.vc_name, 'fio');
+	get(pa && pa.vc_account, 'account');
 	// При блокировке за неуплату сайт показывает «Задолженность» (= n_recommended_pay) —
 	// её пишем в баланс со знаком минус. Если долга нет — в баланс идёт n_sum_bal,
 	// а n_recommended_pay показывается отдельным счётчиком «Рекомендуемый платеж».
@@ -70,27 +73,27 @@ function main(){
 	if (suspended && recPay) {
 		result.balance = -recPay; // «Задолженность» со знаком минус
 	} else {
-		AB.getParam(pa && pa.n_sum_bal, result, 'balance', null, AB.replaceTagsAndSpaces, AB.parseBalance);
-		AB.getParam(pa && pa.n_recommended_pay, result, 'recommended_pay', null, AB.replaceTagsAndSpaces, AB.parseBalance);
+		get(pa && pa.n_sum_bal, 'balance', AB.parseBalance);
+		get(pa && pa.n_recommended_pay, 'recommended_pay', AB.parseBalance);
 	}
 	if (pa && pa.d_accounting_begin)
-		AB.getParam(pa.d_accounting_begin, result, 'beg_period', null, AB.replaceTagsAndSpaces, AB.parseDateISO);
+		get(pa.d_accounting_begin, 'beg_period', AB.parseDateISO);
 	if (pa && pa.d_accounting_end)
-		AB.getParam(pa.d_accounting_end, result, 'end_period', null, AB.replaceTagsAndSpaces, AB.parseDateISO);
+		get(pa.d_accounting_end, 'end_period', AB.parseDateISO);
 
 	if (AnyBalance.isAvailable('last_pay_sum', 'last_pay_date', 'last_pay_type')) {
-		AB.getParam(pa && pa.n_last_payment_sum, result, 'last_pay_sum', null, AB.replaceTagsAndSpaces, AB.parseBalance);
-		AB.getParam(pa && pa.d_last_payment, result, 'last_pay_date', null, AB.replaceTagsAndSpaces, AB.parseDateISO);
+		get(pa && pa.n_last_payment_sum, 'last_pay_sum', AB.parseBalance);
+		get(pa && pa.d_last_payment, 'last_pay_date', AB.parseDateISO);
 		// Вид последнего платежа + банк, через который он был проведен (например: «Платежная система / Sberbank»)
 		var payType = pa && pa.vc_last_payment_type;
-		if (payType && pa && pa.vc_last_payment_bank)
+		if (payType && pa.vc_last_payment_bank)
 			payType += ' / ' + pa.vc_last_payment_bank;
-		AB.getParam(payType, result, 'last_pay_type', null, AB.replaceTagsAndSpaces);
+		get(payType, 'last_pay_type');
 	}
 
 	// Адрес подключения (главный адрес из equipment_addresses)
 	var addr = (d.equipment_addresses && d.equipment_addresses.length) ? d.equipment_addresses[0].vc_visual_code : null;
-	AB.getParam(addr, result, 'address', null, AB.replaceTagsAndSpaces);
+	get(addr, 'address');
 
 	if (servs.length) {
 		var tariffNames = [], monthlyFee = 0;
@@ -101,7 +104,7 @@ function main(){
 		});
 		if (monthlyFee)
 			result.monthly_fee = monthlyFee;
-		AB.getParam(tariffNames.join(', '), result, '__tariff', null, AB.replaceTagsAndSpaces);
+		get(tariffNames.join(', '), '__tariff');
 	} else {
 		AnyBalance.trace('Нет подключенных услуг.');
 	}

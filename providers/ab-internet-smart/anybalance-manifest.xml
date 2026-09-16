@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="4">ab-internet-smart</id>
+    <name>Smart (ТиНАО)</name>
+	<api flags="no_browser"/>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе и тарифных опциях для  интернет-провайдера Smart. Smart осуществляет подключение клиентов к домовым сетям в населенных пунктах Новомосковского Административного Округа (ТиНАО)</p>
+	<p>Информация берется с сервера лк https://lk.smart1.ru/. Логин и пароль для доступа на сервер статистике прописаны в договоре на услуги интернет.</p>	
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет.</p>
+	]]></instruction>
+    <author>Gavigor &lt;gavigor@yandex.ru&gt;</author>
+	<depends>
+		<module id="library"/>
+	</depends>
+    <files>
+		<icon>icon.png</icon>
+        <preferences>preferences.xml</preferences>
+        <js>main.js</js>
+    </files>
+    <counters>
+		<counter id="balance" name="Баланс" units=" руб."/>
+		<counter id="err" name="Ошибка" type="text"/>
+    </counters>
+    <keywords>интернет, smart, смарт</keywords>
+    <type>internet</type>
+    <country>ru</country>
+</provider>

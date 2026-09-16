@@ -14,7 +14,7 @@ const BrowserAPI = (() => {
 
     type ClientRule = {
         url: RegExp,
-        action: function|function[],  (PendingRequest, PendingResponse) => callback|boolean|[callback, boolean] (callback to be called after returning the response, true if skip other rules)
+        action: function|function[],  (BrowserAPI, PendingRequest, PendingResponse) => callback|boolean|[callback, boolean] (callback to be called after returning the response, true if skip other rules)
     }
 
     type Options = {

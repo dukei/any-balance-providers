@@ -1179,20 +1179,20 @@ function processCountersLK(result){
 			sumParam(c.deadlineDate, result.remainders, 'remainders.min_till', null, null, parseDateISO, aggregate_min);
 			sumParam(c.usedAmount/del, result.remainders, 'remainders.min_local', null, null, parseBalanceSilent, aggregate_sum);
 			sumParam(c.totalAmount/del, result.remainders, 'remainders.min_total', null, null, parseBalanceSilent, aggregate_sum);
-			sumParam((c.totalAmount - c.usedAmount)/del, result.remainders, 'remainders.min_left', null, null, parseBalanceSilent, aggregate_sum);
+			sumParam((c.currentAmount || (c.totalAmount - c.usedAmount))/del, result.remainders, 'remainders.min_left', null, null, parseBalanceSilent, aggregate_sum);
 		}else if(c.packageType === 'Messaging'){
 			AnyBalance.trace('Это сообщения');
 			sumParam(c.deadlineDate, result.remainders, 'remainders.sms_till', null, null, parseDateISO, aggregate_min);
 			sumParam(c.usedAmount, result.remainders, 'remainders.sms_used', null, null, parseBalanceSilent, aggregate_sum);
 			sumParam(c.totalAmount, result.remainders, 'remainders.sms_total', null, null, parseBalanceSilent, aggregate_sum);
-			sumParam(c.totalAmount - c.usedAmount, result.remainders, 'remainders.sms_left', null, null, parseBalanceSilent, aggregate_sum);
+			sumParam(c.currentAmount || (c.totalAmount - c.usedAmount), result.remainders, 'remainders.sms_left', null, null, parseBalanceSilent, aggregate_sum);
 		}else if(c.packageType === 'Internet'){
 			AnyBalance.trace('Это трафик');
 			sumParam(c.deadlineDate, result.remainders, 'remainders.traffic_left_till', null, null, parseDateISO, aggregate_min);
 			sumParam((c.usedAmount) + ' ' + c.unitType, result.remainders, 'remainders.traffic_used_mb', null, null, parseTraffic, aggregate_sum);
 			sumParam((c.totalAmount) + ' ' + c.unitType, result.remainders, 'remainders.traffic_total_mb', null, null, parseTraffic, aggregate_sum);
 			sumParam((c.usedByAcceptors) + ' ' + c.unitType, result.remainders, 'remainders.traffic_used_by_acceptors_mb', null, null, parseTraffic, aggregate_sum);
-			sumParam((c.totalAmount - c.usedAmount) + ' ' + c.unitType, result.remainders, 'remainders.traffic_left_mb', null, null, parseTraffic, aggregate_sum);
+			sumParam((c.currentAmount || (c.totalAmount - c.usedAmount)) + ' ' + c.unitType, result.remainders, 'remainders.traffic_left_mb', null, null, parseTraffic, aggregate_sum);
 		}else{
 			AnyBalance.trace('Неизвестный счетчик: ' + JSON.stringify(c));
 		}
@@ -1213,18 +1213,23 @@ function processServicesLK(result){
 		Blocked: 'Номер заблокирован'
 	};
 	getParam(status[data.accountBlockStatus]||data.accountBlockStatus, result.services, 'services.statuslock');
-	getParam(data.services.length, result.services, 'services.services');
+	getParam(0, result.services, 'services.services');
 	getParam(0, result.services, 'services.services_free');
 	getParam(0, result.services, 'services.services_paid');
 	getParam(0, result.services, 'services.services_abon');
     getParam(0, result.services, 'services.services_abon_day');
 	for(var i=0; i<data.services.length; ++i){
 		var c = data.services[i];
+		
+		if(/[Абонентская|Ежемесячная]* плата|Абонплата/i.test(c.name)) // Абонплату по тарифу пропускаем, МТС её не показывает в кабинете
+			continue;
+			
+		sumParam(1, result.services, 'services.services', null, null, parseBalanceSilent, aggregate_sum);
 
-		if(c.isSubscriptionFee === false || c.primarySubscriptionFee.value === 0){
+		if((c.isSubscriptionFee === false || c.primarySubscriptionFee.value === 0) && !/Моб[ильная|\.]* маркировка/i.test(c.name)){ // Мобильную маркировку МТС относит к платным, но в isSubscriptionFee возвращает false
 			AnyBalance.trace('Найдена бесплатная услуга ' + c.name);
 			sumParam(1, result.services, 'services.services_free', null, null, parseBalanceSilent, aggregate_sum);
-		}else if(c.isSubscriptionFee === true && c.primarySubscriptionFee.value !== 0){
+		}else if((c.isSubscriptionFee === true && c.primarySubscriptionFee.value !== 0) || /Моб[ильная|\.]* маркировка/i.test(c.name)){
 			AnyBalance.trace('Найдена платная услуга ' + c.name + ': ' + c.primarySubscriptionFee.quotaPeriodicity + ' ' + c.primarySubscriptionFee.value + ' ₽');
 			sumParam(1, result.services, 'services.services_paid', null, null, parseBalanceSilent, aggregate_sum);
 		    if(c.primarySubscriptionFee.unitOfMeasure !== 'Month'){
@@ -1908,7 +1913,7 @@ function processPayments(baseurl, result) {
 }
 
 function turnOffLoginSMSNotify(){
-    var html = AnyBalance.requestGet('https://profile.mts.ru/account', addHeaders({Referer: 'https://login.mts.ru/'}));
+    var html = AnyBalance.requestGet('https://id.mts.ru/account', addHeaders({Referer: 'https://login.mts.ru/'}));
 	var _next = getParam(html, /\/_next\/static\/([\d\S]*?)\/_buildManifest\.js/i, replaceHtmlEntities);
 	if(!html || !_next){
 		AnyBalance.trace('Не удалось получить идентификатор страницы настроек безопасности. Пропускаем проверку способа входа');
@@ -1916,7 +1921,7 @@ function turnOffLoginSMSNotify(){
 	}
 	
 	try{
-	    html = AnyBalance.requestGet('https://profile.mts.ru/_next/data/' + _next + '/account/safety.json', addHeaders({Accept: '*/*', Referer: 'https://profile.mts.ru/account'}));
+	    html = AnyBalance.requestGet('https://id.mts.ru/_next/data/' + _next + '/account/safety.json', addHeaders({Accept: '*/*', Referer: 'https://id.mts.ru/account'}));
 	    var safetyJson = getJson(html);
 	}catch(e){
 	    AnyBalance.trace('Не удалось получить страницу настроек безопасности. Пропускаем проверку способа входа и оповещения о входе');
@@ -1927,10 +1932,10 @@ function turnOffLoginSMSNotify(){
 	    var authLevel = safetyJson.pageProps.initialState.settings.authuserlevel;
 	    if(authLevel !== '1'){
 		    AnyBalance.trace('SMS подтверждение для входа в кабинет включено. Выключаем...');
-		    html = AnyBalance.requestPost('https://profile.mts.ru/api', JSON.stringify({
+		    html = AnyBalance.requestPost('https://id.mts.ru/api', JSON.stringify({
                 "call": "updateAuthUserLevel",
                 "arg": "1"
-            }), addHeaders({'Content-Type': 'application/json', Referer: 'https://profile.mts.ru/account/safety/auth-level'}));
+            }), addHeaders({'Content-Type': 'application/json', Referer: 'https://id.mts.ru/account/safety/auth-level'}));
 		    
 		    var json = getJson(html);
 	        AnyBalance.trace(JSON.stringify(json));
@@ -1954,10 +1959,10 @@ function turnOffLoginSMSNotify(){
 		    AnyBalance.trace('SMS уведомление о входе в кабинет включено. Выключаем...');
 			notifyArgs.lg = false;
 			notifyArgs.lg_sms = false;
-		    html = AnyBalance.requestPost('https://profile.mts.ru/api', JSON.stringify({
+		    html = AnyBalance.requestPost('https://id.mts.ru/api', JSON.stringify({
                 "call": "patchSettingNotification",
                 "arg": notifyArgs
-            }), addHeaders({'Content-Type': 'application/json', Referer: 'https://profile.mts.ru/account/safety/sms-notifications'}));
+            }), addHeaders({'Content-Type': 'application/json', Referer: 'https://id.mts.ru/account/safety/sms-notifications'}));
 			
 		    AnyBalance.trace(html);
 //		    var json = getJson(html);

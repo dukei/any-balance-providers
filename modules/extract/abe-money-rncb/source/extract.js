@@ -82,7 +82,7 @@ function checkSetToken(token) {
 
 function setToken(token) {
 	AnyBalance.setData('access_token', g_token = token);
-	AnyBalance.saveData();
+	AnyBalance.saveData(true);
 }
 
 function setCredentials(web_mobile_login, web_mobile_password) {
@@ -95,7 +95,7 @@ function setCredentials(web_mobile_login, web_mobile_password) {
 	}
 	
 	AnyBalance.setData('credentials', set);
-	AnyBalance.saveData();
+	AnyBalance.saveData(true);
 }
 
 function getCredentials(prefs) {

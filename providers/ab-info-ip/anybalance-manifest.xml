@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <api flags="no_browser" />
+    <id version="1">ab-info-ip</id>
+    <name>Мой IP адрес</name>
+    <description>Показывает ваш внешний IP адрес через ip-api.com. Сделан пользователем Anonymouse Balance</description>
+    <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <files>
+        <icon>icon.png</icon>
+        <js>main.js</js>
+    	<history>history.xml</history>
+    </files>
+    <counters>
+        <counter id="ip"       name="IP адрес"     type="text"/>
+        <counter id="country"  name="Страна"       type="text"/>
+        <counter id="city"     name="Город"        type="text"/>
+        <counter id="isp"      name="Провайдер"    type="text"/>
+        <counter id="timezone" name="Часовой пояс" type="text"/>
+    </counters>
+    <type>info</type>
+</provider>

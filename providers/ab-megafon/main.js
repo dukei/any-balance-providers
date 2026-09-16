@@ -2,19 +2,9 @@
 Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 */
 
-var g_headers = {
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.3',
-    'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
-    'Cache-Control':'max-age=0',
-	'Connection': 'keep-alive',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'
-};
-
 var g_countersTable = {
 	common: {
 		"balance": "balance",
-		"available": "available",
 		"mins_left": "remainders.mins_left",
 		"mins_net_left": "remainders.mins_net_left",
 		"mins_n_free": "remainders.mins_n_free",
@@ -49,6 +39,8 @@ var g_countersTable = {
 		"mins_net_total": "remainders.mins_net_total",
 		"sms_total": "remainders.sms_total",
 		"mms_total": "remainders.mms_total",
+		"available": "available",
+		"own": "own",
 		"credit": "credit",
 		"cashback": "cashback",
 		"sub_scl": "sub_scl",
@@ -71,16 +63,27 @@ var g_countersTable = {
 	}
 };
 
-
 function main(){
 	var prefs = AnyBalance.getPreferences();
 	var options = {allow_captcha: true};
 
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите 10 цифр номера телефона без пробелов и разделителей в качестве логина!');
+	
+	AnyBalance.restoreCookies();
+	
+	AnyBalance.trace('Пробуем войти через API мобильного приложения...');
+	
+	getAdditionalXCabinetHeaders();
+	
 	if(prefs.use_password && prefs.password){
 		megafonLkAPILogin(options);
 	}else{
 		megafonLkAPILoginNew(options);
 	}
+	
+	AnyBalance.saveCookies();
+	AnyBalance.saveData();
 	
 	function shouldProcess(counter, info){ return true }
     var adapter = new NAdapter(g_countersTable.common, shouldProcess);

@@ -31,7 +31,7 @@ function main() {
 	
 	if (!/logout/i.test(html)) {
 		AnyBalance.trace(html);
-		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Неверный логин или пароль?');
+		throw new AnyBalance.Error('Не удалось зайти в личный кабинет. Неверный логин или пароль?');
 	}
 	
 	var result = {success: true};
@@ -62,13 +62,13 @@ function main() {
 	
 	html = AnyBalance.requestGet(baseurl + 'lk/billing/full.php', g_headers);
 	
-	getParam(html, result, 'prev', /<tr[^>]+class="weight"(?:[^>]*>){2}\s*(?:\d{1,2}.\d{1,2}.\d{2,4})?(?:[^>]*>){2}(\d+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'current', /<tr[^>]+class="weight"(?:[^>]*>){2}\s*(?:\d{1,2}.\d{1,2}.\d{2,4})?(?:[^>]*>){4}(\d+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'diff', /<tr[^>]+class="weight"(?:[^>]*>){2}\s*(?:\d{1,2}.\d{1,2}.\d{2,4})?(?:[^>]*>){6}(\d+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'tarif', /<tr[^>]+class="weight"(?:[^>]*>){2}\s*(?:\d{1,2}.\d{1,2}.\d{2,4})?(?:[^>]*>){8}(\d+[.,]?\d+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'to_pay', /<tr[^>]+class="weight"(?:[^>]*>){2}\s*(?:\d{1,2}.\d{1,2}.\d{2,4})?(?:[^>]*>){12}(\d+[.,]?\d+)/i, replaceTagsAndSpaces, parseBalance);
-	getParam(html, result, 'last_pay_date', /<tr[^>]+class="weight"(?:[^>]*>){2}\s*(?:[^>]*>){16}(\d{1,2}.\d{1,2}.\d{2,4})/i, replaceTagsAndSpaces, parseDate);
-	getParam(html, result, 'last_pay_sum', /<tr[^>]+class="weight"(?:[^>]*>){2}\s*(?:[^>]*>){16}(?:\d{1,2}.\d{1,2}.\d{2,4})(?:[^>]*>){18}(\d+[.,]?\d+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'prev', /<tr class="weight"(?:[^>]*>){2}\s*\d{1,2}.\d{1,2}.\d{2,4}(?:[^>]*>){2}(\d+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'current', /<tr class="weight"(?:[^>]*>){2}\s*\d{1,2}.\d{1,2}.\d{2,4}(?:[^>]*>){4}(\d+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'diff', /<tr class="weight"(?:[^>]*>){2}\s*\d{1,2}.\d{1,2}.\d{2,4}(?:[^>]*>){6}(\d+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'tarif', /<tr class="weight"(?:[^>]*>){2}\s*\d{1,2}.\d{1,2}.\d{2,4}(?:[^>]*>){8}(\d+[.,]?\d+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'to_pay', /<tr class="weight"(?:[^>]*>){2}\s*\d{1,2}.\d{1,2}.\d{2,4}(?:[^>]*>){12}(\d+[.,]?\d+)/i, replaceTagsAndSpaces, parseBalance);
+	getParam(html, result, 'last_pay_date', /<tr class="weight"(?:[^>]*>){2}\s*(?:[^>]*>){16}(\d{1,2}.\d{1,2}.\d{2,4})/i, replaceTagsAndSpaces, parseDate);
+	getParam(html, result, 'last_pay_sum', /<tr class="weight"(?:[^>]*>){2}\s*(?:[^>]*>){16}(?:\d{1,2}.\d{1,2}.\d{2,4})(?:[^>]*>){18}(\d+[.,]?\d+)/i, replaceTagsAndSpaces, parseBalance);
 	
 	AnyBalance.setResult(result);
 }

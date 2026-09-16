@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="1">ab-internet-radiointernet1</id>
+	<api flags="no_browser"/>
+    <name>РадиоИнтернет</name>
+	<description html="true"><![CDATA[
+	<p>Предоставляет информацию о балансе, тарифном плане и другие данные для абонентов федерального оператора спутниковой связи <a href="https://radiointernet1.ru/">РадиоИнтернет</a>.</p>
+	<p>Информация берется из личного кабинета абонента на сайте https://cabinet.radiointernet1.ru/options/.</p>
+	]]></description>
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет абонента РадиоИнтернет.</p>
+	]]></instruction>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+		<module id="library"/>
+		<module id="misc/saved-data"/>
+	</depends>
+	<files>
+		<icon>icon.png</icon>
+		<preferences>preferences.xml</preferences>
+		<js>main.js</js>
+		<history>history.xml</history>
+	</files>
+    <counters>
+        <counter id="balance" name="Баланс" units=" ₽"/>
+		<counter id="abon" name="Абонентская плата" units=" ₽/мес"/>
+		<counter id="next_pay_date" name="Следующее списание" type="time" format="dd.MM.yyyy"/>
+		<counter id="status" name="Статус подключения" type="text"/>
+		<counter id="platform" name="Платформа" type="text"/>
+		<counter id="traffic_rest" name="Остаток трафика" units=" Мб"/>
+		<counter id="traffic_total" name="Включенный трафик" units=" Мб"/>
+		<counter id="incoming_traffic" name="Входящий трафик" units=" Мб"/>
+		<counter id="outgoing_traffic" name="Исходящий трафик" units=" Мб"/>
+		<counter id="total_expense_traffic" name="Общий расход трафика" units=" Мб"/>
+		<counter id="total_expense_sum" name="Общая сумма расходов" units=" ₽"/>
+		<counter id="add_traffic_cost" name="Стоимость доп. трафика" units=" ₽/Мб"/>
+		<counter id="add_traffic_use" name="Использовать доп. трафик" type="text"/>
+		<counter id="tariff_autoactivate" name="Автоактивация тарифа" type="text"/>
+		<counter id="terminal" name="Терминал" type="text"/>
+		<counter id="terminal_status" name="Статус терминала" type="text"/>
+		<counter id="association_date" name="Дата ассоциации" type="time" format="dd.MM.yyyy"/>
+		<counter id="mac_address" name="MAC-адрес" type="text"/>
+		<counter id="ip_addresses" name="Сеть IP-адресов" type="text"/>
+		<counter id="last_bill_num" name="Номер посл. счета" type="text"/>
+		<counter id="last_bill_date" name="Дата посл. счета" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_bill_sum" name="Сумма посл. счета" units=" ₽"/>
+		<counter id="last_bill_pay_date" name="Дата оплаты счета" type="time" format="dd.MM.yyyy"/>
+		<counter id="last_bili_pay_system" name="Платежная система" type="text"/>
+		<counter id="all" name="Сводка за месяц" type="text"/>
+		<counter id="contract" name="Договор" type="text"/>
+		<counter id="site_id" name="Site ID" type="text"/>
+		<counter id="region" name="Регион" type="text"/>
+		<counter id="address" name="Адрес установки" type="text"/>
+		<counter id="email" name="E-mail" type="text"/>
+		<counter id="phone" name="Телефон" type="text"/>
+		<counter id="client" name="Абонент" type="text"/>
+    </counters>
+    <keywords>интернет, радиоинтернет, спутник, связь</keywords>
+    <type>internet</type>
+    <country>ru</country>
+</provider>

@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="3">ab-internet-domolan</id>
+	<id version="4">ab-internet-domolan</id>
 	<api flags="no_browser"/>
 	<name>Домолан</name>
 	<description html="true"><![CDATA[
-	<p>Предоставляет информацию по балансу, услугам и платежам для абонентов интернет-провайдера "Домолан" (Домодедово).</p>
-	<p>Информация берется из личного кабинета https://www.domolan.ru/.</p>
+	<p>Предоставляет информацию по балансу, услугам и платежам для абонентов интернет-провайдера <a href="https://domolan.ru/">"Домолан"</a> (Домодедово и Дрезна).</p>
+	<p>Информация берется из личного кабинета Домолан на сайте <a href="https://domolan.ru/lk/">https://domolan.ru/lk/</a>.</p>
 	]]></description>
 	<instruction html="true"><![CDATA[
-	<p>Для получения данных с сайта необходимо ввести в настройки провайдера свой логин, на который зарегистрирован личный кабинет, и пароль для входа.</p>
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет Домолан.</p>
 	]]></instruction>
-	<author>RamzesZeus &lt;ramzeszeus@gmail.com&gt;</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>
@@ -36,7 +36,7 @@
 		<counter id="phone" name="Номер телефона" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>
 	</counters>
-	<keywords>domolan, домолан</keywords>
+	<keywords>интернет, domolan, домолан, домодедово, дрезна</keywords>
 	<type>internet</type>
 	<country>ru</country>
 </provider>

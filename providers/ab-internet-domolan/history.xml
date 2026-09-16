@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change version="3" date="2022-05-20">
+    <change version="4" date="2026-07-16">
+	- Поддержка изменений на сайте
+	</change>
+	<change version="3" date="2022-05-20">
 	- Поддержка изменений в процедуре входа
 	- Добавлен счетчик Адрес подключения
 	</change>

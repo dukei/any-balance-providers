@@ -9,10 +9,10 @@ var g_headers = {
 	'Accept-Encoding': 'gzip, deflate, br',
     'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.88 Safari/537.36'
+	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36'
 };
 
-var baseurl = 'https://lk.domolan.ru';
+var baseurl = 'https://domolan.ru';
 var replaceNumber = [replaceTagsAndSpaces, /\D/g, '', /.*(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7 $1 $2-$3-$4'];
 
 function main() {
@@ -25,7 +25,7 @@ function main() {
 	
 	AnyBalance.trace ('Пробуем войти в личный кабинет...');
 	
-	html = AnyBalance.requestGet(baseurl + '/csrfToken', addHeaders({
+	html = AnyBalance.requestGet(baseurl + '/csrf-token', addHeaders({
 		'Accept': 'application/json, text/plain, */*',
        	'Referer': baseurl + '/lk/login'
 	}), g_headers);
@@ -37,17 +37,16 @@ function main() {
 		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось получить токен авторизации. Сайт изменён?');
 	}
-		
+	
 	var html = AnyBalance.requestPost(baseurl + '/api/login', JSON.stringify({
         "login": prefs.login,
         "password": prefs.password
     }), addHeaders({
 		'Accept': 'application/json, text/plain, */*',
        	'Content-Type': 'application/json',
-		'Host': 'lk.domolan.ru',
 		'Origin': baseurl,
        	'Referer': baseurl + '/lk/login',
-	    'X-CSRF-Token': g_token
+	    'X-Csrf-Token': g_token
 	}), g_headers);
 
 	if (AnyBalance.getLastStatusCode() === 400) {
@@ -85,10 +84,9 @@ function main() {
         }), addHeaders({
 			'Accept': 'application/json, text/plain, */*',
         	'Content-Type': 'application/json',
-		  	'Host': 'lk.domolan.ru',
 			'Origin': baseurl,
         	'Referer': baseurl + '/lk',
-		   	'X-CSRF-Token': g_token
+		   	'X-Csrf-Token': g_token
 		}), g_headers);
 		
 		var json = getJson(html);

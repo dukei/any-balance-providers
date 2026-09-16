@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="7">ab-bonus-gorod-troika</id>
+	<id version="8">ab-bonus-gorod-troika</id>
 	<api flags="no_browser"/>
 	<name>Город Тройка</name>
 	<description html="true"><![CDATA[
@@ -24,6 +24,7 @@
 	<counters>
 		<counter id="balance" name="Доступные бонусы" units=" Б"/>
 		<counter id="expected" name="Ожидаемые бонусы" units=" Б"/>
+		<counter id="burn" name="Сгораемые бонусы" units=" Б"/>
 		<counter id="experience" name="Собрано жетонов" units=" Ж"/>
 		<counter id="wallet" name="Кошелек" units=" ₽"/>
 		<counter id="tickettype" name="Тип билета" type="text"/>
@@ -49,7 +50,9 @@
 		<counter id="last_oper_sum" name="Сумма посл. операции" units=" ₽"/>
 		<counter id="last_oper_bonuses" name="Бонусы посл. операции" units=" Б"/>
 		<counter id="last_oper_experience" name="Жетоны посл. операции" units=" Ж"/>
+		<counter id="favorcat" name="Любимые категории" type="html"/>
 		<counter id="notifications" name="Уведомления" units=" шт"/>
+		<counter id="favorites" name="Избранное" units=" шт"/>
 		<counter id="region" name="Регион" type="text"/>
 		<counter id="phone" name="Номер телефона" type="text"/>
 		<counter id="fio" name="ФИО" type="text"/>

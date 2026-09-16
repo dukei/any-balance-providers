@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
-    <change version="7" date="2025-08-31">
+    <change version="8" date="2026-08-27">
+	- Добавлены счетчики Сгораемые бонусы и Любимые категории
+	</change>
+	<change version="7" date="2025-08-31">
 	- Альтернативный способ получения баланса кошелька
 	</change>
     <change version="6" date="2025-04-06">

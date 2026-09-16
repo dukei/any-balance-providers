@@ -331,6 +331,24 @@ function main() {
 	    getParam(fio, result, 'fio');
 	getParam(prefs.login, result, 'phone', null, replaceNumber);
 	
+	if(isAvailable(['burn', 'favorites'])){
+	    html = AnyBalance.requestGet(baseurl + '/api/profile/other?region_id=2', AB.addHeaders({
+		    'accept': 'application/json',
+            'Referer': baseurl + '/profile',
+		    'x-troikagorod-app-uid': uid,
+		    'x-troikagorod-auth-token': g_token
+	    }));
+	    
+	    var json = getJson(html);
+	    AnyBalance.trace(JSON.stringify(json));
+		
+		if(json.availableBonuses && !result.balance)
+		    getParam(json.availableBonuses.value, result, 'balance', null, null, parseBalance);
+		if(json.expiringBonuses)
+		    getParam(json.expiringBonuses.value, result, 'burn', null, null, parseBalance);
+	    getParam(json.favouritesCount, result, 'favorites', null, null, parseBalance);
+	}
+	
 	if(isAvailable(['currmonthvisitscount', 'totalvisitscount', 'totalstationscount'])){
 	    html = AnyBalance.requestGet(baseurl + '/api/troika/visits/history?limit=1&region_id=2', AB.addHeaders({
 		    'accept': 'application/json',
@@ -413,6 +431,30 @@ function main() {
 	    }else{
 		    AnyBalance.trace('Не удалось получить данные по операциям');
 	    }
+	}
+	
+	if(AnyBalance.isAvailable('favorcat')) {
+		html = AnyBalance.requestGet(baseurl + '/api/profile/edit/fields/metadata?region_id=2', AB.addHeaders({
+		    'accept': 'application/json',
+            'Referer': baseurl + '/profile',
+		    'x-troikagorod-app-uid': uid,
+		    'x-troikagorod-auth-token': g_token
+	    }));
+	    
+	    var json = getJson(html);
+	    AnyBalance.trace(JSON.stringify(json));
+	    
+	    if(json.selectedCategories && json.selectedCategories.length > 0){
+	    	AnyBalance.trace('Найдено любимых категорий: ' + json.selectedCategories.length);
+			for(var i=0; i<json.selectedCategories.length; ++i){
+	            var c = json.selectedCategories[i];
+				
+			    sumParam(c.name, result, 'favorcat', null, null, null, create_aggregate_join(',<br> '));
+			}
+	    }else{
+ 	    	AnyBalance.trace('Не удалось получить данные по любимым категориям');
+			result.favorcat = 'Нет данных';
+ 	    }
 	}
 
 	AnyBalance.setResult(result);

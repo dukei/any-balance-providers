@@ -29,7 +29,6 @@
 	]]></instruction>
 	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
-		<module id="library"/>
 		<module id="nadapter"/>
 		<module id="extract/abe-cell-beeline"/>
 	</depends>

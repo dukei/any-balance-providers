@@ -17,6 +17,8 @@ var g_headers = {
 
 var g_html;
 
+var g_savedData;
+
 function myParseCurrency(text) {
     var val = text.replace(/\s+/g, '').replace(/[\-\d\.,]+/g, '');
     

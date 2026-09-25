@@ -12,6 +12,8 @@ var g_currency = {
 
 var g_savedData;
 
+if(typeof SavedData === 'undefined') var SavedData = { load: function(){ return {}; }, save: function(){} };
+
 function main() {
 	var prefs = AnyBalance.getPreferences();
 	AnyBalance.setDefaultCharset('utf-8');

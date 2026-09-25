@@ -78,6 +78,11 @@ function callAPIProc(url, getParams, postParams, method) {
             throw new AnyBalance.Error('Сервер мобильного API временно недоступен');
         }
 		
+		if(AnyBalance.getLastStatusCode() == 403){
+            AnyBalance.trace(html);
+            throw new AnyBalance.Error('Доступ к серверу мобильного API ограничен');
+        }
+		
 		if(/Too Many Requests/i.test(html) || AnyBalance.getLastStatusCode() == 429){
 			if(tries < maxtries){
 //				AnyBalance.trace('Превышено количество одновременных запросов к серверу. Ожидаем 1 секунду и пробуем повторить запрос...');
@@ -278,11 +283,8 @@ function processApi(result){
 		processApi.payType[prefs.phone] = json.payType;
 	}
 	
-	var type = {
-		PREPAID: 'Предоплатный',
-		POSTPAID: 'Постоплатный'
-	};
-	getParam(type[processApi.payType[prefs.phone]]||processApi.payType[prefs.phone], result, 'type');
+	var type = {PREPAID: 'Предоплатный', POSTPAID: 'Постоплатный'};
+	getParam(cabType[processApi.payType[prefs.phone]]||processApi.payType[prefs.phone], result, 'type');
 	
 	if(processApi.payType[prefs.phone] == 'PREPAID'){
 		processApiPrepaid(result);
@@ -817,9 +819,12 @@ function processApiRemaindersPostpaid(result){
 	AnyBalance.trace(JSON.stringify(remainders));
 }
 
-/** если не найдено число вернет null */
-function apiParseBalanceRound(val) {
-	var balance = parseBalance(val + '');
+function apiParseBalanceRoundSilent(val) {
+	return apiParseBalanceRound(val, true);
+}
+
+function apiParseBalanceRound(val, silent) {
+	var balance = !silent ? parseBalance(val + '') : parseBalanceSilent(val + '');
 	if(!isset(balance))
 		return null;
 	

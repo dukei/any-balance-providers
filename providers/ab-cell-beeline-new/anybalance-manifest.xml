@@ -1,34 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="188">ab-cell-beeline-new</id>
+	<id version="189">ab-cell-beeline-new</id>
 	<name>Билайн (новый кабинет)</name>
 	<api flags="no_browser" min_level="5"/>
 	<description html="true"><![CDATA[
-	<p>Предоставляет  информацию о балансе и тарифном плане для пользователей сотового оператора "Билайн".</p>
-	<p>Информация берётся из личных кабинетов:</p>
-	<ul>
-		<li>Россия <a href="https://my.beeline.ru">https://my.beeline.ru</a></li>
-		<li>Казахстан <a href="https://my.beeline.kz">https://my.beeline.kz</a></li>
-		<li>Узбекистан <a href="https://my.beeline.uz">https://my.beeline.uz</a></li>
-	</ul>
-	<b>ВНИМАНИЕ!</b> Если у вас логин и пароль от старого личного кабинета <a href="https://uslugi.beeline.ru">https://uslugi.beeline.ru</a>, используйте провайдер "Билайн" (старый кабинет).
+	<p>редоставляет  информацию о балансе, бонусных баллах, трафике, использованных минутах и SMS на телефоне и многое другое для пользователей оператора сотовой связи Билайн.</p>
+	<p>Информация берется из личного кабинета Билайн на сайте <a href="https://www.beeline.ru">https://www.beeline.ru</a> или из <a href="https://www.rustore.ru/catalog/app/ru.beeline.services">мобильного приложения</a> Билайн.</p>
+	<b>ВНИМАНИЕ!</b> Если у вас логин и пароль от старого личного кабинета <a href="https://uslugi.beeline.ru">https://uslugi.beeline.ru</a>, используйте провайдер Билайн (старый кабинет).
 	]]></description>
 	<instruction html="true"><![CDATA[
 	<p><strong>Как получить или сменить пароль:</strong></p>
 	<ol>
-		<li>Со своего мобильного телефона наберите номер *110*9# для России и *808# для Казахстана.</li>
-		<li>Получите SMS с логином и ВРЕМЕННЫМ паролем в личный кабинет.</li>
-		<li>Войдите в кабинет <a href="https://my.beeline.ru">https://my.beeline.ru</a> для России и <a href="https://my.beeline.kz">https://my.beeline.kz</a> для Казахстана с помощью вашего логина и ВРЕМЕННОГО пароля.</li>
+		<li>Со своего мобильного телефона наберите команду *110*9# и нажмите кнопку Вызов.</li>
+		<li>Получите SMS с логином и ВРЕМЕННЫМ паролем для входа в личный кабинет.</li>
+		<li>Войдите в кабинет <a href="https://www.beeline.ru">https://www.beeline.ru</a> с помощью вашего логина и ВРЕМЕННОГО пароля.</li>
 		<li>Смените пароль на ПОСТОЯННЫЙ.</li>
-		<li>Введите логин и ПОСТОЯННЫЙ пароль в настройки провайера.</li><br/>
+		<li>Введите логин и ПОСТОЯННЫЙ пароль в настройки провайдера.</li><br/>
 	</ol>
 	<p><strong>Как отключить уведомления по SMS о входе в личный кабинет:</strong></p>
 	<ol>
-		<li>Войдите в кабинет <a href="https://my.beeline.ru">https://my.beeline.ru</a> для России, <a href="https://my.beeline.kz">https://my.beeline.kz</a> для Казахстана и <a href="https://my.beeline.uz">https://my.beeline.uz</a> для Узбекистана.</li>
-		<li>Перейдите на вкладку "Настройки".</li>
+		<li>Войдите в свой личный кабинет на сайте <a href="https://www.beeline.ru">https://www.beeline.ru</a>.</li>
+		<li>Перейдите на вкладку Настройки.</li>
 		<li>Нажмите на нужный номер телефона и подождите, пока не раскроется меню.</li>
-		<li>Снимите галочку с пункта "Вход в личный кабинет".</li>
-		<li>Нажмите кнопку "Сохранить" внизу страницы.</li><br/>
+		<li>Снимите галочку с пункта Вход в личный кабинет.</li>
+		<li>Нажмите кнопку Сохранить внизу страницы.</li><br/>
 	</ol>	
 	<small>Если данные об оставшихся SMS, MMS, минутах и трафике не отображаются в приложении, вначале проверьте, есть ли они в личном кабинете. Если есть, обратитесь к разработчикам.</small>
 	]]></instruction>
@@ -39,18 +34,15 @@
 		<module id="extract/abe-cell-beeline"/>
 	</depends>
 	<files>
-	    <icon>icon.png</icon>
+		<icon>icon.png</icon>
 		<preferences>preferences.xml</preferences>
-		<js>lkkz.js</js>
-		<js>lkuz.js</js>
 		<js>main.js</js>
 		<history>history.xml</history>
-		<settings target="init">settings_init.xml</settings>
 	</files>
 	<counters>
 		<counter id="balance" name="Баланс" units=" {@currency}"/>
-<!--	<counter id="unified_balance" name="Общий баланс" units=" {@currency}"/>
-		<counter id="addon_balance" name="Баланс для доп. услуг" units=" {@currency}"/> -->
+    	<counter id="unified_balance" name="Общий баланс" units=" {@currency}"/>
+		<counter id="addon_balance" name="Баланс для доп. услуг" units=" {@currency}"/>
 		<counter id="prebal" name="Предварительная сумма по договору" units=" {@currency}"/>
 	    <counter id="overpay" name="Переплата" units=" {@currency}"/>
 		<counter id="sms_left" name="Остаток SMS" units=" sms"/>
@@ -75,7 +67,7 @@
 		<counter id="phone" name="Телефон" type="text"/>
 		<counter id="agreement" name="Договор" type="text"/>
 		<counter id="type" name="Тип кабинета" type="text"/>
-<!--	<counter id="month_refill" name="Пополнения за месяц" units=" {@currency}"/> -->
+    	<counter id="month_refill" name="Пополнения за месяц" units=" {@currency}"/>
 		<counter id="last_pay_sum" name="Сумма последнего платежа" units=" {@currency}"/>
 		<counter id="last_pay_date" name="Дата последнего платежа" type="time" format="dd.MM.yyyy"/>
 		<counter id="last_pay_place" name="Место последнего платежа" type="text"/> <!-- Только для предоплатных абонентов -->
@@ -83,8 +75,8 @@
 		<counter id="statuslock" name="Статус блокировки" type="text"/>
 		<counter id="total_balance" name="Сумма по всем номерам" units=" {@currency}"/>
 		<counter id="traffic_used" name="Использовано трафика" units=" Mb"/>
-<!--	<counter id="traffic_used_4g" name="Трафик по Безлимит в 4G" units=" Mb"/>
-		<counter id="traffic_used_total" name="Общий расход трафика" units=" Мб"/> -->
+    	<counter id="traffic_used_4g" name="Трафик по Безлимит в 4G" units=" Mb"/>
+		<counter id="traffic_used_total" name="Общий расход трафика" units=" Мб"/>
 		<counter id="traffic_total" name="Всего трафика" units=" Mb"/>
 		<counter id="min_local_till" name="Срок действия пакета минут" type="time" format="dd.MM.yyyy"/>
 <!--	<counter id="honeycomb" name="Накопленные соты" prefix="🐝 " units=" шт"/> -->
@@ -94,7 +86,7 @@
 		<counter id="services_abon" name="Абонплата за услуги (месяц)" units=" {@currency}"/>
 		<counter id="services_abon_day" name="Абонплата за услуги (сутки)" units=" {@currency}"/>
 		<counter id="subscriptions_count" name="Подключенные подписки" prefix="📌 " units=" шт"/>
-<!--	<counter id="debet" name="Начислено за услуги" units=" {@currency}"/> -->
+    	<counter id="debet" name="Начислено за услуги" units=" {@currency}"/>
 		<counter id="abon_tariff" name="Абонплата по тарифу" units=" {@currency}"/>
 		<counter id="bills" name="Выставленные счета" units=" шт"/>
 	</counters>

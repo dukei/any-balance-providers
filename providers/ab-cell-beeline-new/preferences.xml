@@ -36,17 +36,8 @@
 		title="Источник данных"
 		summary="Источник для получения информации||{@s}\n"
 		dialogTitle="Источник данных"
-		entries="Мобильное приложение|Официальный сайт"
-		entryValues="app|site"
-		defaultValue="app">
+		entries="Официальный сайт|Мобильное приложение"
+		entryValues="site|app"
+		defaultValue="site">
 	</ListPreference>
-    <ListPreference 
-        key="country" 
-        title="Страна"
-        summary="Страна для определения личного кабинета||{@s}\n"
-		dialogTitle="Страна"
-        entries="Россия|Казахстан|Узбекистан"
-        entryValues="ru|kz|uz"
-		defaultValue="ru">
-    </ListPreference>
 </PreferenceScreen>

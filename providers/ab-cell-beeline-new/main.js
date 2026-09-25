@@ -3,57 +3,53 @@
 
 */
 
-function main() {
-	AnyBalance.setDefaultCharset('utf-8');
-	
-	var prefs = AnyBalance.getPreferences();
-
-	var baseurl = 'https://my.beeline.' + (prefs.country || 'ru') + '/';
-
-	if(prefs.__initialization){
-		return initialize(baseurl);
-	}
-	
-	checkEmpty(prefs.login, 'Введите логин!');
-	checkEmpty(prefs.password, 'Введите пароль!');
-	if(prefs.country == 'uz') {
-	        main_uz();
-	        return;
-	}
-	if(prefs.country == 'kz') {
-		AnyBalance.setCookie('my.beeline.kz', 'ui.language.current', 'ru_RU');
-	} else {
-		if(prefs.source == 'app') {
-			proceedWithMobileAppAPI(baseurl);
-			return;
-		}
-	}
-	
-	try {
-		if(prefs.country == 'kz')
-			proceedWithSiteKz(baseurl);
-		else
-//			mainRu(baseurl); // Закрываем код сайта до лучших времён, чтобы зря не тратить трафик и время
-		    proceedWithMobileAppAPI(baseurl);
-	} catch(e){
-//		if(e.fatal)
-			throw e;
-		//Обломался сайт. Если можно мобильное приложение, давайте его попробуем
-//		AnyBalance.trace('Не получается зайти в личный кабинет: ' + e.message + ', ' + e.stack + '. Попробуем мобильное приложение');
-//		clearAllCookies();
-//		proceedWithMobileAppAPI(baseurl);
-//		return;
-	}
+var g_currency = {
+    руб: '₽',
+	RUB: '₽',
+    RUR: '₽',
+    undefined: ''
 }
 
-function initialize(baseurl){
-	var prefs = AnyBalance.getPreferences();
-	if(prefs.country && prefs.country != 'ru')
-		throw new AnyBalance.Error('Автоматическое получение пароля пока поддерживается только для России!');
+var g_savedData;
 
-	var pass = createNewPassword(baseurl);
-	var result = {success: true, __initialization: true, login: prefs.login, password: pass, country: 'ru'};
-	AnyBalance.setResult(result);
+function main() {
+	var prefs = AnyBalance.getPreferences();
+	AnyBalance.setDefaultCharset('utf-8');
+    AnyBalance.trace('Пробуем войти в личный кабинет...');
+	
+	checkEmpty(prefs.login, 'Введите логин!');
+	checkEmpty(/^\d{10}$/.test(prefs.login), 'Введите 10 цифр номера телефона без пробелов и разделителей в качестве логина!');
+	checkEmpty(prefs.password, 'Введите пароль!');
+	
+	var baseurl = 'https://www.beeline.ru/';
+	
+	if(prefs.source == 'app')
+		baseurl = 'https://my.beeline.ru/';
+	
+	if(!g_savedData)
+		g_savedData = new SavedData('beeline-mobile-site', prefs.login);
+	
+	switch(prefs.source){
+    case 'site':
+        mainRu(baseurl);
+        break;
+    case 'app':
+        proceedWithMobileAppAPI(baseurl);
+        break;
+    case 'auto':
+    default:
+        try{
+			mainRu(baseurl);
+        }catch(e){
+            if(e.fatal)
+                throw e;
+			AnyBalance.trace('Не удалось получить данные с официального сайта: ' + e.message + ' (' + e.stack + ')');
+            throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?'); // API пока не работает, нет смысла к нему переходить
+			clearAllCookies();
+            proceedWithMobileAppAPI(baseurl);
+        }
+        break;
+	}
 }
 
 var g_countersTable = {
@@ -113,8 +109,6 @@ var g_countersTable = {
 function mainRu(baseurl){
 	var prefs = AnyBalance.getPreferences();
 
-	checkEmpty(prefs.password, 'Введите пароль!' );
-
 	var ret = login(baseurl);
 
 	function shouldProcess(counter, info){ return true }
@@ -122,8 +116,9 @@ function mainRu(baseurl){
     adapter.proceedWithSite = adapter.envelope(proceedWithSite);
 
 	var result = {success: true};
-
-	adapter.proceedWithSite(baseurl, ret.type, ret.html, result);
+	
+	adapter.proceedWithSite(baseurl, ret.type, ret.html, ret.json, result);
+	
 	var newresult = adapter.convert(result);
 	newresult.currency = result.currency;
 

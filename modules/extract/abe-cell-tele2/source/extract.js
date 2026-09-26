@@ -4,9 +4,10 @@
 
 var g_headers = {
 	'Connection':'keep-alive',
-	'Tele2-User-Agent': '"mytele2-app/4.27.1"; "unknown"; "Android/9"; "Build/12998710"',
-	'X-API-Version': '3',
-	'User-Agent':'okhttp/4.2.0'
+	'Tele2-User-Agent': '"mytele2-app/6.49.0"; "realme/RMX5061"; "Android/16"; "Build/169183250";',
+	'X-API-Version': '1',
+	'User-Agent':'okhttp/4.2.0',
+	'Accept':'application/json'
 };
 
 var baseurl = 'https://api.tele2.ru/';
@@ -29,7 +30,7 @@ function callApi(action, params){
 	var json = {};
 	if(html){
 		json = JSON.parse(html);
-		if(json.message || (json.error_description && !/Security code[\s\S]*?empty/i.test(json.error_description))){
+		if(json.message || (json.error_description && !isSecurityCodeRequired(json))){
 			AnyBalance.trace(html);
 			var error = json.message || json.error_description || 'Ошибка обращения к API';
 			throw new AnyBalance.Error(error, null, /парол|Msisdn not found|password/i.test(error));
@@ -75,33 +76,39 @@ function saveTokens(json){
 	AnyBalance.saveData();
 }
 
+function isSecurityCodeRequired(json){
+	var s = (json && (json.error_description || json.message || json.error || '')) + '';
+	return /security[_ ]code/i.test(s) || /(two[- ]factor|2fa|verification code|подтверждени)/i.test(s);
+}
+
 function loginBySMS() {
 	var prefs = AnyBalance.getPreferences();
 
-	var json = callApi('validation/number/7' + prefs.login, {sender: 'Tele2'});
+	AnyBalance.trace('Запрашиваем код SMS непосредственно через SSO');
 
 	var code = AnyBalance.retrieveCode('Пожалуйста, введите код из SMS, отправленного на ваш номер T2', null, {inputType: 'number', time: 180000});
 	
-	json = callApi('https://sso.tele2.ru/auth/realms/tele2-b2c/protocol/openid-connect/token?msisdn=7' + prefs.login + '&action=auth&authType=sms', {
+	json = callApi('https://sso.t2.ru/auth/realms/tele2-b2c/protocol/openid-connect/token?msisdn=7' + prefs.login + '&action=auth&authType=sms', {
 		__post: true,
 		username: '7' + prefs.login,
 		password: code,
 		grant_type: 'password',
+		scope: 'openid',
 		client_id: 'android-app',
 		password_type:	'sms_code'
 	});
 	
-	if(json.error && /Security code[\s\S]*?empty/i.test(json.error_description)){
+	if(json.error && isSecurityCodeRequired(json)){
 		AnyBalance.trace('T2 затребовал код подтверждения из письма');
 	    
-	    json = callApi('https://sso.tele2.ru/auth/realms/tele2-b2c/credential-management/security-codes', {
+	    json = callApi('https://sso.t2.ru/auth/realms/tele2-b2c/credential-management/security-codes', {
 		    username: '7' + prefs.login
 	    });
 	    
 	    var securityCodeToken = json.security_code_token;
 	    var securityCode = AnyBalance.retrieveCode('Пожалуйста, введите код из письма, отправленного на ваш E-mail', null, {inputType: 'number', time: 180000});
         
-		json = callApi('https://sso.tele2.ru/auth/realms/tele2-b2c/protocol/openid-connect/token?msisdn=7' + prefs.login + '&action=auth&authType=sms', {
+		json = callApi('https://sso.t2.ru/auth/realms/tele2-b2c/protocol/openid-connect/token?msisdn=7' + prefs.login + '&action=auth&authType=sms', {
 		    __post: true,
 		    username: '7' + prefs.login,
 		    password: code,
@@ -124,7 +131,7 @@ function loginByAccessToken(){
 	g_headers.Authorization = 'Bearer ' + AnyBalance.getData('ac');
 
 	try{
-		var json = callApi('https://sso.tele2.ru/auth/realms/tele2-b2c/protocol/openid-connect/userinfo');
+		var json = callApi('https://sso.t2.ru/auth/realms/tele2-b2c/protocol/openid-connect/userinfo');
 	}catch(e){
 		AnyBalance.trace('Не удалось войти по access token: ' + e.message);
 		return false;
@@ -143,7 +150,7 @@ function loginByRefreshToken(){
 	delete g_headers.Authorization;
 
 	try{
-		var json = callApi('https://sso.tele2.ru/auth/realms/tele2-b2c/protocol/openid-connect/token?action=refresh', {
+		var json = callApi('https://sso.t2.ru/auth/realms/tele2-b2c/protocol/openid-connect/token?action=refresh', {
 			__post: true,
 			refresh_token: AnyBalance.getData('rt'),
 			grant_type:	'refresh_token',
@@ -164,26 +171,27 @@ function loginByRefreshToken(){
 function loginByPassword(){
 	var prefs = AnyBalance.getPreferences();
 	
-	json = callApi('https://sso.tele2.ru/auth/realms/tele2-b2c/protocol/openid-connect/token?msisdn=7' + prefs.login + '&action=auth&authType=pass', {
+	json = callApi('https://sso.t2.ru/auth/realms/tele2-b2c/protocol/openid-connect/token?msisdn=7' + prefs.login + '&action=auth&authType=pass', {
 		__post: true,
 		username: '7' + prefs.login,
 		password: prefs.password,
 		grant_type: 'password',
+		scope: 'openid',
 		client_id: 'android-app',
 		password_type:	'password'
 	});
 	
-	if(json.error && /Security code[\s\S]*?empty/i.test(json.error_description)){
+	if(json.error && isSecurityCodeRequired(json)){
 		AnyBalance.trace('Теле2 затребовал код подтверждения из письма');
 	    
-	    json = callApi('https://sso.tele2.ru/auth/realms/tele2-b2c/credential-management/security-codes', {
+	    json = callApi('https://sso.t2.ru/auth/realms/tele2-b2c/credential-management/security-codes', {
 		    username: '7' + prefs.login
 	    });
 	    
 	    var securityCodeToken = json.security_code_token;
 	    var securityCode = AnyBalance.retrieveCode('Пожалуйста, введите код из письма, отправленного на ваш E-mail', null, {inputType: 'number', time: 180000});
         
-	    json = callApi('https://sso.tele2.ru/auth/realms/tele2-b2c/protocol/openid-connect/token?msisdn=7' + prefs.login + '&action=auth&authType=pass', {
+	    json = callApi('https://sso.t2.ru/auth/realms/tele2-b2c/protocol/openid-connect/token?msisdn=7' + prefs.login + '&action=auth&authType=pass', {
 		    __post: true,
 		    username: '7' + prefs.login,
 		    password: prefs.password,

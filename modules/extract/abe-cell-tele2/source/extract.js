@@ -3,21 +3,28 @@
 */
 
 var g_headers = {
-	'Connection':'keep-alive',
-	'Tele2-User-Agent': '"mytele2-app/6.49.0"; "realme/RMX5061"; "Android/16"; "Build/169183250";',
-	'X-API-Version': '1',
-	'User-Agent':'okhttp/4.2.0',
-	'Accept':'application/json'
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7,de;q=0.6,fr;q=0.5',
+	'Cache-Control': 'max-age=0',
+	'User-Agent': 'okhttp/4.12.0',
+	'Accept-Encoding': 'gzip, deflate',
+	'Accept': 'application/json, text/plain, */*',
+	'Connection': 'keep-alive',
+	'Tele2-User-Agent': '"mytele2-app/6.50.0"; "realme/RMX5061"; "Android/16"; "Build/169183289";',
+	'X-API-Version': '1'
 };
 
-var baseurl = 'https://api.tele2.ru/';
+var baseurl = 'https://api.t2.ru/';
 
 function callApi(action, params){
+	if(AnyBalance.getCapabilities && AnyBalance.getCapabilities().clientOkHttp)
+		AnyBalance.setOptions({CLIENT: 'okhttp'});
 	var url = joinUrl(baseurl + 'api/', action);
-	var headers = g_headers;
+	var headers = addHeaders(g_headers);
+	headers['X-Request-Id'] = randomString(40);
 	if(params){
 		if(params.__post){
 			delete params.__post;
+			headers = addHeaders({'Content-Type': 'application/x-www-form-urlencoded'});
 		}else{
 			params = JSON.stringify(params);
 			headers = addHeaders({'Content-Type': 'application/json; charset=UTF-8'});
@@ -26,6 +33,11 @@ function callApi(action, params){
 	
 	AnyBalance.trace('Запрос: ' + url);
 	
+	if(params && headers['Content-Type'] === 'application/x-www-form-urlencoded') {
+		var form = [];
+		for(var k in params) if(Object.prototype.hasOwnProperty.call(params, k)) form.push(encodeURIComponent(k) + '=' + encodeURIComponent(params[k]));
+		params = form.join('&');
+	}
 	var html = AnyBalance.requestPost(url, params, headers, {HTTP_METHOD: params ? 'POST' : 'GET'});
 	var json = {};
 	if(html){
@@ -40,6 +52,14 @@ function callApi(action, params){
 	AnyBalance.trace('Ответ: ' + JSON.stringify(json));
 	
 	return json.data || json;
+}
+
+
+function randomString(n){
+    var chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var out='';
+    for(var i=0;i<n;i++) out += chars.charAt(Math.floor(Math.random()*chars.length));
+    return out;
 }
 
 function login(){
@@ -73,6 +93,7 @@ function saveTokens(json){
 	AnyBalance.setData('login', prefs.login);
 	AnyBalance.setData('ac', json.access_token);
 	AnyBalance.setData('rt', json.refresh_token);
+	if(json.expires_in) AnyBalance.setData('ac_expires', String(new Date().getTime() + parseInt(json.expires_in, 10) * 1000));
 	AnyBalance.saveData();
 }
 
@@ -84,38 +105,45 @@ function isSecurityCodeRequired(json){
 function loginBySMS() {
 	var prefs = AnyBalance.getPreferences();
 
-	AnyBalance.trace('Запрашиваем код SMS непосредственно через SSO');
+	AnyBalance.trace('Запрашиваем код SMS через актуальный T2 validation API');
+
+	// Сначала явно просим T2 отправить одноразовый SMS-код.
+	// В старой версии это делалось неявно старым SSO, а новый API
+	// требует отдельный POST /api/validation/number/{msisdn}.
+	callApi('https://api.t2.ru/api/validation/number/7' + prefs.login, {
+		sender: 'Tele2'
+	});
 
 	var code = AnyBalance.retrieveCode('Пожалуйста, введите код из SMS, отправленного на ваш номер T2', null, {inputType: 'number', time: 180000});
 	
-	json = callApi('https://sso.t2.ru/auth/realms/tele2-b2c/protocol/openid-connect/token?msisdn=7' + prefs.login + '&action=auth&authType=sms', {
+	json = callApi('https://api.t2.ru/auth/realms/tele2-b2c/protocol/openid-connect/token?msisdn=7' + prefs.login + '&action=auth&authType=sms', {
 		__post: true,
 		username: '7' + prefs.login,
 		password: code,
 		grant_type: 'password',
 		scope: 'openid',
-		client_id: 'android-app',
+		client_id: 'digital-suite-web-app',
 		password_type:	'sms_code'
 	});
 	
 	if(json.error && isSecurityCodeRequired(json)){
 		AnyBalance.trace('T2 затребовал код подтверждения из письма');
 	    
-	    json = callApi('https://sso.t2.ru/auth/realms/tele2-b2c/credential-management/security-codes', {
+	    json = callApi('https://api.t2.ru/auth/realms/tele2-b2c/credential-management/security-codes', {
 		    username: '7' + prefs.login
 	    });
 	    
 	    var securityCodeToken = json.security_code_token;
 	    var securityCode = AnyBalance.retrieveCode('Пожалуйста, введите код из письма, отправленного на ваш E-mail', null, {inputType: 'number', time: 180000});
         
-		json = callApi('https://sso.t2.ru/auth/realms/tele2-b2c/protocol/openid-connect/token?msisdn=7' + prefs.login + '&action=auth&authType=sms', {
+		json = callApi('https://api.t2.ru/auth/realms/tele2-b2c/protocol/openid-connect/token?msisdn=7' + prefs.login + '&action=auth&authType=sms', {
 		    __post: true,
 		    username: '7' + prefs.login,
 		    password: code,
 			security_code: securityCode,
             security_code_token: securityCodeToken,
 		    grant_type: 'password',
-		    client_id: 'android-app',
+		    client_id: 'digital-suite-web-app',
 		    password_type:	'sms_code'
 	    });
 	}
@@ -128,18 +156,28 @@ function loginByAccessToken(){
 	if(prefs.login !== AnyBalance.getData('login'))
 		return false;
 
-	g_headers.Authorization = 'Bearer ' + AnyBalance.getData('ac');
+	var token = AnyBalance.getData('ac');
+	if(!token) return false;
 
+	g_headers.Authorization = 'Bearer ' + token;
+
+	// Не обращаемся к userinfo при каждом обновлении. Если срок жизни
+	// токена известен, используем его напрямую и бережём auth API.
+	var exp = parseInt(AnyBalance.getData('ac_expires'), 10);
+	if(exp && new Date().getTime() + 60000 < exp){
+		AnyBalance.trace('Используем сохранённый access token без повторной проверки');
+		return true;
+	}
+
+	// Для старых сохранённых сессий без срока жизни проверяем токен один раз.
 	try{
-		var json = callApi('https://sso.t2.ru/auth/realms/tele2-b2c/protocol/openid-connect/userinfo');
+		callApi('https://api.t2.ru/auth/realms/tele2-b2c/protocol/openid-connect/userinfo');
+		AnyBalance.trace('Сохранённый access token действителен');
+		return true;
 	}catch(e){
 		AnyBalance.trace('Не удалось войти по access token: ' + e.message);
 		return false;
 	}
-
-    AnyBalance.trace('Вошли по access token');
-
-	return true;
 }
 
 function loginByRefreshToken(){
@@ -150,11 +188,11 @@ function loginByRefreshToken(){
 	delete g_headers.Authorization;
 
 	try{
-		var json = callApi('https://sso.t2.ru/auth/realms/tele2-b2c/protocol/openid-connect/token?action=refresh', {
+		var json = callApi('https://api.t2.ru/auth/realms/tele2-b2c/protocol/openid-connect/token?action=refresh', {
 			__post: true,
 			refresh_token: AnyBalance.getData('rt'),
 			grant_type:	'refresh_token',
-			client_id:	'android-app'
+			client_id:	'digital-suite-web-app'
 		});
 	}catch(e){
 		AnyBalance.trace('Не удалось получить токен по refresh token: ' + e.message);
@@ -171,34 +209,34 @@ function loginByRefreshToken(){
 function loginByPassword(){
 	var prefs = AnyBalance.getPreferences();
 	
-	json = callApi('https://sso.t2.ru/auth/realms/tele2-b2c/protocol/openid-connect/token?msisdn=7' + prefs.login + '&action=auth&authType=pass', {
+	json = callApi('https://api.t2.ru/auth/realms/tele2-b2c/protocol/openid-connect/token?msisdn=7' + prefs.login + '&action=auth&authType=pass', {
 		__post: true,
 		username: '7' + prefs.login,
 		password: prefs.password,
 		grant_type: 'password',
 		scope: 'openid',
-		client_id: 'android-app',
+		client_id: 'digital-suite-web-app',
 		password_type:	'password'
 	});
 	
 	if(json.error && isSecurityCodeRequired(json)){
 		AnyBalance.trace('Теле2 затребовал код подтверждения из письма');
 	    
-	    json = callApi('https://sso.t2.ru/auth/realms/tele2-b2c/credential-management/security-codes', {
+	    json = callApi('https://api.t2.ru/auth/realms/tele2-b2c/credential-management/security-codes', {
 		    username: '7' + prefs.login
 	    });
 	    
 	    var securityCodeToken = json.security_code_token;
 	    var securityCode = AnyBalance.retrieveCode('Пожалуйста, введите код из письма, отправленного на ваш E-mail', null, {inputType: 'number', time: 180000});
         
-	    json = callApi('https://sso.t2.ru/auth/realms/tele2-b2c/protocol/openid-connect/token?msisdn=7' + prefs.login + '&action=auth&authType=pass', {
+	    json = callApi('https://api.t2.ru/auth/realms/tele2-b2c/protocol/openid-connect/token?msisdn=7' + prefs.login + '&action=auth&authType=pass', {
 		    __post: true,
 		    username: '7' + prefs.login,
 		    password: prefs.password,
 			security_code: securityCode,
             security_code_token: securityCodeToken,
 		    grant_type: 'password',
-		    client_id: 'android-app',
+		    client_id: 'digital-suite-web-app',
 		    password_type:	'password'
 	    });
 	}
@@ -212,6 +250,22 @@ function getSubscriberId() {
     return subsid;
 }
 
+function forceReLogin(){
+    var prefs = AnyBalance.getPreferences();
+    delete g_headers.Authorization;
+
+    // Сначала пытаемся обновить access token через refresh token.
+    // Это не требует SMS/E-mail и является предпочтительным вариантом.
+    if(loginByRefreshToken())
+        return;
+
+    AnyBalance.trace('Refresh token не сработал — требуется полноценная авторизация T2');
+    if(prefs.password)
+        loginByPassword();
+    else
+        loginBySMS();
+}
+
 function processBalance(result){
     if(!AnyBalance.isAvailable('balance', 'tariff'))
         return;
@@ -221,6 +275,7 @@ function processBalance(result){
     AnyBalance.trace('Пробуем получить баланс и тариф');
 
     var maxTries = 3;
+    var balanceOk = false;
 
     if(AnyBalance.isAvailable('balance')){
         for(var i = 0; i < maxTries; i++) {
@@ -233,14 +288,42 @@ function processBalance(result){
                 }));
         
                 var json = getJson(html);
+                if(!json || !json.data || typeof json.data.value === 'undefined')
+                    throw new Error('T2 не вернул значение баланса');
         
                 getParam(json.data.value, result, 'balance');
+                balanceOk = true;
         
                 AnyBalance.trace('Успешно получили баланс: ' + html);
                 break;
             }
             catch(e) {
-                AnyBalance.trace('Не удалось получить баланс, пробуем еще раз...');
+                AnyBalance.trace('Не удалось получить баланс: ' + e.message);
+            }
+        }
+
+        // Если старый access/refresh token формально ещё существует, но
+        // запросы данных больше не проходят, раньше провайдер просто
+        // оставлял пустые значения, которые AnyBalance показывал как 0/- .
+        // Теперь один раз полностью переавторизуемся и повторяем запрос.
+        if(!balanceOk){
+            AnyBalance.trace('Баланс не получен. Сбрасываем текущую сессию и повторяем авторизацию.');
+            forceReLogin();
+
+            try {
+                var retryHtml = AnyBalance.requestGet(baseurl + 'api/subscribers/' + subsid + '/balance', addHeaders({
+                	Accept: '*/*',
+                	'X-Requested-With': 'XMLHttpRequest',
+                	Referer: baseurl
+                }));
+                var retryJson = getJson(retryHtml);
+                if(!retryJson || !retryJson.data || typeof retryJson.data.value === 'undefined')
+                    throw new Error('После повторной авторизации T2 не вернул значение баланса');
+                getParam(retryJson.data.value, result, 'balance');
+                balanceOk = true;
+                AnyBalance.trace('Баланс успешно получен после повторной авторизации: ' + retryHtml);
+            } catch(e) {
+                throw new AnyBalance.Error('Не удалось получить баланс T2 даже после повторной авторизации: ' + e.message);
             }
         }
     }

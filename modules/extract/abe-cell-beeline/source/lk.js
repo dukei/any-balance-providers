@@ -16,7 +16,6 @@ var g_headers = {
 };
 
 var g_html;
-
 var g_savedData;
 
 function myParseCurrency(text) {
@@ -30,6 +29,9 @@ function myParseCurrency(text) {
 
 function login(baseurl) {
     var prefs = AnyBalance.getPreferences();
+	
+	if(!g_savedData)
+		g_savedData = new SavedData('beeline-mobile-site', prefs.login);
 
     if(prefs.password){
         return loginWithPassword(baseurl);
@@ -440,12 +442,9 @@ function selectAssocNumber(num){
 	
 	for(var i=0; i<assocs.length; ++i){
 		var sso = assocs[i];
-		if(sso.userType !== 'Mobile'){ // Обрабатываем только мобильные номера, домашний интернет и прочее пропускаем
-			continue;
-		}
 	    
 	    var ctn = findCTNForLoginSite(sso.formattedAccountNumber.replace(/[^\d]*/g,'').substr(-10).replace(/(\d{3})(\d{3})(\d{2})(\d{2})/, '$1$2$3$4'));
-		if(ctn){
+        if(ctn){
 			AnyBalance.trace('Используем логин и присоединенный номер ' + ctn);
 			return ctn;
 		}

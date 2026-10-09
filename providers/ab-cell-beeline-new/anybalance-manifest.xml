@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="191">ab-cell-beeline-new</id>
+	<id version="192">ab-cell-beeline-new</id>
 	<name>Билайн (новый кабинет)</name>
 	<api flags="no_browser" min_level="5"/>
 	<description html="true"><![CDATA[
-	<p>редоставляет  информацию о балансе, бонусных баллах, трафике, использованных минутах и SMS на телефоне и многое другое для пользователей оператора сотовой связи Билайн.</p>
+	<p>Предоставляет информацию о балансе, бонусных баллах, трафике, использованных минутах и SMS на телефоне и многое другое для пользователей оператора сотовой связи Билайн.</p>
 	<p>Информация берется из личного кабинета Билайн на сайте <a href="https://www.beeline.ru">https://www.beeline.ru</a> или из <a href="https://www.rustore.ru/catalog/app/ru.beeline.services">мобильного приложения</a> Билайн.</p>
 	<b>ВНИМАНИЕ!</b> Если у вас логин и пароль от старого личного кабинета <a href="https://uslugi.beeline.ru">https://uslugi.beeline.ru</a>, используйте провайдер Билайн (старый кабинет).
 	]]></description>
@@ -91,5 +91,5 @@
 	</counters>
 	<keywords>Сотовый телефон, мобильный, мобильник, билайн, beeline, интернет, Россия</keywords>
 	<type>cell</type>
-	<country>ru, kz, uz</country>
+	<country>ru</country>
 </provider>

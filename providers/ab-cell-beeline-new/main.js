@@ -24,9 +24,6 @@ function main() {
 	if(prefs.source == 'app')
 		baseurl = 'https://my.beeline.ru/';
 	
-	if(!g_savedData)
-		g_savedData = new SavedData('beeline-mobile-site', prefs.login);
-	
 	switch(prefs.source){
     case 'site':
         mainRu(baseurl);

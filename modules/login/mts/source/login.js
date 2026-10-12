@@ -825,7 +825,7 @@ function enterLKNUI(options){
 	if (json.header)
 		AnyBalance.trace('Progress header: ' + json.header);
 	
-	if (json.header && json.header == "device-match-hold") {
+	if (json.header == "device-match-hold") {
 		var params = json;
 		params.callbacks[0].input[0].value = '{"screen":{"screenWidth":1600,"screenHeight":900,"screenColourDepth":24},"userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","platform":"Win32","language":"ru","timezone":{"timezone":-180},"plugins":{"installedPlugins":"internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;"},"fonts":{"installedFonts":"cursive;monospace;serif;sans-serif;fantasy;default;Arial;Arial Black;Arial Narrow;Bookman Old Style;Bradley Hand ITC;Century;Century Gothic;Comic Sans MS;Courier;Courier New;Georgia;Impact;Lucida Console;Monotype Corsiva;Papyrus;Tahoma;Times;Times New Roman;Trebuchet MS;Verdana;"},"appName":"Netscape","appCodeName":"Mozilla","appVersion":"5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","product":"Gecko","productSub":"20030107","vendor":"Google Inc."}';
 		params.callbacks[2].input[0].value = "true";
@@ -842,7 +842,7 @@ function enterLKNUI(options){
 		    AnyBalance.trace('Progress header: ' + json.header);
 	}
 	
-	if (json.header && json.header == "verify-captcha") {
+	if (json.header == "verify-captcha") {
 		AnyBalance.trace('МТС затребовал капчу');
 		var data = json.callbacks[0].output[0].value;
 		var img = getParam(data, /data:image\/\w+?(?:png)?;base64,([^"]+)/i);
@@ -867,7 +867,7 @@ function enterLKNUI(options){
 	    }
 	}
 	
-	if (json.header && json.header == "radius-frontend-request") {
+	if (json.header == "radius-frontend-request") {
 		var params = json;
 		params.callbacks[0].input[0].value = "0";
 		params.callbacks[3].input[0].value = "mts-w-payment";
@@ -881,7 +881,7 @@ function enterLKNUI(options){
 		    AnyBalance.trace('Progress header: ' + json.header);
 	}
 	
-	if (json.header && json.header == "confirm-network-phone") {
+	if (json.header == "confirm-network-phone") {
 		var params = json;
 		
 		params.callbacks[0].input[0].value = "1";
@@ -896,7 +896,7 @@ function enterLKNUI(options){
 		    AnyBalance.trace('Progress header: ' + json.header);
 	}
 	
-	if (json.header && json.header == "network-header-resource" || json.header == "network-header-resource-v1") {
+	if (json.header == "network-header-resource" || json.header == "network-header-resource-v1") {
 		var params = json;
 		params.callbacks[0].input[0].value = "1";
         params.callbacks[1].input[0].value = "mts-w-payment";
@@ -910,7 +910,7 @@ function enterLKNUI(options){
 		    AnyBalance.trace('Progress header: ' + json.header);
 	}
 			
-	if (json.header && json.header == "network-header" || json.header == "network-header-v1") {
+	if (json.header == "network-header" || json.header == "network-header-v1") {
 		var params = json;
 //		params.callbacks[1].input[0].value = "1"; // Оставить по умолчанию, иначе мтс не пропускает запрос
 		params.callbacks[2].input[0].value = "mts-w-payment";
@@ -924,10 +924,10 @@ function enterLKNUI(options){
 		    AnyBalance.trace('Progress header: ' + json.header);
 	}
 	    
-	if (json.header && json.header == "enter-phone") {
+	if (json.header == "enter-phone") {
 		var params = json;
 		params.callbacks[0].input[0].value = "7" + options.login;
-		params.callbacks[1].input[0].value = "1";
+        setConfirmationOption(params, 'OK');
 		params.callbacks[2].input[0].value = "mts-w-payment";
 		
 		html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
@@ -951,11 +951,11 @@ function enterLKNUI(options){
 		json = checkPasskeyOffer(json, loginUrl, headers);
 	}
 		
-	if (json.header && json.header == "verify-password") {
+	if (json.header == "verify-password") {
 	    var params = json;
 		params.callbacks[0].input[0].value = options.password;
 		params.callbacks[1].input[0].value = "true"; // Для установки куки persistent ("Запомнить")
-		params.callbacks[2].input[0].value = "1";
+        setConfirmationOption(params, 'OK');
 		params.callbacks[3].input[0].value = "mts-w-payment";
 		
 		html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
@@ -976,17 +976,40 @@ function enterLKNUI(options){
 		
 		json = checkPasskeyOffer(json, loginUrl, headers);
 	}
-	
-	if (json.header && json.header == "verify-otp") {
+
+    if (json.header == "call-password-id") {
+        AnyBalance.trace('МТС запросил проверку входа с помощью QR кода, отказываемся');
+
+        var params = json;
+        setConfirmationOption(params, 'CANTGET');
+
+        html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
+
+        var json = getJson(html);
+//    	AnyBalance.trace('Отправка кода из SMS: ' + JSON.stringify(json));
+
+        if (json.header)
+            AnyBalance.trace('Progress header: ' + json.header);
+
+    }
+
+    if (json.header == "verify-otp") {
 		AnyBalance.trace('МТС запросил проверку с помощью кода из SMS');
-		var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, высланный на номер ' + recipient + '\n\nЕсли вы не хотите постоянно вводить SMS-пароли при входе, выберите способ входа "Пароль" в настройках безопасности вашего личного кабинета МТС', null, {inputType: 'number', time: 300000});
+
+        const cb = json.callbacks.find(cb => cb.type === "MetadataCallback");
+        const metadata = cb?.output?.[0]?.value;
+        if(!metadata) {
+            AnyBalance.trace(html);
+            throw new AnyBalanceError("Ошибка поиска Metadata в проверке OTP. Сайт изменен?");
+        }
+
+		var code = AnyBalance.retrieveCode(`Пожалуйста, введите код подтверждения, высланный на ${metadata.channel} ${metadata.recipient}`+ '\n\nЕсли вы не хотите постоянно вводить коды при входе, выберите способ входа "Пароль" в настройках безопасности вашего личного кабинета МТС', null, {inputType: 'number', time: 300000});
 		
 		var params = json;
 		params.callbacks[0].input[0].value = code;
-		params.callbacks[1].input[0].value = "true"; // Для установки куки persistent ("Запомнить")
-		params.callbacks[2].input[0].value = "1";
-		params.callbacks[3].input[0].value = "mts-w-payment";
-		
+		params.callbacks[1].input[0].value = true; // Для установки куки persistent ("Запомнить")
+        setConfirmationOption(params, 'OK');
+
 		html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
 	
 	    var json = getJson(html);
@@ -1005,14 +1028,22 @@ function enterLKNUI(options){
 		
 		json = checkPasskeyOffer(json, loginUrl, headers);
 	}
-	
-	if (json.tokenId && json.successUrl) {
+
+    if (json.header == "bank_cpid_busy") {
+        throw new AnyBalance.Error("Сервер авторизации МТС занят, попробуйте ещё раз через минуту");
+    }
+
+    if (json.tokenId && json.successUrl) {
 		AnyBalance.trace('Успешно вошли через NUI: ' + JSON.stringify(json));
 		var tokenId = json.tokenId;
 		var successUrl = json.successUrl;
 		
         // Дологиниваемся корректно с установкой куков сессии
 		html = AnyBalance.requestGet(successUrl, addHeaders({Referer: loginRef}));
+
+        //Сохраняем куки после успешного входа
+        g_savedData.setCookies();
+        g_savedData.save();
 	} else {
 		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?', allowRetry);
@@ -1021,12 +1052,26 @@ function enterLKNUI(options){
     return html;
 }
 
+// В блоке ConfirmationCallback кнопки подтверждений, они могут менять порядок в зависимости
+// от пользователя, поэтому важно их по идентификаторам нажимать!
+function setConfirmationOption(json, name){
+    const ccb = json.callbacks.find(cb => cb.type === "ConfirmationCallback");
+    const options = ccb?.output.find(o => o.name === "options");
+    const optionIndex = options?.value.indexOf(name);
+    if(optionIndex === undefined || optionIndex === -1){
+        AnyBalance.trace(JSON.stringify(json));
+        throw new AnyBalance.Error(`Не удалось найти ссылку ${name} для входа на стадии ${json.header}. Сайт изменен?`);
+    }
+
+    ccb.input[0].value = optionIndex;
+}
+
 function checkPasskeyOffer(json, loginUrl, headers){
-	if (json.header && json.header == "passkey-start-registration") {
+	if (json.header == "passkey-start-registration") {
 		AnyBalance.trace('МТС предложил установить ключ доступа. Отказываемся...');
 		var params = json;
-        params.callbacks[0].input[0].value = "0";
-		params.callbacks[1].input[0].value = "mts-w-payment";
+        setConfirmationOption(params, 'IGNORE');
+		//params.callbacks[1].input[0].value = "mts-w-payment";
 		
 		var html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
 	    

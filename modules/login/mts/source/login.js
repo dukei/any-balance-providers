@@ -132,7 +132,7 @@ function getOrdinaryLoginForm(html){
 }
 
 function loadProtectedPage(fromUrl, headers){
-	const url = fromUrl; //.startsWith(g_baseurlLogin) ? fromUrl : 'https://united-auth.ssl.mts.ru/account/login?goto=https://lk.mts.ru/&xClientId=LK';
+	const url = fromUrl.startsWith('https://lk.mts.ru') ? 'https://united-auth.ssl.mts.ru/account/login?goto=https://lk.mts.ru/&xClientId=LK' : fromUrl;
 
     var html = AnyBalance.requestGet(url, headers);
     
@@ -141,25 +141,29 @@ function loadProtectedPage(fromUrl, headers){
 		if(!AnyBalance.getCapabilities().clientOkHttp && !AnyBalance.getCapabilities().clientDebugger)
         	throw new AnyBalance.Error('Для работы провайдера требуется обновить приложение. Новая версия AnyBalance доступна на RuStore');
         AnyBalance.setOptions({CLIENT: 'okhttp'});
-//		clearAllCookies();
+		clearAllCookies(/qrator|StickyID/i);
 
         const bro = new BrowserAPI({
-            provider: 'mts-login-q5',
-            userAgent: headers["User-Agent"],
+            provider: 'mts-login-q6',
+            //userAgent: headers["User-Agent"],
             headful: true,
 			//noInterception: true,
-            userInteraction: true,
+            childProcess: true,
+            userInteraction: false,
             singlePage: true,
             rules: [{
                 resType: /^(image|stylesheet|font)$/.toString(),
                 action: 'abort',
             }, {
 		        url: /_qrator\/qauth(?:_\w+)*\.js/.toString(),
-                action: 'cache',
+                action: 'continue',
                 valid: 360*1000
             }, {
+                url: /_qrator\/captcha\/gen/.toString(),
+                action: 'response',
+            }, {
                 url: /_qrator/.toString(),
-                action: 'request',
+                action: 'continue',
             }, {
                 resType: /^(image|stylesheet|font|script)$/i.toString(),
                 action: 'abort',
@@ -168,20 +172,44 @@ function loadProtectedPage(fromUrl, headers){
                 action: 'abort',
             }, {
 				url: /\.mts\.ru/.toString(),
-                action: 'request',
+                action: 'continue',
 			}, {
                 url: /.*/.toString(),
                 action: 'abort',
             }],
+            additionalRequestHeaders: [
+                {
+                    url: /\.js/,
+                    headers: {
+                        'Accept-Encoding': 'gzip, deflate, br, zstd',
+                        'Sec-Fetch-Site': 'same-origin',
+                        'Sec-Fetch-Mode': 'no-cors',
+                        'sec-fetch-dest': 'script',
+                    },
+                },
+                {
+                    url: /__qrator/,
+                    headers: {
+                        'Accept-Encoding': 'gzip, deflate, br, zstd',
+                        'Sec-Fetch-Site': 'same-origin',
+                        'Sec-Fetch-Mode': 'cors',
+                        'sec-fetch-dest': 'empty',
+                    },
+                },
+                {
+                    headers: {
+                        'Accept-Encoding': 'gzip, deflate, br, zstd',
+                        'Sec-Fetch-Site': 'none',
+                        'Sec-Fetch-Mode': 'navigate',
+                        'sec-fetch-user': '?1',
+                        'sec-fetch-dest': 'document',
+                    },
+                }
+            ],
 			clientRules: [{
                 url: /__qrator\/captcha\/gen/,
                 action: solveQratorCaptcha
             }],
-            additionalRequestHeaders: [{
-                headers: {
-			        'User-Agent': headers["User-Agent"]
-                }
-		    }],
             debug: AnyBalance.getPreferences().debug
         });
 
@@ -227,9 +255,10 @@ function solveQratorCaptcha(bro, req, resp){
     })
 
     return (respResult) => {
+        const r = req.r || resp.r;
         const waitId = respResult.tasks[myTaskIdx];
 
-        const captchaInfo = JSON.parse(resp.r.body)
+        const captchaInfo = JSON.parse(r.body)
         const image = getParam(captchaInfo.image, /base64,(.*)/)
         const answer = AnyBalance.retrieveCode('МТС требует ввести капчу, чтобы подтвердить, что вы не робот. Пожалуйста, введите символы с картинки', image, {time: 60000});
 

@@ -23,6 +23,7 @@ const BrowserAPI = (() => {
         debug?: boolean
         userAgent: string,
         singlePage?: boolean,
+        childProcess?: boolean,
         incognito?: boolean, //По умолчанию true
         headful?: boolean,
         noInterception?: boolean,
@@ -130,6 +131,7 @@ const BrowserAPI = (() => {
                 headful: this.options.headful,
                 noInterception: this.options.noInterception,
                 userInteraction: this.options.userInteraction,
+                childProcess: this.options.childProcess,
                 incognito: this.options.incognito,
                 url: url,
                 rules: this.options.rules
@@ -147,79 +149,96 @@ const BrowserAPI = (() => {
                 json = this.requestAPI('base/status?page=' + page);
                 AnyBalance.trace(`Loading status of page ${page}: ${json.loadStatus} (попытка ${num})`);
                 if (json.pendingRequests && json.pendingRequests.length > 0) {
-
+                    let cookiesPresent = false;
                     for (let j = 0; j < json.pendingRequests.length; ++j) {
+                        let requestResult;
                         const pr = json.pendingRequests[j];
-                        const headers = [];
-                        for (let name in pr.headers) {
-                            const hv = pr.headers[name];
-                            if (hv.trim() === '')
-                                continue;
-                            const values = hv.split('\n');
-                            for (let i = 0; i < values.length; ++i) {
-                                if (name.toLowerCase() === 'content-length')
-                                    continue;
-                                headers.push([name, values[i]]);
-                            }
-                        }
 
-                        let additionalHeaders = {};
-                        if (this.options.additionalRequestHeaders) {
-                            for (let a = 0; a < this.options.additionalRequestHeaders.length; ++a) {
-                                const arh = this.options.additionalRequestHeaders[a];
-                                if (!arh.url || arh.url.test(pr.url)) {
-                                    const headerMatchCounts = this.headerMatchCounts;
-                                    if (!arh.maxCount || (headerMatchCounts[a] || 0) < arh.maxCount) {
-                                        additionalHeaders = arh.headers || {};
-                                        if (arh.maxCount)
-                                            headerMatchCounts[a] = (headerMatchCounts[a] || 0) + 1;
-                                        break;
+                        if(!pr.r) {
+                            //Это request
+                            const headers = [];
+                            for (let name in pr.headers) {
+                                let hv = pr.headers[name], namel = name.toLowerCase();
+                                if (hv.trim() === '')
+                                    continue;
+                                if (namel === 'content-length')
+                                    continue;
+                                if (namel === 'cookie')
+                                    cookiesPresent = true;
+                                const values = hv.split('\n');
+                                for (let i = 0; i < values.length; ++i) {
+                                    headers.push([name, values[i]]);
+                                }
+                            }
+
+                            //if(!cookiesPresent)
+                            //    headers.push(['cookie', null]);
+
+                            let additionalHeaders = {};
+                            if (this.options.additionalRequestHeaders) {
+                                for (let a = 0; a < this.options.additionalRequestHeaders.length; ++a) {
+                                    const arh = this.options.additionalRequestHeaders[a];
+                                    if (!arh.url || arh.url.test(pr.url)) {
+                                        const headerMatchCounts = this.headerMatchCounts;
+                                        if (!arh.maxCount || (headerMatchCounts[a] || 0) < arh.maxCount) {
+                                            additionalHeaders = arh.headers || {};
+                                            if (arh.maxCount)
+                                                headerMatchCounts[a] = (headerMatchCounts[a] || 0) + 1;
+                                            break;
+                                        }
                                     }
                                 }
                             }
-                        }
 
-                        const html = AnyBalance.requestPost(pr.url, pr.body, addHeaders(additionalHeaders, headers), {
-                            HTTP_METHOD: pr.method,
-                            options: {
-                                FORCE_CHARSET: forcedCharset,
-                                MANUAL_REDIRECTS: true
-                            }
-                        });
-                        const params = AnyBalance.getLastResponseParameters();
-                        const convertedHeaders = {};
-                        let ct;
+                            const html = AnyBalance.requestPost(pr.url, pr.body, addHeaders(additionalHeaders, headers), {
+                                HTTP_METHOD: pr.method,
+                                options: {
+                                    FORCE_CHARSET: forcedCharset,
+                                    MANUAL_REDIRECTS: true
+                                }
+                            });
+                            const params = AnyBalance.getLastResponseParameters();
+                            const convertedHeaders = {};
+                            let ct;
 
-                        for (let i = 0; i < params.headers.length; ++i) {
-                            const h = params.headers[i];
-                            const name = h[0].toLowerCase();
-                            if (['transfer-encoding', 'content-encoding'].indexOf(name) >= 0)
-                                continue; //Возвращаем контент целиком
-                            if (name === 'content-length') {
-                                //https://stackoverflow.com/questions/5515869/string-length-in-bytes-in-javascript
-                                h[1] = '' + unescape(encodeURIComponent(html || '')).length;
+                            for (let i = 0; i < params.headers.length; ++i) {
+                                const h = params.headers[i];
+                                const name = h[0].toLowerCase();
+                                if (['transfer-encoding', 'content-encoding'].indexOf(name) >= 0)
+                                    continue; //Возвращаем контент целиком
+                                if (name === 'content-length') {
+                                    //https://stackoverflow.com/questions/5515869/string-length-in-bytes-in-javascript
+                                    h[1] = '' + unescape(encodeURIComponent(html || '')).length;
+                                }
+                                if (convertedHeaders[name] === undefined) {
+                                    convertedHeaders[name] = h[1];
+                                } else if (Array.isArray(convertedHeaders[name])) {
+                                    convertedHeaders[name].push(h[1]);
+                                } else {
+                                    convertedHeaders[name] = [convertedHeaders[name], h[1]];
+                                }
+                                if (name === 'content-type')
+                                    ct = h[1];
                             }
-                            if (convertedHeaders[name] === undefined) {
-                                convertedHeaders[name] = h[1];
-                            } else if (Array.isArray(convertedHeaders[name])) {
-                                convertedHeaders[name].push(h[1]);
-                            } else {
-                                convertedHeaders[name] = [convertedHeaders[name], h[1]];
-                            }
-                            if (name === 'content-type')
-                                ct = h[1];
-                        }
-                        const prDone = {
-                            id: pr.id,
-                            page: page,
-                            r: {
+
+                            requestResult = {
                                 status: AnyBalance.getLastStatusCode(),
                                 headers: convertedHeaders,
                                 charset: forcedCharset,
                                 contentType: ct,
                                 body: html
                             }
+                        }else{
+                            //Это response
+                            requestResult = "continue";
                         }
+
+                        const prDone = {
+                            id: pr.id,
+                            page: page,
+                            r: requestResult
+                        }
+
                         const callbacks = this.applyClientRules(pr, prDone)
                         const ret = this.requestAPI('base/response', prDone);
                         callbacks.forEach(cb => cb(ret, this, pr, prDone))

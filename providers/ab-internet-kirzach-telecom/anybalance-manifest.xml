@@ -6,8 +6,10 @@
 	<description html="true"><![CDATA[
 	<p>Предоставляет информацию о балансе и услугах провайдера Киржач Телеком (г. Киржач, Владимирская область).</p>
 	<p>Информация берется из личного кабинета <a href="https://lk.kirzhachtelecom.ru/login">https://lk.kirzhachtelecom.ru/login</a></p>
+
+        Автор: K. Molchanov https://github.com/k03mad
 	]]></description>
-	<author>K. Molchanov</author>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
 	<depends>
 		<module id="library"/>
 	</depends>

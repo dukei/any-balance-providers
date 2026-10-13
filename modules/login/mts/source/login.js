@@ -293,6 +293,7 @@ function enterMtsLK(options) {
 	
 	if(/__qrator|Access to [^<]* is forbidden|Доступ к сайту [^<]* запрещен/.test(html)){
 		if(!isLoginAfresh(baseurl)){
+            //https://login.mts.ru/amserver/NUI/?client_id=MTS_Profile&goto=https://lk.mts.ru
 		    // Если упёрлись в Qrator, пробуем обойти по главной
 		    html = loadProtectedPage('https://lk.mts.ru/', g_headers);
 	        // Пробуем повторить запрос. Обход по url не сработает, поэтому делаем раздельно
@@ -445,7 +446,7 @@ function loginOrdinaryForm(html, options){
     	var recaptcha = solveRecaptcha('МТС требует ввода рекапчи, как и при входе через браузер. Пожалуйста, докажите, что вы не робот.', loginUrl, sitekey);
     	params.IDToken3 = recaptcha;
     }
-    
+
     // AnyBalance.trace("Login params: " + JSON.stringify(params));
     AnyBalance.trace("Логинимся с заданным номером");
     html = AnyBalance.requestPost(options.url, params, addHeaders({Origin: g_baseurlLogin, Referer: options.url}));
@@ -464,7 +465,7 @@ function enterMTS(options){
 
     var html = options.html;
     fixCookies();
-    
+
     if(!html || !getOrdinaryLoginForm(html)){
 		html = AnyBalance.requestGet(loginUrl, g_headers);
         fixCookies();
@@ -489,7 +490,7 @@ function enterMTS(options){
 		        return html;
 		    }
 		}
-	    
+
         if(AnyBalance.getLastStatusCode() >= 500)
         	throw new AnyBalance.Error("Ошибка на сервере МТС, сервер не смог обработать запрос. Можно попытаться позже...", allowRetry);
     }
@@ -500,16 +501,16 @@ function enterMTS(options){
 	}
 
 	html = redirectIfNeeded(html);
-	
+
 	var loginFormatted = options.login.replace(/.*(\d{3})(\d{3})(\d{2})(\d{2})$/i, '$1 $2-$3-$4');
 
     var form;
     if(form = getOrdinaryLoginForm(html)){  //Обычная форма входа
     	html = loginOrdinaryForm(html, options);
-    }else if(form = (getElement(html, /<form[^>]+class="section__form form -loginForm"/i) || getElement(html, /<form[^>]+class="section__passwordForm passwordForm "/i))){       
+    }else if(form = (getElement(html, /<form[^>]+class="section__form form -loginForm"/i) || getElement(html, /<form[^>]+class="section__passwordForm passwordForm "/i))){
 		AnyBalance.trace('Найдена корп. форма входа');
         loginUrl = AnyBalance.getLastUrl();
-		
+
 		if(form = getElement(html, /<form[^>]+class="section__form form -loginForm"/i)){ // Может сразу выкатить форму ввода пароля, проверяем на наличие формы логина
 		    var params = createFormParams(form, function (params, input, name, value) {
                 if (name == 'login'){
@@ -517,14 +518,14 @@ function enterMTS(options){
 			    }else if (name == 'IDToken1'){
                     value = options.login;
 			    }
-			    
+
                 return value;
             });
-            
+
             html = AnyBalance.requestPost(loginUrl, params, addHeaders({Origin: g_baseurlLogin, Referer: loginUrl}));
             fixCookies();
 		}
-    	
+
     	form = getElement(html, /<form[^>]+class="section__passwordForm passwordForm "/i);
 		if(!form){
     		var error = getElement(html, /<[^>]+errorText/i, replaceTagsAndSpaces);
@@ -539,7 +540,7 @@ function enterMTS(options){
         var params = createFormParams(form, function (params, input, name, value) {
             if (name == 'IDToken1')
                 value = options.password;
-			
+
             return value;
         });
 
@@ -548,7 +549,7 @@ function enterMTS(options){
         AnyBalance.setCookie('.mts.ru', 'MTSWebSSO', msocookie);
         fixCookies();
     }else if(/bobcmn/i.test(html)){
-    	throw new AnyBalance.Error('МТС ввел защиту от автоматического входа. Пожалуйста, обратитесь в поддержку МТС, составьте обращение о невозможности использования третьесторонних программ слежения за балансом. Напомните им, что вы можете перейти к другому оператору, который не противодействует отслеживанию баланса.');       
+    	throw new AnyBalance.Error('МТС ввел защиту от автоматического входа. Пожалуйста, обратитесь в поддержку МТС, составьте обращение о невозможности использования третьесторонних программ слежения за балансом. Напомните им, что вы можете перейти к другому оператору, который не противодействует отслеживанию баланса.');
     }else{
     	if(!html)
     		throw new AnyBalance.Error('Личный кабинет МТС временно недоступен. Попробуйте ещё раз позже');
@@ -577,218 +578,6 @@ function enterMTS(options){
         throw new AnyBalance.Error('Не удаётся зайти в личный кабинет. Он изменился или проблемы на сайте.', allowRetry);
     }
 
-    return html;
-}
-
-function enterLKUI(html, options){
-	var prefs = AnyBalance.getPreferences();
-
-	var loginFormatted = options.login.replace(/.*(\d{3})(\d{3})(\d{2})(\d{2})$/i, '$1 $2-$3-$4');
-	
-	if(/captchaForm/i.test(html)){
-		AnyBalance.trace('МТС затребовал капчу');
-		var form = getElement(html, /<form[^>]+captchaForm[^>]*>/i);
-	    if(!form){
-	    	AnyBalance.trace(html);
-            throw new AnyBalance.Error('Не удалось найти форму для ввода капчи. Сайт изменен?');
-        }
-	    
-		var img = getParam(form, /data:image\/\w+?(?:png)?;base64,([^"]+)/i);
-		var captcha = AnyBalance.retrieveCode('МТС требует ввести капчу для входа в личный кабинет, чтобы подтвердить, что вы не робот. Пожалуйста, введите символы с картинки', img);
-		
-		var params = createFormParams(form, function (params, input, name, value) {
-            var undef;
-	        if (name == 'IDToken2')
-                value = captcha;
-            else if (name == 'noscript')
-                value = undef; //Снимаем галочку
-        
-            return value;
-        });
-        
-		// Отправляем капчу
-        html = AnyBalance.requestPost('https://login.mts.ru/amserver/UI/Login?no-config&arg=newsession', params, addHeaders({
-        	Origin: 'https://login.mts.ru',
-	    	Referer: 'https://login.mts.ru/amserver/UI/Login?no-config&arg=newsession'
-	    }));
-		
-		if (!html || AnyBalance.getLastStatusCode() > 400) { // Через VPN иногда не пускает с ошибкой 403. Оповещаем, чтобы не смущать отсутствием формы 
-            throw new AnyBalance.Error('Личный кабинет МТС временно недоступен. Попробуйте ещё раз позже');
-	    }
-	
-	    if(/captchaForm/i.test(html)){
-	    	var form = getElement(html, /<form[^>]+captchaForm[^>]*>/i);
-            var error = getParam(form, null, null, /class="errorText"[\s\S]*?data-error="*>?([\s\S]*?)[">]*?<\/p>/i, replaceTagsAndSpaces);
-            if (error){
-                throw new AnyBalance.Error (error, null, /код/i.test(error));
-            }
-           	
-            AnyBalance.trace(html);
-			throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
-        }
-	}
-	
-	if(/loginForm/i.test(html)){ // Ввод номера
-	    var form = getElement(html, /<form[^>]+loginForm[^>]*>/i);
-	    if(!form){
-	    	AnyBalance.trace(html);
-            throw new AnyBalance.Error('Не удалось найти форму для ввода номера. Сайт изменен?');
-        }
-	
-	    var params = createFormParams(form, function (params, input, name, value) {
-            var undef;
-	        if (name == 'login')
-                value = loginFormatted;
-            else if (name == 'IDToken1')
-                value = options.login;
-            else if (name == 'IDToken2')
-                value = options.password;
-            else if (name == 'noscript')
-                value = undef; //Снимаем галочку
-        
-            return value;
-        });
-    
-        // Отправляем номер телефона
-        html = AnyBalance.requestPost('https://login.mts.ru/amserver/UI/Login?no-config&arg=newsession', params, addHeaders({
-        	Origin: 'https://login.mts.ru',
-	    	Referer: 'https://login.mts.ru/amserver/UI/Login?no-config&arg=newsession'
-	    }));
-	}
-    
-	var form = getElement(html, /<form[^>]*>/i); // devicePrint
-	if(!form){
-		AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удалось найти форму для ввода devicePrint. Сайт изменен?');
-    }
-
-	var params = createFormParams(form, function (params, input, name, value) {
-        var undef;
-	    if (name == 'login')
-            value = loginFormatted;
-        else if (name == 'IDToken1')
-            value = options.login;
-        else if (name == 'IDToken2')
-            value = '{"screen":{"screenWidth":1600,"screenHeight":900,"screenColourDepth":24},"userAgent":"Mozilla/5.0+(Windows+NT+10.0;+WOW64)+AppleWebKit/537.36+(KHTML,+like+Gecko)+Chrome/126.0.0.0+Safari/537.36","platform":"Win32","language":"ru","timezone":{"timezone":-180},"plugins":{"installedPlugins":"internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;"},"fonts":{"installedFonts":"cursive;monospace;serif;sans-serif;fantasy;default;Arial;Arial+Black;Arial+Narrow;Bookman+Old+Style;Bradley+Hand+ITC;Century;Century+Gothic;Comic+Sans+MS;Courier;Courier+New;Georgia;Impact;Lucida+Console;Monotype+Corsiva;Papyrus;Tahoma;Times;Times+New+Roman;Trebuchet+MS;Verdana;"},"appName":"Netscape","appCodeName":"Mozilla","appVersion":"5.0+(Windows+NT+10.0;+WOW64)+AppleWebKit/537.36+(KHTML,+like+Gecko)+Chrome/126.0.0.0+Safari/537.36","product":"Gecko","productSub":"20030107","vendor":"Google+Inc."}';
-        else if (name == 'noscript')
-            value = undef; //Снимаем галочку
-        
-        return value;
-    });
-
-    // Теперь МТС ещё и devicePrint требует. Отправляем
-    html = AnyBalance.requestPost('https://login.mts.ru/amserver/UI/Login?no-config&arg=newsession', params, addHeaders({
-    	Origin: 'https://login.mts.ru',
-		Referer: 'https://login.mts.ru/amserver/UI/Login?no-config&arg=newsession'
-	}));
-	
-	if(/новый пользователь|Разблокировать/i.test(html)){
-		AnyBalance.trace(html);
-        throw new AnyBalance.Error('Ваш номер не зарегистрирован в МТС или доступ к нему заблокирован. Пожалуйста, перейдите на страницу авторизации https://login.mts.ru/amserver/UI/Login через браузер и выполните действия по регистрации или восстановлению доступа', null, true);
-    }
-	
-	if(/passwordForm/i.test(html)){
-	    var form = getElement(html, /<form[^>]+passwordForm[^>]*>/i);
-	    if(!form){
-	    	AnyBalance.trace(html);
-            throw new AnyBalance.Error('Не удалось найти форму для ввода пароля. Сайт изменен?');
-        }
-
-        var params = createFormParams(form, function (params, input, name, value) {
-            var undef;
-	        if (name == 'login')
-                value = loginFormatted;
-            else if (name == 'IDToken1')
-                value = options.login;
-            else if (name == 'IDToken2')
-                value = options.password;
-            else if (name == 'noscript')
-                value = undef; //Снимаем галочку
-		
-            return value;
-        });
-    
-        // Проверка пароля
-        html = AnyBalance.requestPost('https://login.mts.ru/amserver/UI/Login?no-config&arg=newsession', params, addHeaders({
-	    	Origin: 'https://login.mts.ru',
-	    	Referer: 'https://login.mts.ru/amserver/UI/Login?no-config&arg=newsession'
-	    }));
-	
-	    if(/passwordForm/i.test(html)){
-	    	var form = getElement(html, /<form[^>]+passwordForm[^>]*>/i);
-            var error = getParam(form, null, null, /class="errorText"[\s\S]*?data-error="*>?([\s\S]*?)[">]*?<\/p>/i, replaceTagsAndSpaces);
-            if (error){
-                throw new AnyBalance.Error (error, null, /парол/i.test(error));
-            }
-            	
-            AnyBalance.trace(html);
-			throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
-        }
-	}
-	
-	if(/codeCheckForm/i.test(html)){
-		AnyBalance.trace('МТС запросил проверку с помощью кода из SMS');
-		var code = AnyBalance.retrieveCode('Пожалуйста, введите код подтверждения, высланный на номер +7 ' + loginFormatted + '.\n\nЕсли вы не хотите постоянно вводить SMS-пароли при входе, выберите способ входа "Пароль" в настройках безопасности вашего личного кабинета МТС', null, {inputType: 'number', time: 300000});
-	    var form = getElement(html, /<form[^>]+codeCheckForm[^>]*>/i);
-	    if(!form){
-	    	AnyBalance.trace(html);
-            throw new AnyBalance.Error('Не удалось найти форму для ввода кода из SMS. Сайт изменен?');
-        }
-
-        var params = createFormParams(form, function (params, input, name, value) {
-            var undef;
-	        if (name == 'IDToken1')
-                value = code;
-            else if (name == 'noscript')
-                value = undef; //Снимаем галочку
-		
-            return value;
-        });
-    
-        // Проверка пароля
-        html = AnyBalance.requestPost('https://login.mts.ru/amserver/UI/Login?no-config&arg=newsession', params, addHeaders({
-	    	Origin: 'https://login.mts.ru',
-	    	Referer: 'https://login.mts.ru/amserver/UI/Login?no-config&arg=newsession'
-	    }));
-	
-	    if(/codeCheckForm/i.test(html)){
-	    	var form = getElement(html, /<form[^>]+codeCheckForm[^>]*>/i);
-            var error = getParam(form, null, null, /class[^>]+errorText"[\s\S]*?oneLine"*>?([\s\S]*?)[">]*?<\/span>/i, replaceTagsAndSpaces);
-            if (error){
-                throw new AnyBalance.Error (error, null, /код/i.test(error));
-            }
-			
-            AnyBalance.trace(html);
-            throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
-        }
-	}
-    
-	var form = getElement(html, /<form[^>]+gaForm[^>]*>/i); // Логинимся наконец
-	if(!form){
-		AnyBalance.trace(html);
-        throw new AnyBalance.Error('Не удалось найти форму входа. Сайт изменен?');
-    }
-
-    var params = createFormParams(form, function (params, input, name, value) {
-        var undef;
-	    if (name == 'login')
-            value = loginFormatted;
-        else if (name == 'IDToken1')
-            value = options.login;
-        else if (name == 'IDToken2')
-            value = options.password;
-        else if (name == 'noscript')
-            value = undef; //Снимаем галочку
-
-        return value;
-    });
-    
-    // Логинимся с заданным номером
-    html = AnyBalance.requestPost('https://login.mts.ru/amserver/UI/Login?no-config&arg=newsession', params, addHeaders({
-		Origin: 'https://login.mts.ru',
-		Referer: 'https://login.mts.ru/amserver/UI/Login?no-config&arg=newsession'
-	}));
-    
     return html;
 }
 
@@ -981,17 +770,32 @@ function enterLKNUI(options){
         AnyBalance.trace('МТС запросил проверку входа с помощью QR кода, отказываемся');
 
         var params = json;
-        setConfirmationOption(params, 'CANTGET');
+        setConfirmationOption(params, ['OTP', 'CANTGET']);
 
         html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
 
         var json = getJson(html);
-//    	AnyBalance.trace('Отправка кода из SMS: ' + JSON.stringify(json));
 
         if (json.header)
             AnyBalance.trace('Progress header: ' + json.header);
 
     }
+
+    if (json.header == "esia-oauth2-auth") {
+        AnyBalance.trace('МТС запросил проверку входа через Госуслуги, отказываемся');
+
+        var params = json;
+        setConfirmationOption(params, ['OTP', 'CANTGET']);
+
+        html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
+
+        var json = getJson(html);
+
+        if (json.header)
+            AnyBalance.trace('Progress header: ' + json.header);
+
+    }
+
 
     if (json.header == "verify-otp") {
 		AnyBalance.trace('МТС запросил проверку с помощью кода из SMS');
@@ -1033,6 +837,10 @@ function enterLKNUI(options){
         throw new AnyBalance.Error("Сервер авторизации МТС занят, попробуйте ещё раз через минуту");
     }
 
+    if (json.header == "restore-fail") {
+        throw new AnyBalance.Error("МТС не может подтвердить, что это ваш номер. Попробуйте войти через браузер, добавьте в профиль e-mail и подтвердите его.");
+    }
+
     if (json.tokenId && json.successUrl) {
 		AnyBalance.trace('Успешно вошли через NUI: ' + JSON.stringify(json));
 		var tokenId = json.tokenId;
@@ -1057,13 +865,16 @@ function enterLKNUI(options){
 function setConfirmationOption(json, name){
     const ccb = json.callbacks.find(cb => cb.type === "ConfirmationCallback");
     const options = ccb?.output.find(o => o.name === "options");
-    const optionIndex = options?.value.indexOf(name);
-    if(optionIndex === undefined || optionIndex === -1){
-        AnyBalance.trace(JSON.stringify(json));
-        throw new AnyBalance.Error(`Не удалось найти ссылку ${name} для входа на стадии ${json.header}. Сайт изменен?`);
+    const names = Array.isArray(name) ? name : [name];
+    for(let name of names) {
+        const optionIndex = options?.value.indexOf(name);
+        if (optionIndex !== undefined && optionIndex >= 0) {
+            ccb.input[0].value = optionIndex;
+            return;
+        }
     }
-
-    ccb.input[0].value = optionIndex;
+    AnyBalance.trace(JSON.stringify(json));
+    throw new AnyBalance.Error(`Не удалось найти ссылку ${names.join(',')} для входа на стадии ${json.header}. Сайт изменен?`);
 }
 
 function checkPasskeyOffer(json, loginUrl, headers){

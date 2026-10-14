@@ -148,7 +148,7 @@ function loadProtectedPage(fromUrl, headers){
             //userAgent: headers["User-Agent"],
             headful: true,
 			//noInterception: true,
-            childProcess: true,
+            //childProcess: true,
             userInteraction: false,
             singlePage: true,
             rules: [{
@@ -590,11 +590,17 @@ function enterLKNUI(options){
 	var recipient = getParam(options.login, null, null, null, [/.*(\d{3})(\d{3})(\d{2})(\d{2})$/, '+7 ($1) $2-$3-$4']);
 	
 	var headers = addHeaders({
-		'Accept': '*/*',
+        'Accept': 'application/json',
         'Accept-Api-Version': 'resource=4.0, protocol=1.0',
 		'Content-Type': 'application/json;charset=UTF-8',
 		'Origin': 'https://login.mts.ru',
-		'Referer': loginRef
+		'Referer': loginRef,
+        "sec-ch-ua-platform": '"Windows"',
+        "sec-ch-ua": '"Chromium";v="154", "Google Chrome";v="154", "Not A(Brand";v="99"',
+        "sec-ch-ua-mobile": "?0",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Dest": "empty"
 	});
 	
 	var html = AnyBalance.requestPost(loginUrl, null, addHeaders(headers));
@@ -610,11 +616,14 @@ function enterLKNUI(options){
         AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удаётся зайти в личный кабинет. Он изменился или проблемы на сайте.', allowRetry);
     }
-	
+
 	if (json.header)
 		AnyBalance.trace('Progress header: ' + json.header);
-	
-	if (json.header == "device-match-hold") {
+
+
+    const pk = new Passkey(g_savedData, g_headers);
+
+    if (json.header == "device-match-hold") {
 		var params = json;
 		params.callbacks[0].input[0].value = '{"screen":{"screenWidth":1600,"screenHeight":900,"screenColourDepth":24},"userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","platform":"Win32","language":"ru","timezone":{"timezone":-180},"plugins":{"installedPlugins":"internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;"},"fonts":{"installedFonts":"cursive;monospace;serif;sans-serif;fantasy;default;Arial;Arial Black;Arial Narrow;Bookman Old Style;Bradley Hand ITC;Century;Century Gothic;Comic Sans MS;Courier;Courier New;Georgia;Impact;Lucida Console;Monotype Corsiva;Papyrus;Tahoma;Times;Times New Roman;Trebuchet MS;Verdana;"},"appName":"Netscape","appCodeName":"Mozilla","appVersion":"5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","product":"Gecko","productSub":"20030107","vendor":"Google Inc."}';
 		params.callbacks[2].input[0].value = "true";
@@ -714,38 +723,116 @@ function enterLKNUI(options){
 	}
 	    
 	if (json.header == "enter-phone") {
-		var params = json;
-		params.callbacks[0].input[0].value = "7" + options.login;
-        setConfirmationOption(params, 'OK');
-		params.callbacks[2].input[0].value = "mts-w-payment";
-		
-		html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
-	
-	    var json = getJson(html);
+
+        if(pk.hasKey()){
+            const params = json;
+            setConfirmationOption(params, 'ENTER_DISCOVERABLE_PASSKEY');
+            html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
+            json = getJson(html);
+            if (json.header)
+                AnyBalance.trace('Progress header: ' + json.header);
+
+        }else {
+            var params = json;
+            params.callbacks[0].input[0].value = "7" + options.login;
+            setConfirmationOption(params, 'OK');
+            params.callbacks[2].input[0].value = "mts-w-payment";
+
+            html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
+
+            var json = getJson(html);
 //	    AnyBalance.trace('Отправка номера телефона: ' + JSON.stringify(json));
-        
-		if (json.header)
-		    AnyBalance.trace('Progress header: ' + json.header);
-		
-		if (json.header == "enter-phone") {
-	    	AnyBalance.trace(html);
-            throw new AnyBalance.Error('Неверный номер телефона!', allowRetry);
-	    }
-		
-		if (json.header == "lock-change-owner") {
-	    	AnyBalance.trace(html);
-            throw new AnyBalance.Error('Номер заблокирован!', allowRetry);
-	    }
-		
-		json = checkPasskeyOffer(json, loginUrl, headers);
+
+            if (json.header)
+                AnyBalance.trace('Progress header: ' + json.header);
+
+            if (json.header == "enter-phone") {
+                AnyBalance.trace(html);
+                throw new AnyBalance.Error('Неверный номер телефона!', allowRetry);
+            }
+
+            if (json.header == "lock-change-owner") {
+                AnyBalance.trace(html);
+                throw new AnyBalance.Error('Номер заблокирован!', allowRetry);
+            }
+
+            json = checkPasskeyOffer(json, loginUrl, headers);
+        }
 	}
+
+    if (json.header == "call-password-id") {
+        AnyBalance.trace('МТС запросил проверку входа с помощью звонка');
+
+        const metadata = getCbOutput(json, "MetadataCallback", "data").value;
+        try{
+            AnyBalance.retrieveCode(`Пожалуйста, позвоните с номера ${metadata.recipient} на номер ` +
+                `${metadata.cpiConfirmationNumber.replace(/^(7)(\d\d\d)(\d\d\d)(\d\d)(\d\d)$/, '+7($2)$3-$4-$5')}\n` +
+                `После звонка отмените ввод кода.`, null, {inputType: 'number', time: 120000});
+        }catch(e){
+            AnyBalance.trace(e.message);
+        }
+
+        let i=10;
+        for(; i>0; --i){
+            html = AnyBalance.requestGet(`${metadata.cpiLink}${metadata.cpiCallId}`, addHeaders(headers));
+            const code = AnyBalance.getLastStatusCode();
+            AnyBalance.trace(`Проверяем статус звонка ${i+1}: ${code}`);
+            if(code === 200){
+                setConfirmationOption(json, 'OK');
+                html = AnyBalance.requestPost(loginUrl, JSON.stringify(json), addHeaders(headers));
+                json = getJson(html);
+                if (json.header)
+                    AnyBalance.trace('Progress header: ' + json.header);
+                break;
+            }
+            if(i > 1)
+                AnyBalance.sleep(1000);
+        }
+
+        if(i <= 0){
+            throw new AnyBalance.Error("Звонок не совершен");
+        }
+
+    }
+
+    if(json.header === 'passkey-discoverable-authenticate'){
+        if(pk.hasKey()){
+            const tic = getCbOutput(json, "TextInputCallback", "defaultText");
+            const keyData = JSON.parse(tic.value);
+            const sessionKey = getCbOutput(json, "TextOutputCallback", "session-key").value;
+            keyData.origin = "https://login.mts.ru";
+            keyData.counter = 0;
+            const result = pk.login(keyData);
+            result.sessionKey = sessionKey;
+
+            getCbOutput(json, "TextInputCallback").input[0].value = JSON.stringify(result);
+            setConfirmationOption(json, 'OK')
+
+            html = AnyBalance.requestPost(loginUrl, JSON.stringify(json), addHeaders(headers));
+            if(AnyBalance.getLastStatusCode() >= 400 && AnyBalance.getLastStatusCode() < 500){
+                pk.clearKey();
+                throw new AnyBalance.Error('Не удалось авторизоваться через Passkey. Возможно, он удален в кабинете.' +
+                    ' Авторизация аккаунта по Passkey деактивирована, попробуйте обновить аккаунт ещё раз.', {allow_retry: true});
+            }
+
+            json = getJson(html);
+            if (json.header)
+                AnyBalance.trace('Progress header: ' + json.header);
+        }else{
+            throw new AnyBalance.Error("Требуется passkey, но он не сохранён")
+        }
+    }
 		
 	if (json.header == "verify-password") {
-	    var params = json;
-		params.callbacks[0].input[0].value = options.password;
-		params.callbacks[1].input[0].value = "true"; // Для установки куки persistent ("Запомнить")
-        setConfirmationOption(params, 'OK');
-		params.callbacks[3].input[0].value = "mts-w-payment";
+        var params = json;
+        if(options.password) {
+            params.callbacks[0].input[0].value = options.password;
+            params.callbacks[1].input[0].value = "true"; // Для установки куки persistent ("Запомнить")
+            setConfirmationOption(params, 'OK');
+            params.callbacks[3].input[0].value = "mts-w-payment";
+        }else{
+            setConfirmationOption(params, 'RESTORE');
+        }
 		
 		html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
 	
@@ -765,21 +852,6 @@ function enterLKNUI(options){
 		
 		json = checkPasskeyOffer(json, loginUrl, headers);
 	}
-
-    if (json.header == "call-password-id") {
-        AnyBalance.trace('МТС запросил проверку входа с помощью QR кода, отказываемся');
-
-        var params = json;
-        setConfirmationOption(params, ['OTP', 'CANTGET']);
-
-        html = AnyBalance.requestPost(loginUrl, JSON.stringify(params), addHeaders(headers));
-
-        var json = getJson(html);
-
-        if (json.header)
-            AnyBalance.trace('Progress header: ' + json.header);
-
-    }
 
     if (json.header == "esia-oauth2-auth") {
         AnyBalance.trace('МТС запросил проверку входа через Госуслуги, отказываемся');
@@ -834,6 +906,11 @@ function enterLKNUI(options){
 	}
 
     if (json.header == "bank_cpid_busy") {
+        ///const params = json;
+        ///AnyBalance.trace('Сервер волнуется, что логин слишком часто. Ждем 60 сек')
+        //AnyBalance.sleep(60000);
+        //setConfirmationOption(params, 'REFRESH');
+
         throw new AnyBalance.Error("Сервер авторизации МТС занят, попробуйте ещё раз через минуту");
     }
 
@@ -852,6 +929,7 @@ function enterLKNUI(options){
         //Сохраняем куки после успешного входа
         g_savedData.setCookies();
         g_savedData.save();
+
 	} else {
 		AnyBalance.trace(html);
         throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?', allowRetry);
@@ -860,11 +938,61 @@ function enterLKNUI(options){
     return html;
 }
 
+/**
+ *
+ * @param {?PasskeyInstance} pk
+ */
+function createPasskey(pk){
+    if(!pk)
+        pk = new Passkey(g_savedData, g_headers);
+
+    if(!pk.hasKey()){
+        try {
+            let html = AnyBalance.requestGet("https://id.mts.ru/sso?returnUrl=https%3A%2F%2Fid.mts.ru%2F",
+                addHeaders({DNT: "1"}));
+
+            const check = callIdApi('api', {"call":"getUserInfo","arg":{}});
+            if(AnyBalance.getLastStatusCode() >= 400)
+                throw new AnyBalance.Error("Could not login to id.mts.ru: " + AnyBalance.getLastStatusCode())
+
+            const req = callIdApi('passkey/register/start',
+                {arg: {description: "Windows в Chrome", displayName: "", platform: "windows"}});
+            const sessionKey = AnyBalance.getLastResponseHeader('session-key');
+            if (!sessionKey)
+                throw new AnyBalance.Error("Could not find session key header");
+
+            req.origin = "https://id.mts.ru";
+            const res = pk.generate(req);
+            res.sessionKey = sessionKey;
+
+            AnyBalance.sleep(3000);
+
+            callIdApi('passkey/register/finish', {arg: res});
+            pk.saveGeneratedKey();
+
+            AnyBalance.trace("Passkey created successfully.");
+        }catch(e){
+            AnyBalance.trace(`Error creating passkey: ${e.message}\n${e.stack}`);
+        }
+    }
+
+}
+
+function getCbOutput(json, nameCb, nameOutput) {
+    const ccb = json.callbacks.find(cb => cb.type === nameCb);
+    const output = nameOutput ? ccb?.output?.find(o => o.name === nameOutput) : ccb;
+    if(!output){
+        AnyBalance.trace(JSON.stringify(json));
+        throw new AnyBalance.Error(`Не найден выход ${nameCb}.${nameOutput}. Сайт изменен?`)
+    }
+    return output;
+}
+
 // В блоке ConfirmationCallback кнопки подтверждений, они могут менять порядок в зависимости
 // от пользователя, поэтому важно их по идентификаторам нажимать!
 function setConfirmationOption(json, name){
-    const ccb = json.callbacks.find(cb => cb.type === "ConfirmationCallback");
-    const options = ccb?.output.find(o => o.name === "options");
+    const ccb = getCbOutput(json, "ConfirmationCallback");
+    const options = getCbOutput(json, "ConfirmationCallback", "options");
     const names = Array.isArray(name) ? name : [name];
     for(let name of names) {
         const optionIndex = options?.value.indexOf(name);
@@ -898,4 +1026,28 @@ function checkPasskeyOffer(json, loginUrl, headers){
 
 function clearAllCookiesExceptProtection(){
 	clearAllCookies(function(c){return!/qrator|StickyID/i.test(c.name)&&!/^TS0/i.test(c.name)})
+}
+
+function callIdApi(verb, data){
+    const html = AnyBalance.requestPost("https://id.mts.ru/" + verb, JSON.stringify(data),
+        addHeaders({
+            Referer: "https://id.mts.ru/account/safety/auth-level/my-keys",
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Origin: "https://id.mts.ru",
+            "sec-ch-ua-platform": '"Windows"',
+            "sec-ch-ua": '"Chromium";v="154", "Google Chrome";v="154", "Not A(Brand";v="99"',
+            "sec-ch-ua-mobile": "?0",
+            "Sec-Fetch-Site": "same-origin",
+            "Sec-Fetch-Mode": "cors",
+            "Sec-Fetch-Dest": "empty",
+            DNT: "1",
+        }));
+
+    const json = html ? JSON.parse(html) : {message: AnyBalance.getLastStatusCode()}
+    if(AnyBalance.getLastStatusCode() >= 400){
+        AnyBalance.trace(`Ошибка запроса к id.mts.ru (${AnyBalance.getLastStatusCode()}): ` + html);
+        throw new AnyBalance.Error("Ошибка id-апи " + verb + ': ' + json.message);
+    }
+    return json;
 }

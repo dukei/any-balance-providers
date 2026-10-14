@@ -1,7 +1,10 @@
 ﻿/**
-Процедура входа в Яндекс. Унифицирована и выделена в отдельный файл для удобства встраивания
+Сохранение параметров
 */
 
+/**
+ * @type {import('./path/to/SavedData.d.ts').SavedData}
+ */
 function SavedData(provider, account, defaultData){
 	function getDataName(){
     	return provider + '_' + account;
@@ -18,8 +21,7 @@ function SavedData(provider, account, defaultData){
 	}
 
 	/**
-	 *
-	 * @param filter: undefined|RegExp|(domain, name, value, cookie) => boolean
+	 * @type {import('./path/to/SavedData.d.ts').SavedDataInstance.restoreCookies}
 	 */
 	function restoreCookies(filter){
 		if(filter instanceof RegExp) {

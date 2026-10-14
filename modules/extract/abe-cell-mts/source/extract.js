@@ -25,9 +25,7 @@ var g_savedData;
 var g_headers = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
 	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
-	'Cache-Control': 'max-age=0',
 	'Connection': 'keep-alive',
-	'Upgrade-Insecure-Requests': '1',
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36',
 //	'If-Modified-Since': null, //Иначе МТС глючит с кешированием... // А теперь с хедером глючит, закрываем
 };
@@ -845,13 +843,13 @@ function login(result){
     if(login.isLoggedIn){
     	//Если мы уже были в кабинете, то не перелогиниваемся, может это мультипарт получение данных
         html = enterLK({login: prefs.login, onlyAutomatic: true});
-    } else if (prefs.password) {
-        html = loginWithPassword();
     } else {
+        html = loginWithPassword();
+/*    } else { //Без пароля логинимся через стандартные формы NUI
         var ret = loginWithoutPassword();
         html = ret.html;
         result.password = ret.password;
-    }
+*/    }
 
     login.isLoggedIn = true;
     return html;
@@ -1594,6 +1592,8 @@ function mainLK(html, result) {
 	var prefs = AnyBalance.getPreferences();
     AnyBalance.trace("Мы в личном кабинете...");
 
+    createPasskey();
+
 	if (isAnotherNumber()) {
         AnyBalance.trace('Пробуем переключиться на номер ' + prefs.phone);
 		var html = AnyBalance.requestGet('https://lk.mts.ru/api/login/profile', addHeaders({
@@ -1757,6 +1757,7 @@ function loginWithoutPassword(){
             changePassword(undefined, prefs.password || pass);
         }
     } catch (e) {
+        AnyBalance.trace(e.message + '\n' + e.stack);
         AnyBalance.trace('Автоматический вход в кабинет не удался. Пробуем получить пароль через СМС');
         pass = getPasswordBySMS(prefs.login);
         html = enterLK({login: prefs.login, password: pass, baseurl: 'https://lk.mts.ru', url: 'http://login.mts.ru/amserver/UI/Login?service=lk&goto=http%3A%2F%2Flk.mts.ru%2F'});

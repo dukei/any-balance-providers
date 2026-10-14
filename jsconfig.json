@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@modules/*": ["./modules/*"]
+    }
+  },
+  "compilerOptions": {
+    "maxNodeModuleJsDepth": 2,
+    "checkJs": false
+  },
+  "include": [
+    "**/*.js",
+    "**/*.ts",
+    "**/*.d.ts"
+  ]
+}

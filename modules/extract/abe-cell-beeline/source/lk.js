@@ -145,10 +145,10 @@ function doLogin(prefs){
 	
 	var json = getJson(html);
 	
-	if(json.data && json.data.captcha && json.data.captcha.type){ // Обычная символьная капча
+	if(json.data && json.data.captcha && json.data.captcha.type){
 	    var captcha = '';
 		
-		if(json.data.captcha.type == 'image'){
+		if(json.data.captcha.type == 'image'){ // Обычная символьная капча
 		    AnyBalance.trace('Сайт затребовал проверку капчи');
 		    
 		    var img = json.data.captcha.image;
@@ -161,35 +161,39 @@ function doLogin(prefs){
 	    }else{
 	        AnyBalance.trace('Неизвестный тип капчи: ' + json.data.captcha.type);
 	    }
-		
-	    var html = AnyBalance.requestPost('https://idplogin.beeline.ru/web/v1/process', JSON.stringify({
-            'challenge': loginChallenge,
-            'action': 'ACT_SUBMIT_CREDENTIALS',
-            'data': {
-                'methodId': '4', // Вход по логину/паролю
-                'login': prefs.login,
-                'password': prefs.password,
-                'captcha': captcha
-            }
-        }), addHeaders({
-		    'Content-Type': 'application/json;charset=UTF-8',
-		    'Referer': 'https://authentication.beeline.ru/'
-	    }));
-	    
-	    repairCookies();
-	    
-	    var json = getJson(html);	
-	    
-	    if(json.step && json.step.parameters && json.step.parameters.level && json.step.parameters.level == 'ERROR'){
-		    var error = json.step.parameters.text;
-		    if(error)
-			    throw new AnyBalance.Error(error, false, /логин|парол|код|неверн|кое-что не сошлось/i.test(error));
-		    
-		    AnyBalance.trace(html);
-		    throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
-	    }
 	}else{
 	    AnyBalance.trace('Проверка капчи не требуется');
+	}
+	
+	var params = {
+        'challenge': loginChallenge,
+        'action': 'ACT_SUBMIT_CREDENTIALS',
+        'data': {
+            'methodId': '4', // Вход по логину/паролю
+            'login': prefs.login,
+            'password': prefs.password
+        }
+    }
+	
+	if(captcha)
+		params.captcha = captcha;
+	
+	var html = AnyBalance.requestPost('https://idplogin.beeline.ru/web/v1/process', JSON.stringify(params), addHeaders({
+		'Content-Type': 'application/json;charset=UTF-8',
+		'Referer': 'https://authentication.beeline.ru/'
+	}));
+	    
+	repairCookies();
+	
+	var json = getJson(html);	
+	
+	if(json.step && json.step.parameters && json.step.parameters.level && json.step.parameters.level == 'ERROR'){
+		var error = json.step.parameters.text;
+		if(error)
+			throw new AnyBalance.Error(error, false, /логин|парол|код|неверн|кое-что не сошлось/i.test(error));
+		
+		AnyBalance.trace(html);
+		throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
 	}
 	
 	if(json.step && json.step.parameters && json.step.parameters.formId && json.step.parameters.formId == 'SUBMIT_OTP'){
@@ -220,6 +224,11 @@ function doLogin(prefs){
 		    AnyBalance.trace(html);
 		    throw new AnyBalance.Error('Не удалось войти в личный кабинет. Сайт изменен?');
 	    }
+	}
+	
+	if(json.step && json.step.parameters && json.step.parameters.formId && json.step.parameters.formId == 'SET_PASSWORD'){
+		AnyBalance.trace('Сайт затребовал смену пароля');
+		throw new AnyBalance.Error('Билайн требует сменить пароль. Войдите в кабинет ' + loginUrl + ' через браузер и смените пароль. Новый пароль введите в настройках провайдера', null, true);
 	}
 	
 	if(json.step && json.step.parameters && json.step.parameters.redirectTo){
@@ -254,10 +263,11 @@ function doLogin(prefs){
 	    var json = getJson(html);
 	}
 	
-	if(json.step && json.step.parameters && json.step.parameters.redirectTo)
+	if(json.step && json.step.parameters && json.step.parameters.redirectTo){
 		var redirectUrl = json.step.parameters.redirectTo;
-	
-	html = AnyBalance.requestGet(redirectUrl, addHeaders({'Referer': 'https://authentication.beeline.ru/'}));
+	    
+	    html = AnyBalance.requestGet(redirectUrl, addHeaders({'Referer': 'https://authentication.beeline.ru/'}));
+	}
 	
 	var referer = 'https://beeline.ru/auth/logincallback/';
 	

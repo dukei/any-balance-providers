@@ -18,15 +18,6 @@ var g_headers = {
 var g_html;
 var g_savedData;
 
-function myParseCurrency(text) {
-    var val = text.replace(/\s+/g, '').replace(/[\-\d\.,]+/g, '');
-    
-	val = g_currency[val] || val;
-    AnyBalance.trace('Parsing currency (' + val + ') from: ' + text);
-	
-    return val;
-}
-
 function login(baseurl) {
     var prefs = AnyBalance.getPreferences();
 	
@@ -145,26 +136,6 @@ function doLogin(prefs){
 	
 	var json = getJson(html);
 	
-	if(json.data && json.data.captcha && json.data.captcha.type){
-	    var captcha = '';
-		
-		if(json.data.captcha.type == 'image'){ // Обычная символьная капча
-		    AnyBalance.trace('Сайт затребовал проверку капчи');
-		    
-		    var img = json.data.captcha.image;
-		    captcha = AnyBalance.retrieveCode('Пожалуйста, введите символы с картинки', img, {time: 180000});
-	    }else if(json.data.captcha.type == 'yandexSmartCaptcha'){ // Смарт Капча Яндекса  
-		    AnyBalance.trace('Сайт затребовал проверку Yandex SmartCaptcha');
-		    
-		    var siteKey = json.data.captcha.parameters.siteKey;
-	        captcha = solveSmartCaptcha('Пожалуйста, подтвердите, что вы не робот', 'https://authentication.beeline.ru', {SITEKEY: siteKey, USERAGENT: g_headers['User-Agent']});
-	    }else{
-	        AnyBalance.trace('Неизвестный тип капчи: ' + json.data.captcha.type);
-	    }
-	}else{
-	    AnyBalance.trace('Проверка капчи не требуется');
-	}
-	
 	var params = {
         'challenge': loginChallenge,
         'action': 'ACT_SUBMIT_CREDENTIALS',
@@ -173,19 +144,36 @@ function doLogin(prefs){
             'login': prefs.login,
             'password': prefs.password
         }
-    }
+    };
 	
-	if(captcha)
-		params.captcha = captcha;
+	if(json.data && json.data.captcha && json.data.captcha.type){
+		if(json.data.captcha.type == 'image'){ // Обычная символьная капча
+		    AnyBalance.trace('Сайт затребовал проверку капчи');
+		    
+		    var img = json.data.captcha.image;
+		    params.captcha = AnyBalance.retrieveCode('Пожалуйста, введите символы с картинки', img, {time: 180000});
+	    }else if(json.data.captcha.type == 'yandexSmartCaptcha'){ // Смарт Капча Яндекса  
+		    AnyBalance.trace('Сайт затребовал проверку Yandex SmartCaptcha');
+		    
+		    var siteKey = json.data.captcha.parameters.siteKey;
+	        params.captcha = solveSmartCaptcha('Пожалуйста, подтвердите, что вы не робот', 'https://authentication.beeline.ru', {SITEKEY: siteKey, USERAGENT: g_headers['User-Agent']});
+	    }else{
+	        AnyBalance.trace('Неизвестный тип капчи: ' + json.data.captcha.type);
+	    }
+	}else{
+	    AnyBalance.trace('Проверка капчи не требуется');
+	}
 	
-	var html = AnyBalance.requestPost('https://idplogin.beeline.ru/web/v1/process', JSON.stringify(params), addHeaders({
-		'Content-Type': 'application/json;charset=UTF-8',
-		'Referer': 'https://authentication.beeline.ru/'
-	}));
+	if(json.step && json.step.name && json.step.name == 'STEP_FORM'){
+		var html = AnyBalance.requestPost('https://idplogin.beeline.ru/web/v1/process', JSON.stringify(params), addHeaders({
+		    'Content-Type': 'application/json;charset=UTF-8',
+		    'Referer': 'https://authentication.beeline.ru/'
+	    }));
 	    
-	repairCookies();
-	
-	var json = getJson(html);	
+	    repairCookies();
+	    
+	    var json = getJson(html);
+	}
 	
 	if(json.step && json.step.parameters && json.step.parameters.level && json.step.parameters.level == 'ERROR'){
 		var error = json.step.parameters.text;
@@ -231,8 +219,13 @@ function doLogin(prefs){
 		throw new AnyBalance.Error('Билайн требует сменить пароль. Войдите в кабинет ' + loginUrl + ' через браузер и смените пароль. Новый пароль введите в настройках провайдера', null, true);
 	}
 	
-	if(json.step && json.step.parameters && json.step.parameters.redirectTo){
-		var redirectUrl = json.step.parameters.redirectTo;
+	if(json.step && json.step.name && json.step.name == 'STEP_REDIRECT'){
+		var redirectUrl = json.step && json.step.parameters && json.step.parameters.redirectTo;
+		
+		if(!redirectUrl){
+		    AnyBalance.trace(html);
+		    throw new AnyBalance.Error('Не удалось получить ссылку для переадресации. Сайт изменён?');
+	    }
 	    
 	    html = AnyBalance.requestGet(redirectUrl, addHeaders({'Referer': 'https://authentication.beeline.ru/'}));
 	    
@@ -373,7 +366,6 @@ function getAssocNumbers(){
 	
 	if(/\/accounts/i.test(AnyBalance.getLastUrl()) && AnyBalance.getLastStatusCode() == 401){
 		// Вернулась 401. Пробуем обновить куки сессии принудительно...
-		
 		html = AnyBalance.requestGet('https://' + region.domain + '/auth/refresh/?returnUrl=%2Fapi%2Funi-profile%2Faccounts%2F', g_headers)
 	}
 	
@@ -588,8 +580,13 @@ function switchToAccocNumber(prefs, region, ctn){
 		throw new AnyBalance.Error('Не удалось получить параметры для переключения номера. Сайт изменен?');
 	}
     
-	if(json.step && json.step.parameters && json.step.parameters.redirectTo){
-		var redirectUrl = json.step.parameters.redirectTo;
+	if(json.step && json.step.name && json.step.name == 'STEP_REDIRECT'){
+		var redirectUrl = json.step && json.step.parameters && json.step.parameters.redirectTo;
+		
+		if(!redirectUrl){
+		    AnyBalance.trace(html);
+		    throw new AnyBalance.Error('Не удалось получить ссылку для переадресации. Сайт изменён?');
+	    }
 	    
 	    html = AnyBalance.requestGet(redirectUrl, addHeaders({'Referer': 'https://authentication.beeline.ru/'}));
 	    
@@ -616,10 +613,11 @@ function switchToAccocNumber(prefs, region, ctn){
 	    var json = getJson(html);
 	}
 	
-	if(json.step && json.step.parameters && json.step.parameters.redirectTo)
+	if(json.step && json.step.parameters && json.step.parameters.redirectTo){
 		var redirectUrl = json.step.parameters.redirectTo;
-	
-	html = AnyBalance.requestGet(redirectUrl, addHeaders({'Referer': 'https://authentication.beeline.ru/'}));
+	    
+	    html = AnyBalance.requestGet(redirectUrl, addHeaders({'Referer': 'https://authentication.beeline.ru/'}));
+	}
 	
 	var referer = 'https://beeline.ru/auth/logincallback/';
 	
@@ -695,35 +693,6 @@ function proceedWithSite(baseurl, type, html, json, result){
             break;
         default:
             throw new AnyBalance.Error('Неизвестный тип кабинета: ' + type);
-    }
-}
-
-function parseBalanceNegative(str) {
-    var val = parseBalance(str);
-    if (isset(val))
-        return -val;
-}
-
-function processInfo_basic(baseurl, html, result){
-    getParam(html, result.info, 'info.more3', /Вы с нами больше трёх лет!/i, null, function(str) { return !!str });
-    getParam(html, result.info, 'info.phone', /<h1[^>]+class="phone-number"[^>]*>([\s\S]*?)<\/h1>/i, replaceTagsAndSpaces);
-    getParam(html, result.info, 'info.region', /<div[^>]+region[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-}
-
-function processInfoPost_basic(baseurl, html, result){
-    if(AnyBalance.isAvailable('info.fio', 'info.email', 'info.phone')){
-        if(!result.info)
-            result.info = {};
-
-        getParam(html, result.info, 'info.fio', /<div[^>]+class="ban-param name"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-        if(AnyBalance.isAvailable('info.email')) {
-            var xhtml = html;
-            if(!/<div[^>]+class="email-fixed-width"[^>]*>/i.test(html))
-                xhtml = getBlock(baseurl + 'c/post/index.xhtml', html, 'benAddressLoaderDetails');
-            getParam(xhtml, result.info, 'info.email', /<div[^>]+class="email-fixed-width"[^>]*>([\s\S]*?)<\/div>/i, replaceTagsAndSpaces);
-        }
-
-        processInfo_basic(baseurl, html, result);
     }
 }
 
@@ -828,7 +797,6 @@ function processSiteExpensesPostpaid(result){
 	
 	if(!html || html == 'null' || /Знаем про ошибку/i.test(html) || AnyBalance.getLastStatusCode() == 500){
         AnyBalance.trace('Информация на сайте временно недоступна');
-		AnyBalance.trace('Не удалось получить историю расходов');
 		result.debet = 0;
 	}else{
 		var expenses = getJson(removeBOM(html));
@@ -1104,7 +1072,7 @@ function processSiteTariff(result){
 	    
 	    if(AnyBalance.isAvailable('abon_tariff', 'next_billing_date')){
 	        html = AnyBalance.requestGet('https://' + region.domain + '/api/uni-profile-mobile/tariff-fee/', addHeaders({ // Абонплата по тарифу
-		    Referer: AnyBalance.getLastUrl()
+		        Referer: AnyBalance.getLastUrl()
 	        }));
 	        
 	        var fee = getJson(removeBOM(html));
@@ -1116,7 +1084,7 @@ function processSiteTariff(result){
 				    getParam(fee.billingDate, result, 'next_billing_date', null, null, parseDateISOMy);
 			    if(!result.next_billing_date){ // Пробуем получить дату следующего списания хотя бы из срока действия пакета услуг
 	                if(json.accumulators && json.accumulators.items && json.accumulators.items[0] && json.accumulators.items[0].resetDateTimeUtc)
-	                getParam(json.accumulators.items[0].resetDateTimeUtc, result, 'next_billing_date', null, null, parseDateISO);
+	                    getParam(json.accumulators.items[0].resetDateTimeUtc, result, 'next_billing_date', null, null, parseDateISO);
                 }
 		    }
 	    }
@@ -1135,7 +1103,7 @@ function processSiteInfo(json, result){
         result.info = {};
 
 	var info = result.info;
-	
+	// Номер телефона
 	getParam(json.ctn, info, 'info.phone', /^\d{10}$/, [/(\d{3})(\d{3})(\d{2})(\d{2})/, '+7 $1 $2-$3-$4']);
     
 	if(AnyBalance.isAvailable('info.fio', 'info.address')){

@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
-	<change version="1" date="2026-09-22">
+	<change version="2" date="2026-09-22">
+	- Изменена иконка и другие косметические изменения
+	</change>
+	<change version="1" date="2026-07-16">
 	- Первая версия провайдера
 	</change>
 </history>

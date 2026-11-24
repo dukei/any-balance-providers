@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <provider>
     <api flags="no_browser" />
-    <id version="1">ab-info-ip</id>
+    <id version="2">ab-info-ip</id>
     <name>Мой IP адрес</name>
     <description html="true"><![CDATA[
 	Показывает Ваш внешний IP адрес через <a href="https://ip-api.com/">ip-api.com</a>. Автор Anonymouse Balance

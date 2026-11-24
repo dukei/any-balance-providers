@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<provider>
+	<api flags="no_browser"/>
+    <id major_version="1.0" version="3">ab-shop-21vek</id>
+    <name>21 Век (21vek.by)</name>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+	
+
+	<description html="true"><![CDATA[
+	<p>Бонусный баланс, процент скидки и статистика покупок в интернет-магазине <a href="https://21vek.by/">21vek.by</a>.</p>
+	<p>Информация берется из личного кабинета на сайте 21vek.by.</p>
+        Автор: Anonymouse Balance
+	]]></description>
+
+	<instruction html="true"><![CDATA[
+	<p>Для работы провайдера требуется ввести логин и пароль для входа в личный кабинет.</p>
+	]]></instruction>
+    
+    <files>
+	<js>main.js</js>
+	<icon>icon.png</icon>
+	<history>history.xml</history>
+	<preferences>preferences.xml</preferences>
+    </files>
+
+    <counters>
+        <counter id="balance" type="numeric" name="Баланс бонусов" prefix="Br " />
+        <counter id="discount" type="numeric" name="Процент скидки" suffix=" %" />
+        <counter id="total_sum" type="numeric" name="Сумма покупок" prefix="Br " />
+        <counter id="orders_count" type="numeric" name="Заказов" />
+    </counters>
+    <country>by</country>
+    <keywords>
+        wigle, wardriving, wifi
+    </keywords>
+</provider>

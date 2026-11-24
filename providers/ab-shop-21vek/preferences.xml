@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        key="login" 
+        title="Email" 
+        summary="Ваш Email от 21vek.by||{@s}\n"
+        dialogTitle="Введите Email" 
+        dialogMessage="Укажите Email, который вы используете для входа на 21vek.by"
+        positiveButtonText="OK"
+        negativeButtonText="Отмена"
+        inputType="textEmailAddress" />
+
+    <EditTextPreference 
+        key="password" 
+        title="Пароль" 
+        summary="Пароль от аккаунта||********\n" 
+        dialogTitle="Введите пароль" 
+        dialogMessage="Введите пароль от вашего аккаунта на 21vek.by"
+        positiveButtonText="OK"
+        negativeButtonText="Отмена"
+        inputType="textPassword" />
+</PreferenceScreen>

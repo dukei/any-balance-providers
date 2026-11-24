@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="9" date="2026-09-22">
+	- Поддержка изменений на сайте. Ускорение работы (Anonymouse Balance)	
+	</change>
 	<change version="8" date="2020-05-26">
 	Support for custom api key
 	</change>

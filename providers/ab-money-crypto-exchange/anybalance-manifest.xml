@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <provider>
-	<id version="8">ab-money-crypto-exchange</id>
+	<id version="9">ab-money-crypto-exchange</id>
 	<api flags="no_browser"/>
 	<name>Cryptocurrency Exchange Rates</name>
-	<description html="true"><![CDATA[<p>Fetches cryptocurrencies exchange rates. Uses coinmarketcap.com as it's source.</p>]]></description>
+	<description html="true"><![CDATA[<p>Fetches cryptocurrencies exchange rates. Uses <a href="https://coinmarketcap.com/">coinmarketcap.com</a> as it's source.</p>]]></description>
 	<author>Borislip &lt;borislip@gmail.com&gt;</author>
 	<depends>
 		<module id="library"/>
@@ -22,7 +22,7 @@
 		<counter id="symbol" name="Ticker" type="text"/>
 		<counter id="currency" name="Currency" type="text"/>
 	</counters>
-	<keywords>bitcoin,BTC,биткоин,BTH,биткэш,криптовалюта,cryptocurrency</keywords>
+	<keywords>bitcoin, BTC, биткоин, BTH, биткэш, криптовалюта, cryptocurrency</keywords>
 	<type>finance, exchange</type>
 	<country></country>
 </provider>

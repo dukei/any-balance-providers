@@ -1,6 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <history>
+	<change version="2" date="2026-09-22">
+	- Повышение стабильности и скорости работы в связи с переходом на использование API (Anonymouse Balance)
+
+	</change>
 	<change version="1" date="2020-02-20">
-		- Поддержка изменений на сайте.
-		</change>
-	</history>
+	- Поддержка изменений на сайте.
+	</change>
+</history>

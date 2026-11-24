@@ -1,191 +1,408 @@
 /**
-Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
+ * AnyBalance provider: Белорусская железная дорога (БЧ)
+ *
+ * Получает расписание и свободные места через API мобильного
+ * приложения «БЧ. Мой поезд».
  */
 
+var API_BASE = 'https://apicast.rw.by/v1';
+var API_USER_KEY = 'c0f1de1cbcf6c517baa7c95ab7d0509e';
+
 var g_headers = {
-	'Accept': '*/*',
-	'Accept-Charset': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-	'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3',
-	'Connection': 'keep-alive',
-	'Host': 'pass.rw.by',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36',
+	'Accept': 'application/json, text/plain, */*',
+	'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.5,en;q=0.3',
+	'User-Agent': 'Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 Chrome/151.0 Mobile Safari/537.36'
+};
+
+var CAR_TYPES = {
+	1: 'Общий',
+	2: 'Сидячий',
+	3: 'Плацкартный',
+	4: 'Купейный',
+	5: 'Мягкий',
+	6: 'СВ'
 };
 
 function main() {
 	var prefs = AnyBalance.getPreferences();
-	var baseurl = 'https://rasp.rw.by';
 	AnyBalance.setDefaultCharset('utf-8');
 
 	checkEmpty(prefs.station_from, 'Введите пункт отправления!');
 	checkEmpty(prefs.station_to, 'Введите пункт назначения!');
-	checkEmpty(!prefs.date_trip || /^(\d\d\D\d\d\D\d\d\d\d)$/.test(prefs.date_trip), 'Введите дату в формате DD.MM.YYYY!');
+	checkEmpty(prefs.date_trip && /^\d{2}\.\d{2}\.\d{4}$/.test(prefs.date_trip),
+		'Введите дату в формате DD.MM.YYYY!');
 
-	AnyBalance.restoreCookies();
+	var dt = parseTripDate(prefs.date_trip);
+	var dateApi = getFormattedDate('YYYY-MM-DD', dt);
 
-	if (!prefs.date_trip) {
-			dt = new Date();
-	} else {
-			var parts = prefs.date_trip.split(".");
-			var dt = new Date(parseInt(parts[2], 10),
-							parseInt(parts[1], 10) - 1,
-							parseInt(parts[0], 10));
+	var fromExp = resolveStation(prefs.station_from);
+	var toExp = resolveStation(prefs.station_to);
+
+	AnyBalance.trace('БЧ API: ' + prefs.station_from + ' [' + fromExp + '] -> ' +
+		prefs.station_to + ' [' + toExp + '], ' + dateApi);
+
+	var route = getRoute(fromExp, toExp, dateApi);
+	var trains = extractTrains(route);
+
+	if (!trains.length) {
+		throw new AnyBalance.Error(
+			'БЧ API не вернуло список поездов для ' + prefs.station_from + ' — ' +
+			prefs.station_to + ' на ' + prefs.date_trip + '.');
 	}
-	var curDate = new Date();
-	var time = '00:00';
-	if (getFormattedDate('YYYY-MM-DD', dt) == getFormattedDate('YYYY-MM-DD', curDate))
-			time = getFormattedDate('HH:NN', curDate)
-					if (prefs.station_from && prefs.station_to) {
-							html = AnyBalance.requestGet(baseurl + '/m/ru/route/?path=ru%2Froute%2F&from=' + prefs.station_from + '&from_exp=0&from_esr=0&to=' + prefs.station_to + '&to_exp=&to_esr=&date=' + getFormattedDate('YYYY-MM-DD', dt) + '&s=mobile', {}, addHeaders({'Referer': baseurl }));
-					}
-					if (!html || AnyBalance.getLastStatusCode() > 400) {
-							throw new AnyBalance.Error('Ошибка при подключении к сайту провайдера! Попробуйте обновить данные позже.');
-					}
-					checkEmpty(R98(html, '<div class="list_items">', '<div class="hidden train_details"'), 'Не удалось найти Список Поездов, сайт изменен?', true);
-					var data = R98(html, '<div class="list_items">', '<div class="hidden train_details"');
 
-	
-
-	var res = data.split('class="list_item">');
-	AnyBalance.trace(res.length);
-	var result = {
-			success: true
-	};
-	result.contakt = 105;
-	var chec_end = 'Все поезда на дату:' + getFormattedDate('YYYY-MM-DD', dt) + '<br /><br />';
-	for (var i = 1; i < res.length; i++) {
-			item_text = R98(res[i], '<div class="list_text">', '</div>').replace('&nbsp;&mdash;', '');
-			item_start = R98(res[i], '<div class="list_start">', '</div>');
-			item_status = R98(res[i], '<span class="list_text_small">', '</span>');
-			item_end = R98(res[i], '<div class="list_end">', '</div>').replace('<br />', '_');
-
-			chec_end += "<br />Поезд: " + item_text + '<br />Дни курсирования: ' + item_status + '<br />Отпр. в: ' + item_start + '<br />Приб. в: ' + item_end + '<br /><br />';
+	var selected = selectTrain(trains, prefs.train);
+	if (!selected) {
+		throw new AnyBalance.Error('Поезд с номером "' + prefs.train + '" не найден на указанную дату.');
 	}
-	result.other_trains = chec_end; //Записываем все поезда на Выбранную дату
-	var tRain = prefs.train;
-	//var tRain = '731Б';
 
-			checkEmpty(R98(html, '<div class="hidden train_details" id="item_details_0">', '<script>'), 'Не удалось найти Список Поездов cо  свободными местами, сайт изменен?', true);
-			var data_train = R98(html, '<div class="hidden train_details" id="item_details_0">', '<script>');
-	var type_sv = 0,
-	type_plats = 0,
-	type_kupe = 0,
-	type_sit = 0,
-	type_common = 0,
-	type_soft = 0,
-	price_sv = '',
-	price_plats = '',
-	price_kupe = '',
-	price_sit = '',
-	price_soft = '',
-	price_common = '',
-	depart_station = '',
-	arrival_station = '',
-	tRain_id = ''; ;
-	var res_train = data_train.split('<div class="b-about">');
-	
-	if (!tRain || data_train.indexOf(tRain) < 0) { //если поезд не выбран берем первый из списка
-		AnyBalance.trace('Неудолось выбрать поезд с номером:'+tRain);
-		result.train_id =  'В ведите в настройках № поезда: ['+R98(res_train[1], '<small class="train_id">', '</small>')+'] \nИ появиться дополнительные счетчики с остановками по пути следования  и количество свободных мест со стоимостью!!!';
-			var depart = R98(res_train[1], '<div class="route_title">', '</div>').replace(/<\/?[^>]+>/g, '').trim();
-			var depart_time = R98(res_train[1], '<div class="route_time">', '</div>').replace(/<\/?[^>]+>/g, '').trim();
-			var arrivals = R98(res_train[1], '<div class="route_end">', '<div class="b-places">');
-			var arrival = R98(arrivals, '<div class="route_title">', '</div>').replace(/<\/?[^>]+>/g, '').trim();
-			var arrival_time = R98(arrivals, '<div class="route_time">', '</div>').replace(/<\/?[^>]+>/g, '').trim();
-			result.depart_station = depart + ' ' + depart_time;
-			result.arrival_station = arrival + ' ' + arrival_time;
-			
-			result.type_train = R98(res_train[1], '<div class="train_type">', '</div>').replace(/<\/?[^>]+>/g, '').trim();
-		 
-	} else {
-			for (var k = 1; k < res_train.length; k++) {
-								tRain_id = R98(res_train[k], '<small class="train_id">', '</small>');
-				
-					if (tRain_id == tRain) {//проверяем совпадения
-						AnyBalance.trace('Поезд с номером: '+tRain+' Совподает с номером'+tRain_id);
+	var result = {success: true};
 
-							result.type_train = R98(res_train[k], '<div class="train_type">', '</div>').replace(/<\/?[^>]+>/g, '').trim();
-							result.train_id =tRain_id;
-							var depart = R98(res_train[k], '<div class="route_title">', '</div>').replace(/<\/?[^>]+>/g, '').trim();
-							var depart_time = R98(res_train[k], '<div class="route_time">', '</div>').replace(/<\/?[^>]+>/g, '').trim();
-							var arrivals = R98(res_train[k], '<div class="route_end">', '<div class="b-places">');
-							var arrival = R98(arrivals, '<div class="route_title">', '</div>').replace(/<\/?[^>]+>/g, '').trim();
-							var arrival_time = R98(arrivals, '<div class="route_time">', '</div>').replace(/<\/?[^>]+>/g, '').trim();
-							result.depart_station = depart + ' ' + depart_time;
-							result.arrival_station = arrival + ' ' + arrival_time;
-							
-							checkEmpty(R98(res_train[k], '<table class="places_table">', '</table>'), 'Не удалось найти Список свободных мест, сайт изменен?', true);
-							var plases = R98(res_train[k], '<table class="places_table">', '</table>');
-							var res_plases = plases.split('places_name');
-							for (var j = 1; j < res_plases.length; j++) {
-									places_name = R98(res_plases[j], '">', '</td>');
-									switch (places_name) { //перебираем типы билетов
-									case ("Общий"):
-											result.type_common = R98(res_plases[j], '<td class="places_qty">', '</td>').replace(/<\/?[^>]+>/g, '').trim();
-											result.price_common = R98(res_plases[j], '<td class="places_price">', '</td>').replace(/(<\/?[^>]+>|&nbsp;)/gm, '').trim();
-											break;
-									case ("Плацкартный"):
-											result.type_plats = R98(res_plases[j], '<td class="places_qty">', '</td>').replace(/<\/?[^>]+>/g, '').trim();
-											result.price_plats = R98(res_plases[j], '<td class="places_price">', '</td>').replace(/(<\/?[^>]+>|&nbsp;)/gm, '').trim();
-											break;
-									case ("Купе"):
-											result.type_kupe = R98(res_plases[j], '<td class="places_qty">', '</td>').replace(/<\/?[^>]+>/g, '').trim();
-											result.price_kupe = R98(res_plases[j], '<td class="places_price">', '</td>').replace(/(<\/?[^>]+>|&nbsp;)/gm, '').trim();
-											break;
-									case ("СВ"):
-											result.type_sv = R98(res_plases[j], '<td class="places_qty">', '</td>').replace(/<\/?[^>]+>/g, '').trim();
-											result.price_sv = R98(res_plases[j], '<td class="places_price">', '</td>').replace(/(<\/?[^>]+>|&nbsp;)/gm, '').trim();
-											break;
-									case ("Сидячий"):
-											result.type_sit = R98(res_plases[j], '<td class="places_qty">', '</td>').replace(/<\/?[^>]+>/g, '').trim();
-											result.price_sit = R98(res_plases[j], '<td class="places_price">', '</td>').replace(/(<\/?[^>]+>|&nbsp;)/gm, '').trim();
-											break;
-									case ("Мягкий"):
-											result.type_soft = R98(res_plases[j], '<td class="places_qty">', '</td>').replace(/<\/?[^>]+>/g, '').trim();
-											result.price_soft = R98(res_plases[j], '<td class="places_price">', '</td>').replace(/(<\/?[^>]+>|&nbsp;)/gm, '').trim();
-											break;
-									}
-							}
-							url_stops = R98(res_train[k], '<a href="', '" class="list_item">').replace(/<\/?[^>]+>/g, '').trim();
-							html_stops = AnyBalance.requestGet(baseurl + url_stops, {}, addHeaders({
-													'Referer': baseurl
-											}));
-						
-							if (html_stops) {
+	result.other_trains = buildTrainList(trains, prefs);
+	fillTrainInfo(result, selected, prefs);
+	fillPlaces(result, selected);
+	result.stops_train = buildStops(selected);
 
-									data_stops = R98(html_stops, '<ul class="list_items">', '</ul>');
-									stops_res = data_stops.split('<li class="list_item">');
-									var chec_stops = '';
-									chec_stops =  "Станция : " +R98(stops_res[1], '<div class="list_text">', '</div>').replace(/<\/?[^>]+>/g, '').trim() + " Отпр. в: " + R98(stops_res[1], '<div class="list_end">', '</div>').replace(/<\/?[^>]+>/g, '').trim() + '<br /><br />';
-									for (var b = 2; b < stops_res.length; b++) {
-											stop_item = R98(stops_res[b], '<div class="list_text">', '</div>').replace(/<\/?[^>]+>/g, '').trim();
-											stop_item_start = R98(stops_res[b], '<div class="list_start">', '</div>').replace(/(<\/?[^>]+>|&nbsp;)/gm, '').trim();
-											stop_item_stop = R98(stops_res[b], '<div class="list_stop">', '</div>').replace(/<\/?[^>]+>/g, '').trim();
-											stop_item_end = R98(stops_res[b], '<div class="list_end">', '</div>').replace(/<\/?[^>]+>/g, '').trim();
-											chec_stops += "Станция: " +stop_item + "<br />Приб. в: " + stop_item_start + '<br /> Стоянка: ' + stop_item_stop + '<br /> Отпр. в: ' + stop_item_end + ',<br /><br />';
-									}
-									result.stops_train = chec_stops;
-							}
-					} else {
-							continue;
-						}
-			}
-	}
-	AnyBalance.saveCookies();
-	AnyBalance.saveData();
 	AnyBalance.setResult(result);
 }
-function R98(s, l, r) {
-	var i = s['indexOf'](l);
-	if (i > -1) {
-			s = s['substr'](i + l['length']);
-			if (r) {
-					i = s['indexOf'](r);
-					if (i > -1) {
-							s = s['substr'](0, i)
-					}
-			}
-	} else {
-			s = ''
+
+function getRoute(fromExp, toExp, dateApi) {
+    var params =
+        'format=json' +
+        '&user_key=' + encodeURIComponent(API_USER_KEY) +
+        '&from_exp=' + encodeURIComponent(fromExp) +
+        '&to_exp=' + encodeURIComponent(toExp) +
+        '&date=' + encodeURIComponent(dateApi);
+
+    var url = API_BASE + '/rasp/ru/index/route?' + params;
+    return requestJson(url);
+}
+
+function requestJson(url) {
+	AnyBalance.trace('GET ' + url);
+
+	var response = AnyBalance.requestGet(url, {}, addHeaders(g_headers));
+	var status = AnyBalance.getLastStatusCode();
+
+	if (!response || status >= 400) {
+		var preview = response ? String(response).substr(0, 500) : '';
+		AnyBalance.trace('HTTP ' + status + ': ' + preview);
+		throw new AnyBalance.Error('Ошибка обращения к API БЧ. HTTP ' + status + '.');
 	}
-	return s
-};
+
+	try {
+		return JSON.parse(response);
+	} catch (e) {
+		AnyBalance.trace('Ответ API: ' + String(response).substr(0, 1500));
+		throw new AnyBalance.Error('БЧ API вернуло некорректный JSON.');
+	}
+}
+
+function resolveStation(name) {
+	var normalized = normalizeStation(name);
+	var key;
+
+	for (key in STATIONS) {
+		if (normalizeStation(key) == normalized)
+			return STATIONS[key];
+	}
+
+	throw new AnyBalance.Error(
+		'Не удалось определить код станции БЧ для "' + name + '". ' +
+		'Введите название станции точно так, как оно указано в расписании БЧ.');
+}
+
+function normalizeStation(s) {
+	return String(s || '')
+		.replace(/ё/g, 'е')
+		.replace(/Ё/g, 'Е')
+		.replace(/[\u00a0\s]+/g, ' ')
+		.replace(/^\s+|\s+$/g, '')
+		.toLowerCase();
+}
+
+function parseTripDate(value) {
+	var p = value.split('.');
+	var day = parseInt(p[0], 10);
+	var month = parseInt(p[1], 10);
+	var year = parseInt(p[2], 10);
+	var d = new Date(year, month - 1, day);
+
+	if (d.getFullYear() != year || d.getMonth() != month - 1 || d.getDate() != day)
+		throw new AnyBalance.Error('Некорректная дата: ' + value);
+
+	return d;
+}
+
+/*
+ * В API встречаются разные уровни обёртки (RouteInfo/RouteMulti/RouteData).
+ * Не привязываемся к одному уровню JSON: ищем объекты, у которых есть номер
+ * поезда и данные отправления/прибытия.
+ */
+function extractTrains(data) {
+	/* Current БЧ API returns the routes directly in RouteInfo.routes.
+	 * Do not recursively search the JSON: nested objects are not trains.
+	 */
+	if (!data || Object.prototype.toString.call(data.routes) != '[object Array]')
+		return [];
+
+	var result = [];
+	for (var i = 0; i < data.routes.length; i++) {
+		if (data.routes[i] && typeof data.routes[i] == 'object')
+			result.push(normalizeTrain(data.routes[i]));
+	}
+
+	return result;
+}
+
+function normalizeTrain(o) {
+	var t = {};
+
+	t.raw = o;
+	t.trainNumber = textValue(firstValue(o, ['train_number', 'trainNumber', 'number']));
+	t.trainThread = textValue(firstValue(o, ['train_thread', 'trainThread']));
+	t.trainName = textValue(firstValue(o, ['train_name', 'trainName']));
+	t.trainType = textValue(firstValue(o, ['train_type', 'trainType']));
+	t.trainDays = textValue(firstValue(o, ['train_days', 'trainDays']));
+
+	t.fromStation = objectText(firstValue(o, [
+		'from_station_name', 'fromStationName', 'from_station', 'fromStation'
+	]));
+	t.toStation = objectText(firstValue(o, [
+		'to_station_name', 'toStationName', 'to_station', 'toStation'
+	]));
+
+	t.fromTime = textValue(firstValue(o, [
+		'from_time_formatted', 'fromTimeFormatted', 'from_time_formatted_local',
+		'fromTimeFormattedLocal', 'from_time', 'fromTime'
+	]));
+	t.toTime = textValue(firstValue(o, [
+		'to_time_formatted', 'toTimeFormatted', 'to_time_formatted_local',
+		'toTimeFormattedLocal', 'to_time', 'toTime'
+	]));
+
+	t.carrier = textValue(firstValue(o, ['carrier_name', 'carrierName', 'carrier']));
+	t.service = textValue(firstValue(o, ['service']));
+
+	t.isTicketSellingAllowed = firstValue(o, [
+		'is_ticket_selling_allowed', 'isTicketSellingAllowed', 'ticket_selling_allowed'
+	]);
+	t.isFreeSeats = firstValue(o, [
+		'is_train_has_free_seats', 'isTrainHasFreeSeats'
+	]);
+
+	t.places = firstValue(o, ['places', 'place', 'car_places', 'carPlaces']);
+	if (!t.places)
+		t.places = [];
+
+	t.allStations = firstValue(o, ['all_stations', 'allStations', 'stations']);
+	t.trainStops = firstValue(o, ['train_stops', 'trainStops']);
+
+	return t;
+}
+
+function selectTrain(trains, requested) {
+	if (!requested)
+		return trains[0];
+
+	var wanted = normalizeTrainNumber(requested);
+
+	for (var i = 0; i < trains.length; i++) {
+		if (normalizeTrainNumber(trains[i].trainNumber) == wanted)
+			return trains[i];
+	}
+
+	return null;
+}
+
+function normalizeTrainNumber(value) {
+	return String(value || '').replace(/\s+/g, '').toUpperCase();
+}
+
+function fillTrainInfo(result, train, prefs) {
+	result.train_id = train.trainNumber;
+	result.depart_station = prefs.station_from + formatTime(train.fromTime);
+	result.arrival_station = prefs.station_to + formatTime(train.toTime);
+	result.type_train = train.carrier || train.trainType || train.service;
+}
+
+function fillPlaces(result, train) {
+	var sums = {};
+	var prices = {};
+	var places = train.raw && Object.prototype.toString.call(train.raw.places) == '[object Array]'
+		? train.raw.places : [];
+
+	for (var i = 0; i < places.length; i++) {
+		var place = places[i] || {};
+		var type = parseInt(place.car_type, 10);
+		if (!CAR_TYPES[type])
+			continue;
+
+		var multi = Object.prototype.toString.call(place.price_multi) == '[object Array]'
+			? place.price_multi : [];
+
+		for (var j = 0; j < multi.length; j++) {
+			var item = multi[j] || {};
+			var qty = parseSeats(item.places);
+			if (item.places != null && item.places !== '') {
+				if (sums[type] == null) sums[type] = 0;
+				sums[type] += qty;
+			}
+
+			if (Object.prototype.toString.call(item.prices) == '[object Array]') {
+				for (var k = 0; k < item.prices.length; k++) {
+					var price = parsePrice(item.prices[k]);
+					if (price != null && (prices[type] == null || price < prices[type]))
+						prices[type] = price;
+				}
+			}
+		}
+	}
+
+	setPlaceResult(result, 1, sums[1], prices[1], 'common');
+	setPlaceResult(result, 2, sums[2], prices[2], 'sit');
+	setPlaceResult(result, 3, sums[3], prices[3], 'plats');
+	setPlaceResult(result, 4, sums[4], prices[4], 'kupe');
+	setPlaceResult(result, 5, sums[5], prices[5], 'soft');
+	setPlaceResult(result, 6, sums[6], prices[6], 'sv');
+}
+
+function setPlaceResult(result, type, qty, price, suffix) {
+	result['type_' + suffix] = qty == null ? 0 : qty;
+	if (price != null)
+		result['price_' + suffix] = formatPrice(price);
+}
+
+function getPriceFromMultiItem(item) {
+	if (!item || typeof item != 'object')
+		return null;
+
+	var prices = firstValue(item, ['prices']);
+	if (Object.prototype.toString.call(prices) == '[object Array]') {
+		var min = null;
+		for (var i = 0; i < prices.length; i++) {
+			var p = parsePrice(prices[i]);
+			if (p != null && (min == null || p < min))
+				min = p;
+		}
+		return min;
+	}
+
+	return parsePrice(prices);
+}
+
+function parseSeats(value) {
+	if (value == null || value === '')
+		return 0;
+
+	var n = parseInt(String(value).replace(/[^0-9-]/g, ''), 10);
+	return isNaN(n) || n < 0 ? 0 : n;
+}
+
+function parsePrice(value) {
+	if (value == null || value === '')
+		return null;
+
+	var s = String(value).replace(/\s/g, '').replace(',', '.');
+	var m = s.match(/-?[0-9]+(?:\.[0-9]+)?/);
+	if (!m)
+		return null;
+
+	var n = parseFloat(m[0]);
+	return isNaN(n) ? null : n;
+}
+
+function formatPrice(value) {
+	return Number(value).toFixed(2).replace('.', ',') + ' BYN';
+}
+
+function buildTrainList(trains, prefs) {
+	var html = 'Все поезда на дату:<br /><br />';
+
+	for (var i = 0; i < trains.length; i++) {
+		var t = trains[i];
+		html += 'Поезд: ' + escapeHtml(t.trainNumber);
+
+		if (t.trainDays)
+			html += '<br />Дни курсирования: ' + escapeHtml(t.trainDays);
+		if (t.fromTime)
+			html += '<br />Отпр. в: ' + escapeHtml(prefs.station_from + formatTime(t.fromTime));
+		if (t.toTime)
+			html += '<br />Приб. в: ' + escapeHtml(prefs.station_to + formatTime(t.toTime));
+
+		html += '<br /><br />';
+	}
+
+	return html;
+}
+
+function buildStops(train) {
+	var all = train.allStations;
+	if (!all || !asArray(all).length)
+		return train.trainStops ? escapeHtml(objectText(train.trainStops)) : '';
+
+	var html = '';
+	var stations = asArray(all);
+
+	for (var i = 0; i < stations.length; i++) {
+		var name = objectText(stations[i]);
+		if (name)
+			html += 'Станция: ' + escapeHtml(name) + '<br />';
+	}
+
+	return html;
+}
+
+function asArray(value) {
+	if (value == null)
+		return [];
+	if (Object.prototype.toString.call(value) == '[object Array]')
+		return value;
+
+	var result = [];
+	if (typeof value == 'object') {
+		for (var key in value)
+			if (value.hasOwnProperty(key))
+				result.push(value[key]);
+	}
+	return result;
+}
+
+function firstValue(obj, keys) {
+	if (!obj || typeof obj != 'object')
+		return null;
+
+	for (var i = 0; i < keys.length; i++) {
+		if (obj.hasOwnProperty(keys[i]) && obj[keys[i]] != null)
+			return obj[keys[i]];
+	}
+	return null;
+}
+
+function objectText(value) {
+	if (value == null)
+		return '';
+	if (typeof value == 'string' || typeof value == 'number')
+		return String(value);
+	if (typeof value == 'object')
+		return textValue(firstValue(value, ['name', 'title', 'station_name', 'stationName', 'ru', 'station']));
+	return '';
+}
+
+function textValue(value) {
+	return value == null ? '' : String(value);
+}
+
+function formatTime(value) {
+	if (value == null || value === '')
+		return '';
+	return ' ' + String(value);
+}
+
+function escapeHtml(value) {
+	return String(value == null ? '' : value)
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;');
+}
+var STATIONS = {"Брест-Центральный":"2100035","Брест-Северный":"2100670","Брест-Восточный":"2100188","Харитоны":"2100558","Нагораны":"2100559","Сахарный Завод":"2100629","Кошелево":"2100929","Брест-Полесский":"2100516","Юго-Запад":"2100421","Митьки":"2100695","Прилуки":"2100696","Страдичи":"2100697","Кодень":"2100698","Знаменка":"2100699","Верасы":"2100824","Мотыкалы":"2100710","Заказанка":"2100825","Мухавец":"2100691","Берёзовая Роща":"2101044","Брест-Южный":"2101042","Каменная":"2100181","Жабинка":"2100095","Матеевичи":"2100540","Яковчицы":"2100792","Столпы":"2100590","Тевли":"2100635","Лясы":"2100565","Прилутчина":"2100622","Батча":"2100576","Бобры":"2100744","Высоко-Литовск":"2100168","Высокое-Город":"2100863","Верба":"2100713","Люта":"2100712","Хотислав":"2100555","Лыщицы":"2100677","Щитники":"2100711","Дачное":"2100860","Мотыкалы Большие":"2100861","Прибужье":"2100709","Скоки":"2100708","Западное":"2100862","Дубица":"2100182","Збунин":"2100700","Леплёвка":"2100701","Домачево":"2100702","Липенки":"2100703","Харсы":"2100704","Приборово":"2100705","Селяхи":"2100706","Комаровка":"2100707","Кобёлка":"2100826","Влодава":"2100560","Закрутин":"2100557","Роматово":"2100758","Пожежин":"2100556","Боровая":"2101049","Дубок":"2101047","Жемчужина":"2101046","Малорита":"2100179","Мельники":"2100759","Кобрин":"2100183","Камень":"2100604","Черевачицы":"2100925","Городец":"2100184","Антополь":"2101004","Вулька-Антопольская":"2100588","Пигановичи":"2100716","Липово":"2100905","Дрогичин":"2100125","Дрогичин-Город":"2100562","Липники":"2100563","Орловичи":"2100832","Трудовая":"2100186","Огдемер":"2100833","Снитово":"2100926","Янов-Полесский":"2100235","Юхновичи":"2100187","Понятичи":"2100717","Молотковичи":"2100564","Пинск":"2100180","Алёнушка":"2100651","Ясельда":"2100149","Парохонск":"2100148","Озёрная":"2100834","Лобча":"2100718","Ловча":"2100147","Хвоецкое":"2100538","Вулька-Лунинецкая":"2100693","Вылазы":"2100835","Дубновичи":"2100836","Оранчицы":"2100085","Ткачи":"2100636","Павловичи":"2100566","Берёза-Картузская":"2100030","Кабаки":"2100886","Белоозёрск":"2101065","Бронная Гора":"2100189","Коссово-Полесское":"2100191","Берёза-Город":"2100794","Ивацевичи":"2101045","Борки":"2100885","Речица":"2100195","Войтешин":"2100888","Доманово":"2100136","Бытень":"2100584","Лесная":"2100193","Грицевец":"2100126","Лососно":"2100215","Пересельцы":"2101030","Лосево":"2101031","Чернуха":"2100462","Лихачи":"2100429","Салатье":"2100910","Узбережь":"2100816","Поречье":"2100430","Учитель":"2100723","Брузги":"2100897","Гродно":"2100070","Каплица":"2100546","Богушевка":"2100547","Рыбница":"2100548","Клочки":"2100896","Бокуны":"2100895","Немейщизна":"2100894","Коробчицы":"2100893","Гибуличи":"2100892","Пригородный":"2100864","Аульс":"2100545","Мурованка":"2100749","Завадичи":"2100544","Житомля":"2100157","Бирюличи":"2100748","Полесский Парк":"2101016","Скидель":"2100169","Хвойняны":"2100747","Черлёна":"2100166","Дубно":"2100746","Заполье":"2100745","Свислочь":"2100751","Саки":"2100750","Монтовты":"2100309","Нестеровичи":"2101032","Берестовица":"2100155","Жиличи":"2100757","Рудавка":"2100756","Мстибово":"2100312","Андреевичи":"2100667","Голынка":"2100311","Лесники":"2100297","Волковыск":"2100276","Волковыск-Город":"2100276","Старая Весь":"2101038","Войтковичи":"2100543","Лебяды":"2100293","Зельва":"2100154","Савичи":"2100114","Плетяничи":"2100542","Озерница":"2100448","Гриньки":"2100498","Костени":"2100918","Слоним":"2100153","Фабричный":"2100574","Исса":"2100753","Ивная":"2100541","Детковичи":"2100752","Полонка":"2100152","Севрюки":"2100112","Боровцы":"2100539","Приозёрный":"2101033","Мосты":"2101155","Кульшичи":"2100755","Даниловцы":"2101041","Старина":"2100754","Турья":"2100660","Рось":"2100156","Рожанка":"2100158","Желудок":"2100742","Логвины":"2100743","Микелевщина":"2100907","Скрибовцы":"2100159","Семашки":"2100741","Курган":"2100740","Поречаны":"2100162","Белогруда":"2100739","Далёкий":"2100738","Халечино":"2101017","Лида":"2100250","Минойты":"2100550","Гончары":"2100721","Дитва":"2100842","Раклевцы":"2101018","Дитрики":"2100906","Гуды":"2100682","Петюны":"2100585","Бастуны":"2100163","Вороново":"2100722","Беняконе":"2100232","Ёткишки":"2100930","Гутно":"2100521","Кирьяновцы":"2100737","Яцуки":"2100167","Нёман":"2100164","Новоельня":"2100165","Дворец":"2100694","Выгода":"2100172","Хорошки":"2100720","Молчадь":"2101012","Клишевичи":"2100841","Мицкевичи":"2100173","Мордичи":"2100174","Замошье":"2101025","Домашевичи":"2100552","Барановичи-Северные":"2100241","Козлякевичи":"2100840","Железница":"2100923","Барановичи-Центральные":"2100020","Ольсевичи":"2101075","Пост № 1":"2101153","Крошин":"2100304","Юшкевичи":"2100615","Погорельцы":"2100137","Хвоево":"2101100","Липа":"2100580","Городея":"2100122","Осиповщина":"2100553","Синяво":"2100479","Воротище":"2100554","Столбцы":"2100123","Кучкуны":"2100478","Отцеда":"2100477","Колосово":"2100124","Тёмные Ляды":"2101156","Мезиновка":"2100476","Барановичи-Полесские":"2100010","Русино":"2100127","Федюки":"2100640","Ковали":"2100283","Подлесье":"2101068","Жеребковичи":"2100535","Щепичи":"2100664","Локомотивное Депо":"2100898","Клецк":"2100128","Зубки":"2100714","Дегтяны":"2100536","Тимковичи":"2100676","Шаловичи":"2100715","Середняки":"2100537","Ванилевичи":"2100828","Труд":"2100827","Восток":"2100829","Горынь":"2101190","Бухличи":"2101314","Видибор":"2101002","Журавинка":"2100890","Лунинец":"2100291","Яжевки":"2100645","Любожердье":"2100613","Ракитно":"2100506","Дребск":"2100681","Сад":"2100914","Дятловичи":"2100131","Бостынь":"2100683","Люща":"2100260","Мальковичи":"2100161","Якуба Коласа":"2100646","Люсино":"2100151","Рассвет":"2100719","Молодёжный":"2100913","Ганцевичи":"2100220","Буды":"2100144","Кулени":"2100600","Романовщина":"2100838","Любашево":"2101034","Припять":"2101001","Рейтанов":"2100264","Ляховичи":"2100133","Щара":"2100643","Петуховщина":"2100839","Институт Культуры":"2100002","Столичный":"2101152","Минск-Северный":"2100450","Минск-Пассажирский":"2100001","Минск-Восточный":"2101010","Тракторный":"2100465","Степянка":"2100101","Минск-Южный":"2100004","Лошица":"2100800","Железнодорожный":"2100917","Озерище":"2100509","Колодищи":"2100006","Садовый":"2100464","Городище":"2100510","Слобода":"2100463","Загорье":"2100461","Домашаны":"2101151","Смолевичи":"2100007","Красное Знамя":"2100102","Жодино-Южное":"2100459","Заречное":"2101015","Жодино":"2100145","Пролетарская Победа":"2100458","Печинский":"2100688","Барсуки":"2100267","Борисов":"2100305","Березина":"2100040","Новосады":"2100008","Замужанье":"2100457","Неманица":"2101013","Приямино":"2100009","Бережок":"2100456","Крупки":"2100011","Новая Жизнь":"2101043","Бобр":"2100012","Красновка":"2100455","Троцилово":"2100454","Красная Горка":"2100453","Славное":"2100013","Нарцизово":"2101036","Толочин":"2100014","Выдерщина":"2100452","Перевалочный":"2100451","Мартюхово":"2100439","Коханово":"2100511","Голошевка":"2100438","Дятлово":"2100437","Солнечный":"2100436","Ломачино":"2100435","Хороброво":"2100686","Веровойша":"2101006","Уша":"2100021","Лоси":"2100769","Бояры":"2100581","Мясота":"2100770","Татарщизна":"2100517","Селивоновка":"2100314","Криница":"2100771","Фестивальный":"2100434","Олехновичи":"2100107","Романы":"2100768","Дубравы":"2100515","Вязынка":"2100766","Пралески":"2100767","Радошковичи":"2100680","Хмелевка":"2100764","Анусино":"2100765","Беларусь":"2100106","Зелёное":"2100763","Крыжовка":"2100505","Ратомка":"2100514","Минское Море":"2100762","Ждановичи":"2100279","Масюковщина":"2100761","Лебяжий":"2100865","Негорелое":"2100029","Энергетик":"2101009","Клыповщина":"2100475","Асино":"2101011","Дзержинск":"2100467","Койданово":"2100028","Станьково":"2100474","Бережа":"2101053","Пятигорье":"2100920","Фаниполь":"2100109","Волчковичи":"2100473","Помыслище":"2100522","Роща":"2102154","Курасовщина":"2101056","Птичь":"2100175","Колядичи":"2100284","Мачулищи":"2100318","Асеевка":"2100319","Михановичи":"2100111","Седча":"2100630","Рыбцы":"2100321","Равнополье":"2100322","Зазерка":"2100320","Руденск":"2100671","Новое Село":"2100323","Дричин":"2100523","Вендеж":"2100324","Техникум":"2100325","Пуховичи":"2100185","Веленский":"2100326","Блужа":"2100579","Майский":"2100327","Веселовский":"2100328","Талька":"2100062","Верхи":"2100442","Верейцы":"2100274","Цель":"2100346","Осово":"2100797","Гомоновка":"2100799","Погорелое":"2100801","Лапичи":"2100444","Уборок":"2100347","Гродзянка":"2100531","Осиповичи-1":"2100270","Осиповичи-2":"2100271","Брицаловичи":"2100072","Осиповичи-3":"2100272","Советский":"2100795","Бродище":"2100329","Юбилейный":"2100796","Горожа":"2100881","Татарка":"2100098","Дачная":"2100912","Токари":"2100637","Бибковщина":"2100577","Кветка":"2100856","Гай":"2100902","Ясень":"2100099","Киселевичи":"2100049","Мирадино":"2100675","Бобруйск":"2100310","Дедново":"2100911","Рабкор":"2100134","Октябрьский":"2101048","Новая Дуброва":"2100404","Оземля":"2100402","Бумажково":"2100582","Ратмировичи":"2100129","Заозёрщина":"2100403","Чёрные Броды":"2100401","Мошны":"2100534","Орсичи":"2100308","Брожа":"2100121","Глебова Рудня":"2100349","Красный Брод":"2100119","Туголица":"2100348","Бабино":"2100330","Малинники":"2100513","331 км":"2100855","Телуша":"2100116","Микуличи":"2100616","Омельня":"2100117","Данилов Мост":"2100331","Красный Берег":"2100275","Казимирово":"2100281","Малевичи":"2100501","Калий-1":"2100307","Строитель":"2100433","Солигорск":"2100063","Шахтёрский":"2100432","Калий-3":"2100306","Глядки":"2100431","Новогорки":"2100623","Слуцк":"2100055","Новодворцы":"2100648","Некраши":"2100064","Загродье":"2100781","Повстынь":"2100649","Безверховичи":"2100830","Козловичи":"2100880","Уречье":"2100066","Оточка":"2100782","Верхутино":"2100067","Пасека":"2100783","Старые Дороги":"2100210","Александровка":"2100784","Фаличи":"2100068","Ульяновка":"2100785","Гряда":"2100786","Деревцы":"2100071","Дараганово":"2100069","Гомель":"2100100","Ерёмино":"2100248","Светоч":"2100231","Гомель-Нечётный":"2100854","Мильча":"2100810","Гомель-Чётный":"2100417","Никольский Переезд":"2100416","Гомель-Северный":"2101021","Новобелицкая":"2100206","Берёзки":"2100571","Ларищево":"2100214","Дударево":"2100411","Лисички":"2100207","Коренёвка":"2100208","Уть":"2100773","Соколка":"2100343","Коровышень":"2101218","15 км":"2100889","Терюха":"2101037","Грабовка":"2100919","Дикаловка":"2101237","Кравцовка":"2101227","Дачный":"2100899","Добруш":"2100192","Закопытье":"2100216","Волотова":"2100817","Будотень":"2100818","Носовичи":"2100344","Радуга":"2100891","Борок":"2100211","Иваки":"2100345","Прудовка":"2100440","Зябровка":"2100209","Тереховка":"2100212","Грушевка":"2100445","Красная Буда":"2100412","Мошок":"2100413","Лукьяновка":"2100414","Ленинодар":"2100415","Куток":"2101154","Круговец":"2100213","Словечно":"2100259","Забозье":"2100803","Новая Рудня":"2100802","Богутичи":"2100258","Ельск":"2100135","Мытва":"2100257","Михалки":"2100256","Сосновый Бор":"2100804","Мозырь":"2100254","Мозырь-Павночный":"2100253","Пхов":"2100249","Любань":"2100612","Сенкевичи":"2100139","Ситница":"2100142","Лахва":"2100138","Микашевичи":"2100146","Случь":"2100633","Бронислав":"2100684","Загорбашье":"2100599","Людиневичи":"2100614","Дедовка":"2100901","Житковичи":"2100230","Бринёво":"2101035","Старушки":"2100082","Копцевичи":"2100194","Оголичи":"2100420","Бобрич":"2100650","Муляровка":"2100075","Коржевка":"2100286","Мышанка":"2100196","Кацуры":"2100197","Садки":"2100627","Клинск":"2100567","Руднянский":"2100419","Борречье":"2100815","Калинковичи":"2100090","Мелькомбинат":"2100410","Дубровичи":"2100278","Дудичи":"2100597","Калинковичи-Восточные":"2100813","Голевицы":"2100198","Лозки":"2100294","Нахов":"2100199","Калинковичи-Западные":"2100814","Калинковичи-Южные":"2100805","Юшки":"2100252","Горочичи":"2100251","Уболоть":"2100638","Холодники":"2100229","Плудим":"2100621","Останковичи":"2100228","Узнаж":"2100639","Жердь":"2100227","Светлогорск-на-Березине":"2100217","Сельное":"2100631","Ящицы":"2100226","Мормаль":"2100224","Истопки":"2100603","Нивы":"2100619","Солоное":"2100634","Жлобин-Подольский":"2100533","Василевичи":"2100245","Ведрич":"2100273","Бабичи":"2100202","Лиски":"2100287","Кастрычник":"2100282","Демехи":"2100203","Геолог":"2100812","Ритм":"2100811","Хойники":"2100201","Осов":"2100428","Авраамовская":"2100594","Избынь":"2100427","Макановичи":"2100426","Защобье":"2100507","Ребуса":"2100653","Сенозавод":"2100204","Копань":"2100605","Якимовка":"2100568","Чижовка":"2100641","Щербовка":"2100644","Прибор":"2100569","Центролит":"2100570","Рандовский":"2100418","Сады":"2101003","Жлобин":"2100080","Деповской":"2100332","Жлобин-Западный":"2100532","Вирский":"2100223","Калыбовка":"2100334","Хальч":"2100679","Старая Рудня":"2100219","Металлург":"2100808","Салтановка":"2100222","Забабье":"2100335","Шарыбовка":"2100573","Качаново":"2100336","Потаповка":"2100337","Буда-Кошелёвская":"2100025","Бушевка":"2100338","Череток":"2100339","Радеево":"2100572","Буслы":"2100583","Зелёный Остров":"2100340","Тихиничи":"2100341","Уза":"2100221","Калининский":"2100342","Лазурная":"2100218","Костюковка":"2100678","Сож":"2100447","Плёсы":"2100422","Кленки":"2100423","Романовичи":"2100424","Ипуть":"2100425","Сверково":"2100655","Лукское":"2100242","Жлобин-Северный":"2100408","Новые Луки":"2100625","Больница":"2100806","Рогачёв":"2100290","Старосельский":"2100659","Задрутье":"2100921","Лудчицы":"2100672","Залесская Слобода":"2100601","Тощица":"2100449","Быхов":"2100060","Мокрое":"2100407","Баркалабово":"2100266","Текстильщик":"2100809","Соболевка":"2100807","Дашковка":"2100591","Чернозёмовка":"2100663","Буйничи":"2100269","Могилёв-2":"2100298","Полыковские Хутора":"2100527","Волоки":"2100406","Лотва":"2100494","Савелинки":"2100405","Могилёв-1":"2100150","Могилёв-3":"2100819","Рыжковичи":"2100654","Шклов":"2100225","Слободка":"2100632","Аполлоновка":"2100857","Низовцы":"2100932","Копысь":"2100118","Прокшино":"2100652","Александрия":"2100409","Елизово":"2100073","Тачанка":"2100074","Ольховка":"2100882","Несета":"2100076","Стоялово":"2100524","Суша":"2100787","Воничи":"2100077","Развадово":"2100788","Милое":"2100078","Заличинка":"2100928","Друть":"2100079","Синюга":"2100789","Семуковичи":"2100525","Новая Нива":"2100883","Хоново":"2100790","Понизов":"2100791","Вендриж":"2100081","Голынец":"2100526","Тишовка":"2100884","Городщина":"2101007","Луполово":"2100051","Дары":"2100593","Антоновка":"2100575","Боровка":"2100820","Рудея":"2100822","Щежер":"2100821","Реста":"2100096","Самулки":"2100628","Благовичи":"2100578","Чаусы":"2101215","Дрануха":"2100596","Переможник":"2100620","Веремейки":"2100065","Осовец":"2100097","Юрковка":"2100665","Дарливое":"2100592","Депо":"2100823","Кричев-1":"2100140","Михеевичи":"2100092","Бель":"2100316","Малятичи":"2100296","Воловники":"2100793","Чёрная Натопа":"2100903","Ходосы":"2100089","Пячковичи":"2100774","Красноручье":"2100088","Кошь":"2100844","Тёмный Лес":"2100087","Никольск":"2100775","Кледневичи":"2100086","Пичевка":"2100846","Ремество":"2100845","Погодино":"2100295","Ректа":"2100626","Паршино":"2100927","Зубры":"2100084","Ермоловка":"2100847","Сидоровка":"2100657","Румино":"2100083","Звезда":"2100528","Кричев-2":"2100141","Шестёровка":"2100091","Белынковичи":"2100093","Журбин":"2100094","Новолиповский":"2100529","Бони":"2100843","Коммунары":"2100130","Волосковня":"2100587","Осмоловичи":"2100673","Климовичи":"2100240","Витебск":"2100050","Гришаны":"2100488","Княжица":"2100487","Лётцы":"2100610","Старое Село":"2100237","Язвино":"2100486","Ужлятино":"2100851","Чепино":"2100776","Лужесно":"2100289","Лосвида":"2100611","Залучье":"2100495","Батали":"2100872","Должа":"2100931","Городок":"2100255","Прудок":"2100496","Росляки":"2100497","Грибачи":"2100484","Меховое":"2100904","Езерище":"2100041","Шумилино":"2100037","Ловша":"2100236","Пуща":"2100915","Добрино":"2101005","Оболь":"2100036","Глушанино":"2100485","Горяны":"2100277","Секеровщина":"2100499","Сосница":"2100483","Поздняково":"2100482","Полота":"2100033","Юровичи":"2101029","Полоцк":"2100190","Дретунь":"2100034","Алёща":"2100234","Бигосово":"2100031","Верхнедвинск":"2100105","Свольно":"2100656","Бениславского":"2100268","Сарьянка":"2100853","Борковичи":"2100233","Подозёрцы":"2100472","Адамово":"2100480","Баравуха":"2100032","Ропнянская":"2100481","Гавья":"2100061","Березовцы":"2100736","Лобачи":"2100735","Князюковцы":"2101020","Цверма":"2101019","Литва":"2101022","Юратишки":"2100059","Довгердишки":"2100734","Яхимовщина":"2100733","Войгяны":"2100732","Богданов":"2100058","Мельковщизна":"2100731","Ластоянцы":"2100730","Листопады":"2100729","Воложин":"2100057","Шипуличи":"2100728","Березинское":"2100726","Полочаны":"2100108","Сечки":"2100725","Каледино":"2100724","Молодечно":"2100280","Тышкевичи":"2100549","Домановский":"2101023","Красный Бережок":"2100607","Зенит":"2100692","Гудогай":"2100024","Скрестины":"2100871","Каменка":"2100837","Ошмяны":"2100301","Солы":"2100023","Гаути":"2100870","Сморгонь":"2100205","Белосельский":"2100869","Залесье":"2100022","Засковичи":"2100868","Пруды":"2100518","Мороськи":"2100867","Асановский":"2100866","Насилово":"2100315","Вилейка":"2100265","Куренец":"2100519","Страж":"2100520","Нивки":"2100618","Княгинин":"2100026","Кривичи":"2100608","Будслав":"2100027","Вереньки":"2100647","Илово":"2101024","Парафьянов":"2100503","Порплище":"2100502","Володьки":"2100586","Крулевщизна":"2100285","Шипы":"2100300","Ярево":"2100317","Камайка":"2100470","Разлоги":"2100469","Поставы":"2100048","Новосёлки":"2100879","Жефарово":"2100598","Годутишки":"2100471","Воропаево":"2100047","Ляховщина":"2100878","Новодруцк":"2100046","Веретеи":"2100877","Чёрное":"2100727","Константинов Двор":"2100606","Шарабаи":"2100642","Лынтупы":"2100468","Друя":"2100056","Идолты":"2100602","Миоры":"2100054","Зори":"2100508","Шарковщизна":"2100053","Гута":"2100589","Глубокое":"2100044","Журки":"2100876","Подсвилье":"2100043","Краева":"2100850","Боровое":"2100247","Зябки":"2100042","Полеваче":"2100624","Кульгаи":"2100609","Загатье":"2100246","Ветрино":"2100039","Фариново":"2100244","Ксты":"2100288","Фомино":"2100852","Заольша":"2100492","Черницы":"2100777","Лиозно":"2100038","Шахи":"2100778","Выдрея":"2100491","Крынки":"2100490","Копты":"2100779","Заболотинка":"2100489","Лучёса":"2100780","Бычиха":"2100238","Орша-Центральная":"2100170","Городнянский":"2100685","Хлусово":"2100512","Орша-Западная":"2100303","Червено":"2100019","Звёздный":"2100313","Орша-Восточная":"2100171","Можеевка":"2100299","Юрцево":"2100666","Стайки":"2100243","Лужки":"2100493","Богушевская":"2100015","Скребни":"2100874","Савченки":"2100875","Лычковского":"2100674","Замосточье":"2100239","Сосновка":"2100658","Медведка":"2100500","Крестьянка":"2100873","Лепель":"2100018","Лазовики":"2100690","Заслоново":"2100443","Жестянка":"2100689","Чашники":"2100017","Зябы":"2100460","Вятны":"2100441","Блажевщина":"2100110","Сенненский":"2100120","Уздорники":"2100859","Круглица":"2100132","Менютёво":"2100916","Бурбин":"2100669","Тимирязево":"2100160","Комарово":"2100176","Лемница":"2100292","Шибеки":"2100177","Михново":"2100178","Адровка":"2100261","Смольяны":"2100104","Гребнево":"2100262","Криничино":"2100263","Машково":"2100446","Слободской":"2100662","Васьковщизна":"2100668","11 км":"2100858","Хлюстино":"2100103","Осиновка":"2100016","Киреево":"2101057","Шуховцы":"2100661","Минск":"2100000","Берёза":"2100003","Барановичи":"2100005","Брест":"2100200","Могилёв":"2100150","Орша":"2100170","Осиповичи":"2100270","Петриков":"2100350","Каменец":"2102159","Видомля":"2102158","Турна Большая":"2102157","Ветка":"2100351","Бродница":"2101060","Мариненко":"2101050"};

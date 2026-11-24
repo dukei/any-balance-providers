@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="2">ab-education-duolingo</id>
+    <api flags="no_browser"/>
+    <name>Duolingo — успехи в обучении</name>
+    <description html="true"><![CDATA[
+        <p>Статистика <a href="https://Duolingo.com/">Duolingo</a>: общий XP, XP за сегодня, неделю и месяц, занятия, серия и курсы.</p>
+        <p>Для недельной и месячной статистики необходим JWT Token аккаунта Duolingo.</p>
+        <p>API неофициальный и может измениться.</p>
+        <p>Автор: Anonymouse Balance</p>
+    ]]></description>
+	<author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <instruction html="true"><![CDATA[
+<p>
+1. Укажите username или URL публичного профиля.<br>
+2. Укажите JWT Token Duolingo в настройках провайдера.<br>
+3. Укажите часовой пояс аккаунта (по умолчанию 'Europe/Minsk').<br>
+</p>
+<p>
+<b>Получение JWT-токена Duolingo</b>. Если ты уже авторизован на сайте Duolingo в браузере Opera или Chrome на Windows, сделай следующее через консоль браузера:<br>
+1. Открой Duolingo.<br>
+2. Убедись, что ты вошёл в свой аккаунт.<br>
+3. Нажми F12.<br>
+4. Перейди на вкладку Console (Консоль).<br>
+5. Вставь эту команду:<br>
+document.cookie.match(/(?:^|;\s*)jwt_token=([^;]+)/)?.[1]<br>
+6. Нажми Enter.<br>
+7. Браузер выведет длинную строку. Это JWT-токен.<br>
+Такой способ получения токена описан и в документации библиотеки Duolingo API.<br>
+</p>]]>
+    </instruction>
+    <files>
+	<js>main.js</js>
+	<icon>icon.png</icon>
+	<history>history.xml</history>
+	<preferences>preferences.xml</preferences>
+    </files>
+    <counters>
+        <counter id="total_xp" name="Общий опыт" units=" XP"/>
+        <counter id="weekly_xp" name="Опыт за последние 7 дней" units=" XP 7 дн."/>
+        <counter id="monthly_xp" name="Опыт за последние 30 дней" units=" XP 30 дн."/>
+        <counter id="today_xp" name="Опыт сегодня" units=" XP"/>
+        <counter id="sessions_today" name="Занятий сегодня"/>
+        <counter id="session_time_today" name="Время занятий сегодня" units=" мин."/>
+        <counter id="streak" name="Серия занятий" units=" дн."/>
+        <counter id="courses_xp" name="Сумма XP по курсам" units=" XP"/>
+        <counter id="display_name" name="Имя" type="text"/>
+        <counter id="username" name="Имя пользователя" type="text"/>
+        <counter id="courses" name="Курсы" type="text"/>
+    </counters>
+    <type>education</type>
+</provider>

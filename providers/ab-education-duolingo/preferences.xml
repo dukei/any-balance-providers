@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference
+        title="Имя пользователя Duolingo"
+        key="username"
+        summary="Введите username, @username или ссылку на профиль"
+        dialogTitle="Имя пользователя Duolingo"
+        inputType="text"/>
+    <EditTextPreference
+        title="Duolingo JWT Token"
+        key="token"
+        summary="JWT из сессии Duolingo. Нужен для недельной и месячной статистики"
+        dialogTitle="Duolingo JWT Token"
+        inputType="textPassword"/>
+    <EditTextPreference
+        title="Часовой пояс"
+        key="timezone"
+        defaultValue="Europe/Minsk"
+        summary="IANA timezone, например Europe/Minsk или Europe/Vilnius"
+        dialogTitle="Часовой пояс"
+        inputType="text"/>
+</PreferenceScreen>

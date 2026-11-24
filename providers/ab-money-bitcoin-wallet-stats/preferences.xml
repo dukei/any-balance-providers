@@ -13,9 +13,9 @@
 	<EditTextPreference
 		title="Convesion Currency Code"
 		key="currency"
-        defaultValue=""
+	        defaultValue=""
 		summary="||{@s}"
-        obligatory="true"
+	        obligatory="true"
 		dialogTitle="Currency Code"
 		positiveButtonText="ОК"
 		negativeButtonText="Cancel"

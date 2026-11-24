@@ -3,12 +3,14 @@
     <api flags="no_browser" />
     <id version="1">ab-info-ip</id>
     <name>Мой IP адрес</name>
-    <description>Показывает ваш внешний IP адрес через ip-api.com. Сделан пользователем Anonymouse Balance</description>
+    <description html="true"><![CDATA[
+	Показывает Ваш внешний IP адрес через <a href="https://ip-api.com/">ip-api.com</a>. Автор Anonymouse Balance
+    ]]></description>
     <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
     <files>
         <icon>icon.png</icon>
         <js>main.js</js>
-    	<history>history.xml</history>
+	<history>history.xml</history>
     </files>
     <counters>
         <counter id="ip"       name="IP адрес"     type="text"/>
@@ -18,4 +20,6 @@
         <counter id="timezone" name="Часовой пояс" type="text"/>
     </counters>
     <type>info</type>
+	<keywords>IP, network</keywords>
+	<country></country>
 </provider>

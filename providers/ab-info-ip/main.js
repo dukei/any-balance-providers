@@ -1,5 +1,4 @@
 /**
-Провайдер AnyBalance (http://any-balance-providers.googlecode.com)
 Получает информацию о IP адресе с использованием http://ip-api.com/json/
 */
 

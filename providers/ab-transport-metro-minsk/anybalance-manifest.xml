@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<provider>
+    <id version="2">ab-transport-metro-minsk</id>
+    <api flags="no_browser"/>
+    <name>Минский метрополитен</name>
+    <description>Остаток поездок и сведения по проездному билету Минского метрополитена. Удобно отслеживать срок действия, количество поездок. Автор: Anonymouse Balance
+</description>
+    <author>AnyBalance Team &lt;info@anybalance.ru&gt;</author>
+    <depends>
+        <module id="library"/>
+    </depends>
+    <files>
+    	<js>main.js</js>
+    	<icon>icon.png</icon>
+	<history>history.xml</history>
+    	<preferences>preferences.xml</preferences>
+    </files>
+    <counters>
+        <counter id="trips" name="Остаток поездок"/>
+        <counter id="type" name="Проездной" type="text"/>
+	<counter id="valid" name="Действует до" type="time" format="dd.MM.yyyy"/>
+	<counter id="lastOperation" name="Последняя операция" type="time" format="dd.MM.yyyy HH:mm:ss"/>
+    </counters>
+	<type>transport</type>
+	<country>by</country>
+</provider>

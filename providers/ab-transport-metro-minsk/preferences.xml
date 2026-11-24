@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen>
+    <EditTextPreference 
+        key="card" 
+        title="Номер карты метро" 
+	summary="|Введите 16 цифр номера карты|{@s}"
+        inputType="number" 
+        dialogTitle="Номер карты метро" 
+        dialogMessage="Введите 16 цифр номера карты" />
+</PreferenceScreen>

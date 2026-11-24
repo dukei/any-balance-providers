@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<history>
+	<change version="2" date="2026-11-20">
+	- Теперь понимает безлимитные карточки
+	- Улучшена надёжность, ускорена работа
+	</change>
+	<change version="1" date="2026-09-22">
+	- Первая версия провайдера
+	</change>
+</history>
